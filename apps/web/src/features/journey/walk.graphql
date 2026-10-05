@@ -1,0 +1,28 @@
+# A street walk between an address and a station entrance (src/features/journey/otp.ts).
+query Walk(
+  $origin: PlanLabeledLocationInput!
+  $destination: PlanLabeledLocationInput!
+  $time: OffsetDateTime!
+  $wheelchair: Boolean!
+) {
+  planConnection(
+    origin: $origin
+    destination: $destination
+    dateTime: { earliestDeparture: $time }
+    modes: { directOnly: true, direct: [WALK] }
+    preferences: { accessibility: { wheelchair: { enabled: $wheelchair } } }
+    first: 1
+  ) {
+    routingErrors {
+      code
+    }
+    edges {
+      node {
+        duration
+        legs {
+          distance
+        }
+      }
+    }
+  }
+}

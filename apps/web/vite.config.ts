@@ -3,7 +3,15 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
+// The journey planner talks to OpenTripPlanner at /otp on the app's origin (src/features/journey/otp.ts).
+// The dev and preview servers forward it to a local OTP (`cd otp && docker compose up otp`).
+const otpProxy = {
+  '/otp': { target: process.env['OTP_URL'] ?? 'http://localhost:8080', changeOrigin: true },
+};
+
 export default defineConfig({
+  server: { proxy: otpProxy },
+  preview: { proxy: otpProxy },
   plugins: [
     react(),
     VitePWA({

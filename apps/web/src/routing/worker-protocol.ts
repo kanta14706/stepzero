@@ -16,6 +16,9 @@ export type WorkerRequest =
       /** Edge and pathway ids that are out of service right now. */
       blockedEdgeIds?: string[];
       blockedPathwayIds?: string[];
+      /** Street cost of starting or ending at a node (EndCosts in astar.ts). */
+      fromCost?: Record<NodeId, number>;
+      toCost?: Record<NodeId, number>;
     };
 
 export type WorkerResponse =
@@ -48,6 +51,13 @@ export function handleMessage(
         }
       : NO_OUTAGES;
   const t0 = now();
-  const result = findRoute(index, { from: msg.from, to: msg.to, profile: msg.profile, outages });
+  const result = findRoute(index, {
+    from: msg.from,
+    to: msg.to,
+    profile: msg.profile,
+    outages,
+    ...(msg.fromCost && { fromCost: msg.fromCost }),
+    ...(msg.toCost && { toCost: msg.toCost }),
+  });
   return { type: 'route', id: msg.id, result, ms: now() - t0 };
 }

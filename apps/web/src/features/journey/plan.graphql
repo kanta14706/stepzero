@@ -1,0 +1,68 @@
+# Train itineraries for the journey planner (src/features/journey/otp.ts). OTP 2 GTFS GraphQL API.
+# Transit only: the walks at either end are planned with the in-station graphs and walk.graphql.
+query Plan(
+  $origin: PlanLabeledLocationInput!
+  $destination: PlanLabeledLocationInput!
+  $time: OffsetDateTime!
+  $wheelchair: Boolean!
+  $first: Int!
+) {
+  planConnection(
+    origin: $origin
+    destination: $destination
+    dateTime: { earliestDeparture: $time }
+    modes: { transitOnly: true }
+    preferences: { accessibility: { wheelchair: { enabled: $wheelchair } } }
+    first: $first
+  ) {
+    routingErrors {
+      code
+    }
+    edges {
+      node {
+        start
+        end
+        legs {
+          mode
+          duration
+          distance
+          headsign
+          start {
+            scheduledTime
+          }
+          end {
+            scheduledTime
+          }
+          from {
+            ...place
+          }
+          to {
+            ...place
+          }
+          route {
+            gtfsId
+            shortName
+            longName
+            color
+          }
+          intermediateStops {
+            gtfsId
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment place on Place {
+  name
+  lat
+  lon
+  stop {
+    gtfsId
+    platformCode
+    parentStation {
+      gtfsId
+    }
+  }
+}

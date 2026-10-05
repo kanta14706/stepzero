@@ -1,4 +1,4 @@
-"""Importer entry point: build station graphs into data/build/.
+"""Importer entry point: build station graphs, maps, devices seed and station list into data/build/.
 
     uv run python -m importer.run --stations oedo
     uv run python -m importer.run --stations daimon,421
@@ -11,6 +11,7 @@ import argparse
 from importer.graph.devices import export_devices
 from importer.graph.export import export
 from importer.graph.maps import export_maps
+from importer.graph.stations import export_stations
 from importer.graph.stitch import STATION_SLUGS
 from importer.graph.stitch import main as stitch_reports
 
@@ -42,12 +43,14 @@ def main() -> None:
     graphs = export(ids)
     export_maps(graphs)
     export_devices(graphs)
+    stations = export_stations(graphs)
     for g in graphs:
         st = g["station"]
         print(
             f"{st['id']} {st['slug']:20s} nodes {len(g['nodes']):4d} edges {len(g['edges']):4d} "
             f"warnings {[w['code'] for w in st['warnings']]}"
         )
+    print(f"stations.json: {len(stations['stations'])} stations")
 
 
 if __name__ == "__main__":

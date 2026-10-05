@@ -2,7 +2,7 @@ import type { StationGraph, StationIndex, StationMapData } from './types';
 
 const base = (): string => import.meta.env.BASE_URL.replace(/\/$/, '');
 
-async function getJson<T>(path: string): Promise<T> {
+export async function getJson<T>(path: string): Promise<T> {
   const res = await fetch(`${base()}/data/${path}`);
   if (!res.ok) throw new Error(`${path}: HTTP ${res.status}`);
   return (await res.json()) as T;

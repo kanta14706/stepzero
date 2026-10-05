@@ -1,0 +1,905 @@
+{
+  "recorded": "2026-10-05T19:57:37.282Z",
+  "otp": "opentripplanner 2.10.0, toei-pathway",
+  "variables": {
+    "origin": {
+      "location": {
+        "stopLocation": {
+          "stopLocationId": "1:421"
+        }
+      }
+    },
+    "destination": {
+      "location": {
+        "stopLocation": {
+          "stopLocationId": "1:120"
+        }
+      }
+    },
+    "time": "2026-10-07T09:00:00+09:00",
+    "wheelchair": true,
+    "first": 6
+  },
+  "data": {
+    "planConnection": {
+      "routingErrors": [],
+      "edges": [
+        {
+          "node": {
+            "start": "2026-10-07T09:02:00+09:00",
+            "end": "2026-10-07T09:40:00+09:00",
+            "legs": [
+              {
+                "mode": "SUBWAY",
+                "duration": 1200,
+                "distance": 8655,
+                "headsign": "都庁前",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:02:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:22:00+09:00"
+                },
+                "from": {
+                  "name": "大門",
+                  "lat": 35.656671,
+                  "lon": 139.755696,
+                  "stop": {
+                    "gtfsId": "1:421P3",
+                    "platformCode": "3",
+                    "parentStation": {
+                      "gtfsId": "1:421"
+                    }
+                  }
+                },
+                "to": {
+                  "name": "蔵前",
+                  "lat": 35.705587,
+                  "lon": 139.792244,
+                  "stop": {
+                    "gtfsId": "1:412",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:4",
+                  "shortName": null,
+                  "longName": "大江戸線",
+                  "color": "CF3366"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:420"
+                  },
+                  {
+                    "gtfsId": "1:419"
+                  },
+                  {
+                    "gtfsId": "1:418"
+                  },
+                  {
+                    "gtfsId": "1:417"
+                  },
+                  {
+                    "gtfsId": "1:416"
+                  },
+                  {
+                    "gtfsId": "1:415"
+                  },
+                  {
+                    "gtfsId": "1:414"
+                  },
+                  {
+                    "gtfsId": "1:413"
+                  }
+                ]
+              },
+              {
+                "mode": "WALK",
+                "duration": 586,
+                "distance": 415.83,
+                "headsign": null,
+                "start": {
+                  "scheduledTime": "2026-10-07T09:22:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:31:46+09:00"
+                },
+                "from": {
+                  "name": "蔵前",
+                  "lat": 35.705587,
+                  "lon": 139.792244,
+                  "stop": {
+                    "gtfsId": "1:412",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "to": {
+                  "name": "蔵前",
+                  "lat": 35.703128,
+                  "lon": 139.790858,
+                  "stop": {
+                    "gtfsId": "1:117",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": null,
+                "intermediateStops": null
+              },
+              {
+                "mode": "SUBWAY",
+                "duration": 300,
+                "distance": 2350,
+                "headsign": "青砥",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:35:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:40:00+09:00"
+                },
+                "from": {
+                  "name": "蔵前",
+                  "lat": 35.703128,
+                  "lon": 139.790858,
+                  "stop": {
+                    "gtfsId": "1:117",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "to": {
+                  "name": "押上",
+                  "lat": 35.710824,
+                  "lon": 139.812993,
+                  "stop": {
+                    "gtfsId": "1:120",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:1",
+                  "shortName": null,
+                  "longName": "浅草線",
+                  "color": "FF535F"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:118"
+                  },
+                  {
+                    "gtfsId": "1:119"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "node": {
+            "start": "2026-10-07T09:05:00+09:00",
+            "end": "2026-10-07T09:45:00+09:00",
+            "legs": [
+              {
+                "mode": "SUBWAY",
+                "duration": 1260,
+                "distance": 8655,
+                "headsign": "都庁前",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:05:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:26:00+09:00"
+                },
+                "from": {
+                  "name": "大門",
+                  "lat": 35.656671,
+                  "lon": 139.755696,
+                  "stop": {
+                    "gtfsId": "1:421P3",
+                    "platformCode": "3",
+                    "parentStation": {
+                      "gtfsId": "1:421"
+                    }
+                  }
+                },
+                "to": {
+                  "name": "蔵前",
+                  "lat": 35.705587,
+                  "lon": 139.792244,
+                  "stop": {
+                    "gtfsId": "1:412",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:4",
+                  "shortName": null,
+                  "longName": "大江戸線",
+                  "color": "CF3366"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:420"
+                  },
+                  {
+                    "gtfsId": "1:419"
+                  },
+                  {
+                    "gtfsId": "1:418"
+                  },
+                  {
+                    "gtfsId": "1:417"
+                  },
+                  {
+                    "gtfsId": "1:416"
+                  },
+                  {
+                    "gtfsId": "1:415"
+                  },
+                  {
+                    "gtfsId": "1:414"
+                  },
+                  {
+                    "gtfsId": "1:413"
+                  }
+                ]
+              },
+              {
+                "mode": "WALK",
+                "duration": 586,
+                "distance": 415.83,
+                "headsign": null,
+                "start": {
+                  "scheduledTime": "2026-10-07T09:26:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:35:46+09:00"
+                },
+                "from": {
+                  "name": "蔵前",
+                  "lat": 35.705587,
+                  "lon": 139.792244,
+                  "stop": {
+                    "gtfsId": "1:412",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "to": {
+                  "name": "蔵前",
+                  "lat": 35.703128,
+                  "lon": 139.790858,
+                  "stop": {
+                    "gtfsId": "1:117",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": null,
+                "intermediateStops": null
+              },
+              {
+                "mode": "SUBWAY",
+                "duration": 360,
+                "distance": 2350,
+                "headsign": "成田空港",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:39:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:45:00+09:00"
+                },
+                "from": {
+                  "name": "蔵前",
+                  "lat": 35.703128,
+                  "lon": 139.790858,
+                  "stop": {
+                    "gtfsId": "1:117",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "to": {
+                  "name": "押上",
+                  "lat": 35.710824,
+                  "lon": 139.812993,
+                  "stop": {
+                    "gtfsId": "1:120",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:1",
+                  "shortName": null,
+                  "longName": "浅草線",
+                  "color": "FF535F"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:118"
+                  },
+                  {
+                    "gtfsId": "1:119"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "node": {
+            "start": "2026-10-07T09:08:00+09:00",
+            "end": "2026-10-07T09:45:00+09:00",
+            "legs": [
+              {
+                "mode": "SUBWAY",
+                "duration": 240,
+                "distance": 1468,
+                "headsign": "清澄白河",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:08:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:12:00+09:00"
+                },
+                "from": {
+                  "name": "大門",
+                  "lat": 35.656671,
+                  "lon": 139.755696,
+                  "stop": {
+                    "gtfsId": "1:421P3",
+                    "platformCode": "3",
+                    "parentStation": {
+                      "gtfsId": "1:421"
+                    }
+                  }
+                },
+                "to": {
+                  "name": "築地市場",
+                  "lat": 35.664919,
+                  "lon": 139.766929,
+                  "stop": {
+                    "gtfsId": "1:419",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:4",
+                  "shortName": null,
+                  "longName": "大江戸線",
+                  "color": "CF3366"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:420"
+                  }
+                ]
+              },
+              {
+                "mode": "WALK",
+                "duration": 858,
+                "distance": 784.46,
+                "headsign": null,
+                "start": {
+                  "scheduledTime": "2026-10-07T09:12:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:26:18+09:00"
+                },
+                "from": {
+                  "name": "築地市場",
+                  "lat": 35.664919,
+                  "lon": 139.766929,
+                  "stop": {
+                    "gtfsId": "1:419",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "to": {
+                  "name": "東銀座",
+                  "lat": 35.669915,
+                  "lon": 139.76735,
+                  "stop": {
+                    "gtfsId": "1:111",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": null,
+                "intermediateStops": null
+              },
+              {
+                "mode": "SUBWAY",
+                "duration": 960,
+                "distance": 6694,
+                "headsign": "成田空港",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:29:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:45:00+09:00"
+                },
+                "from": {
+                  "name": "東銀座",
+                  "lat": 35.669915,
+                  "lon": 139.76735,
+                  "stop": {
+                    "gtfsId": "1:111",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "to": {
+                  "name": "押上",
+                  "lat": 35.710824,
+                  "lon": 139.812993,
+                  "stop": {
+                    "gtfsId": "1:120",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:1",
+                  "shortName": null,
+                  "longName": "浅草線",
+                  "color": "FF535F"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:112"
+                  },
+                  {
+                    "gtfsId": "1:113"
+                  },
+                  {
+                    "gtfsId": "1:114"
+                  },
+                  {
+                    "gtfsId": "1:115"
+                  },
+                  {
+                    "gtfsId": "1:116"
+                  },
+                  {
+                    "gtfsId": "1:117"
+                  },
+                  {
+                    "gtfsId": "1:118"
+                  },
+                  {
+                    "gtfsId": "1:119"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "node": {
+            "start": "2026-10-07T09:11:00+09:00",
+            "end": "2026-10-07T09:48:00+09:00",
+            "legs": [
+              {
+                "mode": "SUBWAY",
+                "duration": 1200,
+                "distance": 8655,
+                "headsign": "都庁前",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:11:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:31:00+09:00"
+                },
+                "from": {
+                  "name": "大門",
+                  "lat": 35.656671,
+                  "lon": 139.755696,
+                  "stop": {
+                    "gtfsId": "1:421P3",
+                    "platformCode": "3",
+                    "parentStation": {
+                      "gtfsId": "1:421"
+                    }
+                  }
+                },
+                "to": {
+                  "name": "蔵前",
+                  "lat": 35.705587,
+                  "lon": 139.792244,
+                  "stop": {
+                    "gtfsId": "1:412",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:4",
+                  "shortName": null,
+                  "longName": "大江戸線",
+                  "color": "CF3366"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:420"
+                  },
+                  {
+                    "gtfsId": "1:419"
+                  },
+                  {
+                    "gtfsId": "1:418"
+                  },
+                  {
+                    "gtfsId": "1:417"
+                  },
+                  {
+                    "gtfsId": "1:416"
+                  },
+                  {
+                    "gtfsId": "1:415"
+                  },
+                  {
+                    "gtfsId": "1:414"
+                  },
+                  {
+                    "gtfsId": "1:413"
+                  }
+                ]
+              },
+              {
+                "mode": "WALK",
+                "duration": 586,
+                "distance": 415.83,
+                "headsign": null,
+                "start": {
+                  "scheduledTime": "2026-10-07T09:31:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:40:46+09:00"
+                },
+                "from": {
+                  "name": "蔵前",
+                  "lat": 35.705587,
+                  "lon": 139.792244,
+                  "stop": {
+                    "gtfsId": "1:412",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "to": {
+                  "name": "蔵前",
+                  "lat": 35.703128,
+                  "lon": 139.790858,
+                  "stop": {
+                    "gtfsId": "1:117",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": null,
+                "intermediateStops": null
+              },
+              {
+                "mode": "SUBWAY",
+                "duration": 300,
+                "distance": 2350,
+                "headsign": "京成高砂",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:43:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:48:00+09:00"
+                },
+                "from": {
+                  "name": "蔵前",
+                  "lat": 35.703128,
+                  "lon": 139.790858,
+                  "stop": {
+                    "gtfsId": "1:117",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "to": {
+                  "name": "押上",
+                  "lat": 35.710824,
+                  "lon": 139.812993,
+                  "stop": {
+                    "gtfsId": "1:120",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:1",
+                  "shortName": null,
+                  "longName": "浅草線",
+                  "color": "FF535F"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:118"
+                  },
+                  {
+                    "gtfsId": "1:119"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "node": {
+            "start": "2026-10-07T09:14:00+09:00",
+            "end": "2026-10-07T09:51:00+09:00",
+            "legs": [
+              {
+                "mode": "SUBWAY",
+                "duration": 240,
+                "distance": 1468,
+                "headsign": "都庁前",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:14:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:18:00+09:00"
+                },
+                "from": {
+                  "name": "大門",
+                  "lat": 35.656671,
+                  "lon": 139.755696,
+                  "stop": {
+                    "gtfsId": "1:421P3",
+                    "platformCode": "3",
+                    "parentStation": {
+                      "gtfsId": "1:421"
+                    }
+                  }
+                },
+                "to": {
+                  "name": "築地市場",
+                  "lat": 35.664919,
+                  "lon": 139.766929,
+                  "stop": {
+                    "gtfsId": "1:419",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:4",
+                  "shortName": null,
+                  "longName": "大江戸線",
+                  "color": "CF3366"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:420"
+                  }
+                ]
+              },
+              {
+                "mode": "WALK",
+                "duration": 858,
+                "distance": 784.46,
+                "headsign": null,
+                "start": {
+                  "scheduledTime": "2026-10-07T09:18:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:32:18+09:00"
+                },
+                "from": {
+                  "name": "築地市場",
+                  "lat": 35.664919,
+                  "lon": 139.766929,
+                  "stop": {
+                    "gtfsId": "1:419",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "to": {
+                  "name": "東銀座",
+                  "lat": 35.669915,
+                  "lon": 139.76735,
+                  "stop": {
+                    "gtfsId": "1:111",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": null,
+                "intermediateStops": null
+              },
+              {
+                "mode": "SUBWAY",
+                "duration": 900,
+                "distance": 6694,
+                "headsign": "京成高砂",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:36:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:51:00+09:00"
+                },
+                "from": {
+                  "name": "東銀座",
+                  "lat": 35.669915,
+                  "lon": 139.76735,
+                  "stop": {
+                    "gtfsId": "1:111",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "to": {
+                  "name": "押上",
+                  "lat": 35.710824,
+                  "lon": 139.812993,
+                  "stop": {
+                    "gtfsId": "1:120",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:1",
+                  "shortName": null,
+                  "longName": "浅草線",
+                  "color": "FF535F"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:112"
+                  },
+                  {
+                    "gtfsId": "1:113"
+                  },
+                  {
+                    "gtfsId": "1:114"
+                  },
+                  {
+                    "gtfsId": "1:115"
+                  },
+                  {
+                    "gtfsId": "1:116"
+                  },
+                  {
+                    "gtfsId": "1:117"
+                  },
+                  {
+                    "gtfsId": "1:118"
+                  },
+                  {
+                    "gtfsId": "1:119"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "node": {
+            "start": "2026-10-07T09:03:44+09:00",
+            "end": "2026-10-07T09:51:00+09:00",
+            "legs": [
+              {
+                "mode": "WALK",
+                "duration": 1816,
+                "distance": 1534.53,
+                "headsign": null,
+                "start": {
+                  "scheduledTime": "2026-10-07T09:03:44+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:34:00+09:00"
+                },
+                "from": {
+                  "name": "大門",
+                  "lat": 35.656671,
+                  "lon": 139.755696,
+                  "stop": {
+                    "gtfsId": "1:421P3",
+                    "platformCode": "3",
+                    "parentStation": {
+                      "gtfsId": "1:421"
+                    }
+                  }
+                },
+                "to": {
+                  "name": "新橋",
+                  "lat": 35.665386,
+                  "lon": 139.759338,
+                  "stop": {
+                    "gtfsId": "1:110",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": null,
+                "intermediateStops": null
+              },
+              {
+                "mode": "SUBWAY",
+                "duration": 1020,
+                "distance": 7576,
+                "headsign": "京成高砂",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:34:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:51:00+09:00"
+                },
+                "from": {
+                  "name": "新橋",
+                  "lat": 35.665386,
+                  "lon": 139.759338,
+                  "stop": {
+                    "gtfsId": "1:110",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "to": {
+                  "name": "押上",
+                  "lat": 35.710824,
+                  "lon": 139.812993,
+                  "stop": {
+                    "gtfsId": "1:120",
+                    "platformCode": null,
+                    "parentStation": null
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:1",
+                  "shortName": null,
+                  "longName": "浅草線",
+                  "color": "FF535F"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:111"
+                  },
+                  {
+                    "gtfsId": "1:112"
+                  },
+                  {
+                    "gtfsId": "1:113"
+                  },
+                  {
+                    "gtfsId": "1:114"
+                  },
+                  {
+                    "gtfsId": "1:115"
+                  },
+                  {
+                    "gtfsId": "1:116"
+                  },
+                  {
+                    "gtfsId": "1:117"
+                  },
+                  {
+                    "gtfsId": "1:118"
+                  },
+                  {
+                    "gtfsId": "1:119"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

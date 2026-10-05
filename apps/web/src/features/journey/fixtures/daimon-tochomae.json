@@ -1,0 +1,468 @@
+{
+  "recorded": "2026-10-05T19:57:37.190Z",
+  "otp": "opentripplanner 2.10.0, toei-pathway",
+  "variables": {
+    "origin": {
+      "location": {
+        "stopLocation": {
+          "stopLocationId": "1:421"
+        }
+      }
+    },
+    "destination": {
+      "location": {
+        "stopLocation": {
+          "stopLocationId": "1:429"
+        }
+      }
+    },
+    "time": "2026-10-07T09:00:00+09:00",
+    "wheelchair": true,
+    "first": 6
+  },
+  "data": {
+    "planConnection": {
+      "routingErrors": [],
+      "edges": [
+        {
+          "node": {
+            "start": "2026-10-07T09:00:00+09:00",
+            "end": "2026-10-07T09:19:00+09:00",
+            "legs": [
+              {
+                "mode": "SUBWAY",
+                "duration": 1140,
+                "distance": 7544,
+                "headsign": "光が丘",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:00:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:19:00+09:00"
+                },
+                "from": {
+                  "name": "大門",
+                  "lat": 35.656671,
+                  "lon": 139.755696,
+                  "stop": {
+                    "gtfsId": "1:421P4",
+                    "platformCode": "4",
+                    "parentStation": {
+                      "gtfsId": "1:421"
+                    }
+                  }
+                },
+                "to": {
+                  "name": "都庁前",
+                  "lat": 35.690607,
+                  "lon": 139.692677,
+                  "stop": {
+                    "gtfsId": "1:429P4",
+                    "platformCode": "4",
+                    "parentStation": {
+                      "gtfsId": "1:429"
+                    }
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:4",
+                  "shortName": null,
+                  "longName": "大江戸線",
+                  "color": "CF3366"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:422P2"
+                  },
+                  {
+                    "gtfsId": "1:423P2"
+                  },
+                  {
+                    "gtfsId": "1:424P2"
+                  },
+                  {
+                    "gtfsId": "1:425P2"
+                  },
+                  {
+                    "gtfsId": "1:426P2"
+                  },
+                  {
+                    "gtfsId": "1:427P2"
+                  },
+                  {
+                    "gtfsId": "1:428P7"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "node": {
+            "start": "2026-10-07T09:04:00+09:00",
+            "end": "2026-10-07T09:23:00+09:00",
+            "legs": [
+              {
+                "mode": "SUBWAY",
+                "duration": 1140,
+                "distance": 7544,
+                "headsign": "光が丘",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:04:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:23:00+09:00"
+                },
+                "from": {
+                  "name": "大門",
+                  "lat": 35.656671,
+                  "lon": 139.755696,
+                  "stop": {
+                    "gtfsId": "1:421P4",
+                    "platformCode": "4",
+                    "parentStation": {
+                      "gtfsId": "1:421"
+                    }
+                  }
+                },
+                "to": {
+                  "name": "都庁前",
+                  "lat": 35.690607,
+                  "lon": 139.692677,
+                  "stop": {
+                    "gtfsId": "1:429P4",
+                    "platformCode": "4",
+                    "parentStation": {
+                      "gtfsId": "1:429"
+                    }
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:4",
+                  "shortName": null,
+                  "longName": "大江戸線",
+                  "color": "CF3366"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:422P2"
+                  },
+                  {
+                    "gtfsId": "1:423P2"
+                  },
+                  {
+                    "gtfsId": "1:424P2"
+                  },
+                  {
+                    "gtfsId": "1:425P2"
+                  },
+                  {
+                    "gtfsId": "1:426P2"
+                  },
+                  {
+                    "gtfsId": "1:427P2"
+                  },
+                  {
+                    "gtfsId": "1:428P7"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "node": {
+            "start": "2026-10-07T09:08:00+09:00",
+            "end": "2026-10-07T09:27:00+09:00",
+            "legs": [
+              {
+                "mode": "SUBWAY",
+                "duration": 1140,
+                "distance": 7544,
+                "headsign": "光が丘",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:08:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:27:00+09:00"
+                },
+                "from": {
+                  "name": "大門",
+                  "lat": 35.656671,
+                  "lon": 139.755696,
+                  "stop": {
+                    "gtfsId": "1:421P4",
+                    "platformCode": "4",
+                    "parentStation": {
+                      "gtfsId": "1:421"
+                    }
+                  }
+                },
+                "to": {
+                  "name": "都庁前",
+                  "lat": 35.690607,
+                  "lon": 139.692677,
+                  "stop": {
+                    "gtfsId": "1:429P4",
+                    "platformCode": "4",
+                    "parentStation": {
+                      "gtfsId": "1:429"
+                    }
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:4",
+                  "shortName": null,
+                  "longName": "大江戸線",
+                  "color": "CF3366"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:422P2"
+                  },
+                  {
+                    "gtfsId": "1:423P2"
+                  },
+                  {
+                    "gtfsId": "1:424P2"
+                  },
+                  {
+                    "gtfsId": "1:425P2"
+                  },
+                  {
+                    "gtfsId": "1:426P2"
+                  },
+                  {
+                    "gtfsId": "1:427P2"
+                  },
+                  {
+                    "gtfsId": "1:428P7"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "node": {
+            "start": "2026-10-07T09:13:00+09:00",
+            "end": "2026-10-07T09:32:00+09:00",
+            "legs": [
+              {
+                "mode": "SUBWAY",
+                "duration": 1140,
+                "distance": 7544,
+                "headsign": "光が丘",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:13:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:32:00+09:00"
+                },
+                "from": {
+                  "name": "大門",
+                  "lat": 35.656671,
+                  "lon": 139.755696,
+                  "stop": {
+                    "gtfsId": "1:421P4",
+                    "platformCode": "4",
+                    "parentStation": {
+                      "gtfsId": "1:421"
+                    }
+                  }
+                },
+                "to": {
+                  "name": "都庁前",
+                  "lat": 35.690607,
+                  "lon": 139.692677,
+                  "stop": {
+                    "gtfsId": "1:429P4",
+                    "platformCode": "4",
+                    "parentStation": {
+                      "gtfsId": "1:429"
+                    }
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:4",
+                  "shortName": null,
+                  "longName": "大江戸線",
+                  "color": "CF3366"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:422P2"
+                  },
+                  {
+                    "gtfsId": "1:423P2"
+                  },
+                  {
+                    "gtfsId": "1:424P2"
+                  },
+                  {
+                    "gtfsId": "1:425P2"
+                  },
+                  {
+                    "gtfsId": "1:426P2"
+                  },
+                  {
+                    "gtfsId": "1:427P2"
+                  },
+                  {
+                    "gtfsId": "1:428P7"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "node": {
+            "start": "2026-10-07T09:17:00+09:00",
+            "end": "2026-10-07T09:36:00+09:00",
+            "legs": [
+              {
+                "mode": "SUBWAY",
+                "duration": 1140,
+                "distance": 7544,
+                "headsign": "光が丘",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:17:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:36:00+09:00"
+                },
+                "from": {
+                  "name": "大門",
+                  "lat": 35.656671,
+                  "lon": 139.755696,
+                  "stop": {
+                    "gtfsId": "1:421P4",
+                    "platformCode": "4",
+                    "parentStation": {
+                      "gtfsId": "1:421"
+                    }
+                  }
+                },
+                "to": {
+                  "name": "都庁前",
+                  "lat": 35.690607,
+                  "lon": 139.692677,
+                  "stop": {
+                    "gtfsId": "1:429P4",
+                    "platformCode": "4",
+                    "parentStation": {
+                      "gtfsId": "1:429"
+                    }
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:4",
+                  "shortName": null,
+                  "longName": "大江戸線",
+                  "color": "CF3366"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:422P2"
+                  },
+                  {
+                    "gtfsId": "1:423P2"
+                  },
+                  {
+                    "gtfsId": "1:424P2"
+                  },
+                  {
+                    "gtfsId": "1:425P2"
+                  },
+                  {
+                    "gtfsId": "1:426P2"
+                  },
+                  {
+                    "gtfsId": "1:427P2"
+                  },
+                  {
+                    "gtfsId": "1:428P7"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "node": {
+            "start": "2026-10-07T09:23:00+09:00",
+            "end": "2026-10-07T09:42:00+09:00",
+            "legs": [
+              {
+                "mode": "SUBWAY",
+                "duration": 1140,
+                "distance": 7544,
+                "headsign": "光が丘",
+                "start": {
+                  "scheduledTime": "2026-10-07T09:23:00+09:00"
+                },
+                "end": {
+                  "scheduledTime": "2026-10-07T09:42:00+09:00"
+                },
+                "from": {
+                  "name": "大門",
+                  "lat": 35.656671,
+                  "lon": 139.755696,
+                  "stop": {
+                    "gtfsId": "1:421P4",
+                    "platformCode": "4",
+                    "parentStation": {
+                      "gtfsId": "1:421"
+                    }
+                  }
+                },
+                "to": {
+                  "name": "都庁前",
+                  "lat": 35.690607,
+                  "lon": 139.692677,
+                  "stop": {
+                    "gtfsId": "1:429P4",
+                    "platformCode": "4",
+                    "parentStation": {
+                      "gtfsId": "1:429"
+                    }
+                  }
+                },
+                "route": {
+                  "gtfsId": "1:4",
+                  "shortName": null,
+                  "longName": "大江戸線",
+                  "color": "CF3366"
+                },
+                "intermediateStops": [
+                  {
+                    "gtfsId": "1:422P2"
+                  },
+                  {
+                    "gtfsId": "1:423P2"
+                  },
+                  {
+                    "gtfsId": "1:424P2"
+                  },
+                  {
+                    "gtfsId": "1:425P2"
+                  },
+                  {
+                    "gtfsId": "1:426P2"
+                  },
+                  {
+                    "gtfsId": "1:427P2"
+                  },
+                  {
+                    "gtfsId": "1:428P7"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

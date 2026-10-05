@@ -20,11 +20,18 @@ const MAX_SPEED_MPS = 1.5;
 /** Safety margin so the straight-line heuristic stays admissible despite rounding in the data. */
 const HEURISTIC_SCALE = 0.9;
 
+/** Extra cost (profile seconds) for starting or ending at a node, e.g. the street walk to it. */
+export type EndCosts = Readonly<Partial<Record<NodeId, number>>>;
+
 export interface RouteRequest {
   from: NodeId | readonly NodeId[];
   to: NodeId | readonly NodeId[];
   profile: ProfileId;
   outages?: OutageIndex;
+  /** Cost of starting at each origin (missing = 0). Not part of the route's own seconds. */
+  fromCost?: EndCosts;
+  /** Cost of ending at each destination (missing = 0). Not part of the route's own seconds. */
+  toCost?: EndCosts;
 }
 
 interface Arc {
@@ -77,6 +84,9 @@ interface Search {
 /**
  * A* from any of `sources` to any of `targets`. `costOf` returns `Infinity` for forbidden arcs.
  * With `heuristic = false` this is plain Dijkstra (used to cross-check A* in the tests).
+ * `ends` adds a cost for starting or finishing at a node; the search then keeps going after the
+ * first target until no cheaper finish is possible (the heuristic ignores end costs, so it stays
+ * admissible).
  */
 function search(
   index: GraphIndex,
@@ -84,6 +94,7 @@ function search(
   targets: readonly NodeId[],
   costOf: (arc: Arc) => { cost: number; uncertain: boolean },
   heuristic: boolean,
+  ends: { from?: EndCosts | undefined; to?: EndCosts | undefined } = {},
 ): Search | undefined {
   const targetSet = new Set(targets);
   const targetNodes = targets.flatMap((t) => {
@@ -103,35 +114,46 @@ function search(
   const prev = new Map<NodeId, { from: NodeId; arc: Arc; cost: number; uncertain: boolean }>();
   const open = new MinHeap<NodeId>();
   for (const s of sources) {
-    g.set(s, 0);
-    open.push(h(s), s);
+    const start = ends.from?.[s] ?? 0;
+    if (start < (g.get(s) ?? Infinity)) {
+      g.set(s, start);
+      open.push(start + h(s), s);
+    }
   }
   const closed = new Set<NodeId>();
+  let best: { node: NodeId; total: number } | null = null;
+
+  const finish = (current: NodeId): Search => {
+    const legs: RouteLeg[] = [];
+    const uncertain: string[] = [];
+    const nodes: NodeId[] = [current];
+    for (let at = current, step = prev.get(at); step; step = prev.get(at)) {
+      legs.push({
+        edge: step.arc.edge,
+        forward: step.arc.forward,
+        from: step.from,
+        to: at,
+        seconds: step.arc.edge.seconds,
+        cost: step.cost,
+      });
+      if (step.uncertain) uncertain.push(step.arc.edge.id);
+      at = step.from;
+      nodes.push(at);
+    }
+    legs.reverse();
+    nodes.reverse();
+    return { cost: g.get(current) ?? 0, legs, nodes, uncertain: uncertain.reverse() };
+  };
 
   for (let top = open.pop(); top; top = open.pop()) {
+    if (best && top.key >= best.total) break;
     const current = top.value;
     if (closed.has(current)) continue;
     closed.add(current);
     if (targetSet.has(current)) {
-      const legs: RouteLeg[] = [];
-      const uncertain: string[] = [];
-      const nodes: NodeId[] = [current];
-      for (let at = current, step = prev.get(at); step; step = prev.get(at)) {
-        legs.push({
-          edge: step.arc.edge,
-          forward: step.arc.forward,
-          from: step.from,
-          to: at,
-          seconds: step.arc.edge.seconds,
-          cost: step.cost,
-        });
-        if (step.uncertain) uncertain.push(step.arc.edge.id);
-        at = step.from;
-        nodes.push(at);
-      }
-      legs.reverse();
-      nodes.reverse();
-      return { cost: g.get(current) ?? 0, legs, nodes, uncertain: uncertain.reverse() };
+      const total = (g.get(current) ?? 0) + (ends.to?.[current] ?? 0);
+      if (!ends.to) return finish(current);
+      if (!best || total < best.total) best = { node: current, total };
     }
     const base = g.get(current) ?? Infinity;
     for (const arc of index.arcs.get(current) ?? []) {
@@ -146,7 +168,7 @@ function search(
       }
     }
   }
-  return undefined;
+  return best ? finish(best.node) : undefined;
 }
 
 const asArray = (x: NodeId | readonly NodeId[]): readonly NodeId[] =>
@@ -233,6 +255,7 @@ export function findRoute(index: GraphIndex, request: RouteRequest): RouteResult
       return { cost: c.cost, uncertain: c.uncertain };
     },
     true,
+    { from: request.fromCost, to: request.toCost },
   );
   if (!found) {
     const { failure, alternatives } = explain(index, sources, targets, request.profile, outages);

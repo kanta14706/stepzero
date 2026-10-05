@@ -1,4 +1,4 @@
-// Copy the importer's station graphs and map polygons into public/data/ so the dev server and
+// Copy the importer's station graphs, map polygons and station list into public/data/ so the dev server and
 // the build can serve them. public/data is git-ignored. Missing data is not an error: the app
 // shows "data not built" instead.
 import { cpSync, existsSync, mkdirSync, rmSync } from 'node:fs';
@@ -21,4 +21,6 @@ for (const dir of ['graphs', 'maps']) {
   if (existsSync(resolve(source, dir)))
     cpSync(resolve(source, dir), resolve(target, dir), { recursive: true });
 }
-console.log('sync-data: copied graphs and maps to public/data');
+if (existsSync(resolve(source, 'stations.json')))
+  cpSync(resolve(source, 'stations.json'), resolve(target, 'stations.json'));
+console.log('sync-data: copied graphs, maps and the station list to public/data');

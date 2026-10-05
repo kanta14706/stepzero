@@ -47,6 +47,52 @@ describe('findRoute', () => {
     expect(r.ok && r.nodes).toEqual(['b', 'p2']);
   });
 
+  it('adds the cost of starting at each origin, and still returns the route seconds only', () => {
+    const g = graph(
+      [node('a'), node('b'), node('p')],
+      [
+        edge('a-p', 'a', 'p', 'walk', { seconds: 100 }),
+        edge('b-p', 'b', 'p', 'walk', { seconds: 10 }),
+      ],
+    );
+    const i = indexGraph(g);
+    const far = findRoute(i, {
+      from: ['a', 'b'],
+      to: 'p',
+      profile: 'sensory',
+      fromCost: { b: 200 },
+    });
+    expect(far.ok && far.nodes).toEqual(['a', 'p']);
+    expect(far.ok && far.summary.seconds).toBe(100);
+    const near = findRoute(i, {
+      from: ['a', 'b'],
+      to: 'p',
+      profile: 'sensory',
+      fromCost: { b: 50 },
+    });
+    expect(near.ok && near.nodes).toEqual(['b', 'p']);
+  });
+
+  it('adds the cost of ending at each destination, searching past the first one reached', () => {
+    const g = graph(
+      [node('s'), node('x', 'junction', 0, 139.0001), node('y', 'junction', 0, 139.001)],
+      [
+        edge('s-x', 's', 'x', 'walk', { seconds: 10 }),
+        edge('s-y', 's', 'y', 'walk', { seconds: 60 }),
+      ],
+    );
+    const i = indexGraph(g);
+    const r = findRoute(i, {
+      from: 's',
+      to: ['x', 'y'],
+      profile: 'sensory',
+      toCost: { x: 500, y: 5 },
+    });
+    expect(r.ok && r.nodes).toEqual(['s', 'y']);
+    const plain = findRoute(i, { from: 's', to: ['x', 'y'], profile: 'sensory' });
+    expect(plain.ok && plain.nodes).toEqual(['s', 'x']);
+  });
+
   it('returns a zero-length route when origin is a destination', () => {
     const r = findRoute(index, { from: 'gate', to: ['gate'], profile: 'wheelchair' });
     expect(r.ok && r.legs).toEqual([]);

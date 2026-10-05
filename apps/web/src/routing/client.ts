@@ -16,6 +16,8 @@ export interface RouteQuery {
   profile: ProfileId;
   blockedEdgeIds?: string[];
   blockedPathwayIds?: string[];
+  fromCost?: Record<NodeId, number>;
+  toCost?: Record<NodeId, number>;
 }
 
 /** Promise wrapper around the router worker. */
