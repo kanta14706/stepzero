@@ -173,3 +173,6 @@ data/build/*
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# OTP inputs and graph (large)
+otp/data/
