@@ -176,3 +176,12 @@ Memory was sampled every 2 s with a 6 GB heap cap, so the peak is approximate. M
 - **At 大門 the wheelchair exit is about 60 m further than the default one** (408 m against 348 m walked from the platform stop), consistent with the step-free route using a different entrance.
 - **Router config detail:** in OTP 2.10, `onlyConsiderAccessible` cannot be combined with `unknownCost` or `inaccessibleCost` in the same block (startup error), so the strict mode needs its own config.
 - **Not yet done** (needs the ODPT keys): build with Tokyo Metro, TWR, Tsukuba Express and Tama Monorail (basic licence), then with the challenge-limited operators, and record time and memory for each.
+
+### 2026-10-06: station-map export for the web map (step 2.2 preparation)
+
+Command: `uv run python -m importer.run --stations oedo` now also writes `data/build/maps/<station_id>.json` (about 1.8 MB for the 12 stations). Each file is a GeoJSON FeatureCollection of `floor`, `space` and `facility` features with `ordinal`, `category` and the Japanese category name, plus a `panels` list for the floor switcher. Tests: `importer/tests/test_graph_maps.py`.
+
+- **Half floors and the ground have no polygons, so they are never drawn as floors.** The switcher has one panel per whole floor (`floor(level)`): a graph level of -0.5 shows on the panel for -1, and level 0 (outdoor ground) has its own panel flagged `hasMap: false`. Whole floors missing from the map (青山一丁目 -2, 六本木 -3 and more, see the 2026-10-05 ほこナビ entry) are flagged the same way. Nothing is invented.
+- **Space and facility categories that occur** (GSI spec): spaces B007 to B010 (toilets), B018 (station office), B019 (other room, 1,694 of them), B021 (stairs), B022 (elevator), B023 (escalator), B024 (moving walkway), B025 (slope), B026 (non-public), B029 (walkway); facilities F001 to F004 (toilets), F011 to F015 (stairs, elevator, escalator, slope, moving walkway) and, outside the main 1 to 49 range, **F106 (改札口, ticket gate) and F108 (出口, exit)**. The gate and exit points are the best markers for the map and the step view. Their names are blank in the data.
+- **Multi-function toilets** (B011 to B014, F005 to F008) do not occur at the Ōedo stations, only plain male, female and unisex toilets (B007 to B010). Wheelchair-accessible toilets are not identifiable from this dataset; the separate ほこナビ Tokyo toilet dataset is the better source (step 3.5).
+- **Blank values:** the source uses a single space for "no value"; the export turns it into an absent field.

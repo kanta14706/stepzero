@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 
 from importer.graph.export import export
+from importer.graph.maps import export_maps
 from importer.graph.stitch import STATION_SLUGS
 from importer.graph.stitch import main as stitch_reports
 
@@ -37,7 +38,9 @@ def main() -> None:
     args = parser.parse_args()
     ids = resolve(args.stations)
     stitch_reports()
-    for g in export(ids):
+    graphs = export(ids)
+    export_maps(graphs)
+    for g in graphs:
         st = g["station"]
         print(
             f"{st['id']} {st['slug']:20s} nodes {len(g['nodes']):4d} edges {len(g['edges']):4d} "
