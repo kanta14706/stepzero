@@ -68,3 +68,53 @@ Method: step-free = walkway, moving walkway, elevator, fare gate, exit gate (sta
 - **Duplicate pathways (8):** 421L0340, 421L0341, 421L0342, 421L0348, 421L0349, 421L0350 at 大門; 428L0035, 428L0056 at 新宿. Same from, to and mode as another pathway.
 - **Checks with no findings:** missing references, nodes without level (types 2 to 4), levels not in `levels.txt`, isolated nodes, self loops, zero or missing length, length far from the straight-line distance, nodes more than 400 m from the station, pathways leaving their station.
 - **都庁前 (E-28) has 4 platforms** (P1 to P4), the others 2.
+
+### 2026-10-05: ほこナビ walking network and station maps, 12 Ōedo stations (step 1.3)
+
+Notebook: `importer/notebooks/02_hokonavi.ipynb`. Logic: `importer/importer/analysis/hokonavi.py`. Code meanings come from 歩行空間ネットワークデータ整備仕様 (MLIT, 2024-07) and the GSI indoor spec (2019-03).
+
+**Schema**
+- **Network, nodes:** `node_id`, `lat`, `lon`, `floor` (number), `in_out` (1 outside, 2 boundary, 3 inside), `link1_id` to `link6_id`.
+- **Network, links:** `link_id`, `start_id`, `end_id`, `distance` (m), `rank`, `r_method`, `maint_date`, `rt_struct`, `route_type` (1 none, 2 moving walkway, 4 elevator, 5 escalator, 6 stairs, 7 slope, 99 unknown), `direction`, `width`, `vtcl_slope`, `lev_diff`, `tfc_signal`, `tfc_s_type`, `brail_tile`, `elevator` (type), `roof`.
+- **Station map:** `Floor` polygons (`id`, `name` such as 地下1階, `ordinal`), `Space` polygons (`floor_id`, `category`, `name`, `restricted`, `toll`) and `Facility` points (`floor_id`, `category`, `name`).
+- **No step count, no measured width or slope.** `width` is 4 buckets, `vtcl_slope` 8 buckets, `lev_diff` 5 buckets (0, 0-2, 2-5, 5-10, >10 cm). Step count has to be derived or left unknown.
+- **No link to GTFS-Pathways.** No pathway_id, stop_id or station id anywhere in the network, so stitching (step 1.4) can only use geometry, floor and attributes.
+- **Coordinate system:** EPSG:6668 (JGD2011 geographic, lon/lat degrees) in all files. GTFS is WGS84; the two differ by centimetres, ignored.
+
+**Floors**
+- Nodes carry numeric `floor`: 0 is outdoor ground, half floors are mezzanines (-0.5, -1.5, and odd values -0.2 and -0.7 at 新宿西口). Floor 0 and half floors have **no map polygons at any station**; the map has whole floors only.
+- Map floors are named 地下N階, plus 1階 (ordinal 1) at some stations. Four stations (青山一丁目, 国立競技場, 六本木, 都庁前) have a map floor 1 that no network node uses; 新宿 has floor 1 in both layers; 新宿西口 has network floor 1 but no map polygons for it.
+- **Whole floors missing from the map:** 青山一丁目 floor -2, 六本木 floor -3, 新宿西口 floors -2, 0 and 1. 新宿 has a map floor -5 with no network nodes.
+- **`ordinal` type differs by station:** integer, float, or text ("-3.0" at 新宿 and 新宿西口). Parsing must cast it; comparing as-is silently matches nothing.
+- Floor polygons are split into several pieces per floor (大門 B1 has 7).
+- Both datasets use 0.5 steps for mezzanines, but the GTFS level IDs and the ほこナビ floors have not been matched yet (step 1.4).
+
+**Coverage and quality** (full table in the notebook)
+
+| station | nodes | links | elevator | escalator | stairs | slope | unknown links | step-free street to lowest floor | strict (<=5 cm, <=8%) | nodes inside map spaces |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 赤羽橋 | 124 | 137 | 6 | 8 | 19 | 0 | 4 | yes | yes | 56% |
+| 青山一丁目 | 271 | 295 | 17 | 12 | 38 | 1 | 7 | yes | yes | 64% |
+| 麻布十番 | 211 | 235 | 12 | 15 | 36 | 5 | 4 | yes | **no** | 65% |
+| 大門 | 340 | 378 | 18 | 25 | 56 | 7 | 9 | yes | yes | 69% |
+| 東新宿 | 110 | 120 | 6 | 6 | 16 | 0 | 3 | yes | yes | 80% |
+| 国立競技場 | 301 | 333 | 12 | 21 | 53 | 3 | 10 | yes | yes | 71% |
+| 六本木 | 267 | 298 | 9 | 22 | 43 | 8 | 7 | yes | yes | 72% |
+| 新宿 | 233 | 263 | 13 | 29 | 22 | 5 | 0 | yes | yes | 84% |
+| 新宿西口 | 225 | 254 | 11 | 18 | 37 | 6 | 0 | yes | **no** | 67% |
+| 都庁前 | 269 | 307 | 11 | 16 | 42 | 2 | 4 | yes | yes | 67% |
+| 上野御徒町 | 247 | 267 | 11 | 11 | 48 | 12 | 11 | yes | yes | 68% |
+| 代々木 | 138 | 154 | 6 | 8 | 21 | 0 | 2 | yes | yes | 72% |
+
+Step-free = no stairs or escalators, from a floor-0 outside or boundary node to a node on the lowest floor. Strict also drops links with a step above 5 cm or a slope above 8%. Station names are slugs in the notebook.
+
+- **ほこナビ finds a step-free route at all 12 stations, including 新宿, where GTFS-Pathways found none** (see the Pathways entry). So the 新宿 gap is most likely missing elevator links in the Pathways file. Needs a check during stitching (step 1.4).
+- **Strict check fails at 麻布十番 and 新宿西口** because the only step-free route uses a slope of 8-18% (wheelchair profile forbids above 8%). 新宿西口 also has two flat-labelled links with a slope above 18% and a step above 10 cm (7.0 m and 12.2 m long), which look like a labelling error. The routers (step 2.3) must confirm these.
+- **21 links at 8 stations have a slope above 8%** (mostly route_type 7, 8-18%; the two exceptions are the 新宿西口 links above), so the wheelchair rule matters in practice.
+- **1 to 4% of links have unknown attributes** at 10 stations (not at 新宿 or 新宿西口): all fields 99 at once, rank `XXX`, 0.6 to 18.7 m; at 大門 they sit on floor 0 or between floors -0.5 and 0, which looks like the approach from the street to the entrance. At 麻布十番 one such link has a known slope. Those links are not usable for profile costs; treat their attributes as unknown (never as flat).
+- **Direction:** most links are bidirectional. Escalators are one-way (162 links); 60 unknown-type links also have unknown direction.
+- **One elevator link at 大門 says "no elevator"** (link ae4c6b20..., 0.6 m, `elevator` = 1 on a route_type 4 link). Probably an entrance to a cab; likely a labelling error.
+- **`elevator` type is 5 (wheelchair and visually impaired) on 131 of 132 elevator links**, so the type does not distinguish elevators in practice.
+- **`brail_tile`:** 1401 links with tactile paving, 1579 without, 61 unknown.
+- **Nodes inside map spaces: 56 to 84%.** The rest are on floor 0 or half floors, which have no polygons, plus some on spaces the map omits.
+- **Dataset text errors:** the 大門 description says it is based on 新宿駅 data (copy-paste); see also the earlier note about the 赤羽橋 PDF title.

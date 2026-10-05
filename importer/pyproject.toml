@@ -16,6 +16,7 @@ dev = [
     "jupyter",
     "ruff",
     "pytest",
+    "matplotlib>=3.11.2",
 ]
 
 [build-system]

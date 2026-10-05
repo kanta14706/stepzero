@@ -36,7 +36,7 @@ Later prompts assume earlier ones worked. If a finding changes the plan (e.g. a 
 - [x] **1.2 Explore GTFS-Pathways**
 > Create `importer/notebooks/01_pathways.ipynb`. For each of the 12 Ōedo stations, report: levels, number of pathways by pathway_mode, elevators, whether every platform is reachable step-free from a street entrance, and any obvious data errors. Summarise the results as a table in docs/data-notes.md.
 
-- [ ] **1.3 Explore ほこナビ**
+- [x] **1.3 Explore ほこナビ**
 > Create `02_hokonavi.ipynb`. Load the walking network and station maps for the same stations. Report the schema (which attributes exist: steps, slope, width, elevator), the coordinate system, how floors are encoded, and coverage. Plot one station (大門) per floor. Add findings to docs/data-notes.md.
 
 - [ ] **1.4 Stitch pathways ↔ walking network**
