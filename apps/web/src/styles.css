@@ -363,3 +363,90 @@ main a {
     grid-template-columns: 1fr;
   }
 }
+
+.planner {
+  margin: 1.5rem 0;
+}
+
+.planner h4,
+.planner h5 {
+  margin: 1rem 0 0.5rem;
+}
+
+.choices {
+  margin: 1rem 0;
+  padding: 0;
+  border: none;
+}
+
+.choices legend,
+.field label {
+  padding: 0;
+  font-weight: 700;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: var(--target);
+}
+
+.choice input {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0;
+}
+
+.choice input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+  margin: 1rem 0;
+}
+
+.field select {
+  min-height: var(--target);
+  max-width: 100%;
+  padding: 0 0.75rem;
+  font: inherit;
+  color: var(--fg);
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+}
+
+.field select:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.hint {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+}
+
+.steps {
+  margin: 0.5rem 0;
+  padding-left: 1.75rem;
+}
+
+.steps li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.step-note {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--muted);
+}
+
+.no-route h4 {
+  margin-top: 0;
+}

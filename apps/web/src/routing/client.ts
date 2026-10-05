@@ -1,5 +1,6 @@
 import type { NodeId, ProfileId, RouteResult, StationGraph } from './types';
-import type { WorkerRequest, WorkerResponse } from './worker-protocol';
+import { handleMessage } from './worker-protocol';
+import type { WorkerRequest, WorkerResponse, WorkerState } from './worker-protocol';
 
 /** The part of `Worker` the client uses, so tests can pass a fake. */
 export interface WorkerLike {
@@ -63,4 +64,34 @@ export class RouterClient {
 /** The real thing, for the app. Vite bundles the worker from this URL. */
 export function createRouterWorker(): Worker {
   return new Worker(new URL('./router.worker.ts', import.meta.url), { type: 'module' });
+}
+
+/**
+ * Runs the router on the calling thread, with the same message protocol as the worker. Used when
+ * there is no `Worker` (very old browsers, jsdom tests); routes are short enough (a few ms) that
+ * this stays within the re-route budget.
+ */
+export function createInlineWorker(): WorkerLike {
+  const state: WorkerState = new Map();
+  const listeners: ((event: MessageEvent<WorkerResponse>) => void)[] = [];
+  return {
+    postMessage(message) {
+      queueMicrotask(() => {
+        const data = handleMessage(state, message);
+        for (const l of listeners) l({ data } as MessageEvent<WorkerResponse>);
+      });
+    },
+    addEventListener(_type, listener) {
+      listeners.push(listener);
+    },
+    terminate() {
+      listeners.length = 0;
+      state.clear();
+    },
+  };
+}
+
+/** The Web Worker when the browser has one, otherwise the inline fallback. */
+export function createRouter(): WorkerLike {
+  return typeof Worker === 'undefined' ? createInlineWorker() : createRouterWorker();
 }

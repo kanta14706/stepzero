@@ -1,4 +1,5 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
+import { RoutePlanner } from '../features/station-view/RoutePlanner';
 import { fmt, useI18n } from '../i18n';
 import { FloorSummaryList } from './FloorSummaryList';
 import { FloorSwitcher } from './FloorSwitcher';
@@ -67,6 +68,7 @@ export function StationPage({ id }: { id: string }) {
             {t.tierLine}: {t.tier2Name}
           </p>
           <StationWarnings graph={ready.graph} />
+          <RoutePlanner graph={ready.graph} />
           <FloorSwitcher panels={ready.map.panels} value={panel} onChange={setPanel} />
           <p role="status" aria-live="polite" className="floor-status">
             {fmt(t.floorAnnouncement, { floor: floorLabel(panel, t) })}

@@ -29,7 +29,7 @@ test('shows a rendered map, a floor switcher and a text list for the floor', asy
   // B1 is the first floor with map data
   await expect(page.getByRole('radio', { name: '地下1階' })).toBeChecked();
   await expect(page.getByRole('heading', { name: 'この階にあるもの' })).toBeVisible();
-  await expect(page.getByText('出入口', { exact: true })).toBeVisible();
+  await expect(page.locator('.floor-list').getByText('出入口', { exact: true })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -76,4 +76,35 @@ test('every floor control is at least 44px', async ({ page }) => {
     expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
     expect(box?.width ?? 0).toBeGreaterThanOrEqual(44);
   }
+});
+
+test('shows step-by-step wheelchair directions for 大門 and changes them with the profile', async ({
+  page,
+}) => {
+  await page.goto(STATION);
+  const planner = page.getByRole('region', { name: '駅の中の道順' });
+  const steps = planner.locator('ol.steps > li');
+  await expect(steps.first()).toContainText('出発します');
+  await expect(steps.last()).toContainText('番線ホームに着きます');
+  await expect(planner.getByText(/ステップの道順を表示しています/)).toBeVisible();
+  const text = await steps.allTextContents();
+  expect(text.join('')).toContain('エレベーターで');
+  expect(text.join('')).not.toMatch(/階段で|エスカレーターで/);
+  // a profile that may use stairs gets a different route
+  await planner.getByRole('radio', { name: '感覚過敏' }).check();
+  await expect(steps.filter({ hasText: '階段で' }).first()).toBeVisible();
+});
+
+test('explains why 麻布十番 has no wheelchair route and offers alternatives', async ({ page }) => {
+  await page.goto('/?basemap=off#/station/423');
+  const alert = page.getByRole('alert').filter({ hasText: '道順が見つかりません' });
+  await expect(alert).toBeVisible();
+  await expect(alert.getByText(/8%超/)).toBeVisible();
+  await expect(alert.getByRole('listitem').first()).toBeVisible();
+});
+
+test('directions follow the page language', async ({ page }) => {
+  await page.goto(STATION);
+  await page.getByLabel('言語').selectOption('en');
+  await expect(page.getByText(/^Take the elevator at exit/).first()).toBeVisible();
 });
