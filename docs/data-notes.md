@@ -159,3 +159,20 @@ Sources checked: the ODPT catalogue (ckan.odpt.org, 363 datasets, scraped from t
 - **ほこナビ has more than the Ōedo stations.** 43 datasets: street-level walking networks around Tokyo-area stations (赤羽, 上野, 渋谷 south, 千駄ヶ谷, 新宿, 東京, 池袋, 新木場, 国際展示場, 東京テレポート, お台場海浜公園, 大門 surroundings, 府中, 千代田・中央, and several in Kawasaki and Yokohama) plus 「バリアフリー施設等データ（東京都・車椅子使用者対応トイレのバリアフリー情報）」. Licence pdl-jp-1.0. These are outdoor or station-surround networks, not in-station detail, and the toilet data is useful for the effort summary (step 3.5).
 - **Superseded datasets on ODPT:** the `mlit_nwd_oedo_*` datasets are marked 【公開終了】; the ほこナビ copies are the ones in use. A Tokyo geospatial 3D point cloud of 都庁前 (`ext-mg_tokyo-geosp-tochomae-3d-pointcloud`) is listed; it could feed the 3D view (step 3.4) but has not been examined.
 - **Still to do** (needs the ODPT keys): download the GTFS of the other operators and count `wheelchair_boarding` per operator, then propose how Tier-1 stations without data are shown.
+
+### 2026-10-06: OpenTripPlanner spike, Toei only (step 1.7, first half)
+
+Setup: `otp/` (image `opentripplanner/opentripplanner:2.10.0`, OSM from the BBBike Tokyo extract downloaded 2026-10-05, 91 MB). Query: 新宿 (Ōedo, E-27) to 大門 (E-20), Wednesday 2026-10-07 09:00, GTFS GraphQL `planConnection`. Responses are saved in `otp/results/`.
+
+| Feed | Build time | Peak memory while building | Memory when serving | Graph file |
+|---|---|---|---|---|
+| Toei GTFS (plain) | 27 s | 2.4 GiB | 1.2 GiB | 97 MB |
+| Toei GTFS with Pathways | 28 s | 2.4 GiB | 1.3 GiB | 97 MB |
+
+Memory was sampled every 2 s with a 6 GB heap cap, so the peak is approximate. Most of the graph is the Tokyo street network, not the transit feed.
+
+- **With the plain Toei GTFS, `wheelchair=true` changes nothing.** The three itineraries are identical to the default (17 min on the Ōedo Line, no walking). Every stop has an empty `wheelchair_boarding`, so OTP cannot tell accessible stops from others and allows them at an extra cost. Setting `onlyConsiderAccessible` makes OTP find no stops at either end (`NO_STOPS_IN_RANGE`). OTP's own wheelchair mode is therefore of no use for Toei stations without our in-station graph.
+- **With the Pathways GTFS, OTP does route for wheelchairs through the pathways, and it avoids 新宿.** Default: 26 min (walk 314 m, Ōedo Line 17 min, walk 348 m). `wheelchair=true`: 47 min. It walks 1.16 km to 都庁前, boards there (platform stop `429P1`), rides to 大門 (`421P3`) and walks 408 m to the destination (11 min). That agrees with the step 1.2 finding that the Pathways file has no step-free route at 新宿 (stairs and escalators only), found here independently by a router. It also means OTP and our ほこナビ-based graph will disagree at 新宿 until the Pathways gap is resolved.
+- **At 大門 the wheelchair exit is about 60 m further than the default one** (408 m against 348 m walked from the platform stop), consistent with the step-free route using a different entrance.
+- **Router config detail:** in OTP 2.10, `onlyConsiderAccessible` cannot be combined with `unknownCost` or `inaccessibleCost` in the same block (startup error), so the strict mode needs its own config.
+- **Not yet done** (needs the ODPT keys): build with Tokyo Metro, TWR, Tsukuba Express and Tama Monorail (basic licence), then with the challenge-limited operators, and record time and memory for each.

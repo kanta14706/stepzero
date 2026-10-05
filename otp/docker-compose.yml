@@ -1,0 +1,11 @@
+# OpenTripPlanner 2 for train-leg itineraries. Build the graph first with ./build.sh.
+services:
+  otp:
+    image: opentripplanner/opentripplanner:2.10.0
+    command: ["--load", "--serve"]
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/var/opentripplanner
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xmx6g"

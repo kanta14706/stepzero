@@ -1,0 +1,5 @@
+{
+  "osmDefaults": { "timeZone": "Asia/Tokyo", "osmTagMapping": "default" },
+  "transitServiceStart": "-P1M",
+  "transitServiceEnd": "P6M"
+}
