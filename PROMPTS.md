@@ -19,6 +19,28 @@ To get back on track: finish 1.7 (Toei half), then 1.6 once the keys arrive, the
 
 ---
 
+## Model guide (remind the user to switch with `/model` before these)
+
+Sonnet 5.5 is enough for routine implementation, setup and docs. **Before starting any step marked Opus below, tell the user in one line and suggest switching to Opus 5.5**, then carry on after they answer. Also suggest it whenever a problem turns out to be ambiguous or a first conclusion was wrong.
+
+| Step | Model | Why |
+|---|---|---|
+| 1.6 proposal for Tier-1 stations without data | Opus | data strategy and licence judgement |
+| 1.7 recommendation (all operators or a subset) | Opus | trade-off from measurements |
+| 2.4 Journey planner | Opus | main design: OTP legs plus in-station legs in one timeline |
+| 2.5 Step view and landmark wording | Opus | quality of Japanese and accessibility wording |
+| 2.6 Boarding position | Opus | ambiguous geometry; honest limits |
+| 2.8 Supabase, RLS, rate limiting, realtime | Opus | security-sensitive |
+| 2.9 Offline PWA | Opus | service-worker edge cases |
+| 3.1 Feed spec and the GTFS-Realtime extension proposal | Opus | specification writing |
+| 3.4 3D station view | Opus | rendering and performance |
+| 4.1 Accessibility audit, 4.2 Performance | Opus | careful verification |
+| 4.4 User-test feedback to changes | Opus | synthesis and prioritisation |
+| 5.1 Licences check, 5.2 Write-up, 5.3 Video script, H.1 Hearing prep | Opus | judgement and writing for judges |
+| Everything else (1.x exports, 2.1, 2.2, 2.3, 2.7, 2.10, 3.2, 3.3, 3.5 to 3.7, 4.3, 4.5, 5.4, 5.5) | Sonnet | well specified |
+
+---
+
 ## Every session
 
 **Start of session**

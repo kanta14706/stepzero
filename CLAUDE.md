@@ -169,6 +169,8 @@ Keep these working. If you change a command, update this section in the same com
 3. **Should-haves:** open feed, reliability history, data-quality and coverage map, 3D station view, effort summary, weather and road works, share link.
 4. **Stretch:** airport access, no-route fallbacks, auto-import of any operator's pathways.
 
+**PROMPTS.md also has a "Model guide": before a step it marks Opus, remind the user to switch with `/model`.**
+
 **Progress and any out-of-order work are tracked in PROMPTS.md ("Where we are" and the checkboxes). Read it at the start of every session.**
 
 Target: must-haves done by mid-December, user tests in Tokyo late December, then polish, demo video and write-up before 2027-01-11.
