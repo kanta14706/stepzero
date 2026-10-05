@@ -147,7 +147,7 @@ uv run pytest && uv run ruff check .             # tests that need data/raw skip
 # OTP
 cd otp && ./build.sh && docker compose up otp
 # web
-cd apps/web && pnpm i && pnpm dev | pnpm test | pnpm e2e | pnpm lint | pnpm lighthouse | pnpm build
+cd apps/web && pnpm i && pnpm dev | pnpm sync-data | pnpm test | pnpm e2e | pnpm lint | pnpm lighthouse | pnpm build
 # supabase
 supabase start && supabase db reset
 ```

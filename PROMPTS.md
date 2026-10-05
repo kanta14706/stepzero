@@ -9,13 +9,13 @@ Later prompts assume earlier ones worked. If a finding changes the plan (e.g. a 
 
 Last updated 2026-10-05. The checkboxes below are the source of truth for what is done; this section explains the exceptions.
 
-- **Out of order on purpose.** We did 2.1 (web scaffold) and 2.3 (profiles and A*) before finishing Phase 1, because 1.6 is waiting on API keys and a licence decision. **2.2 (map with floors) was skipped for now**; it needs the ほこナビ floor polygons exported in a web-friendly form first (a small importer addition), so do that export before 2.2.
+- **Out of order on purpose.** We did 2.1 (web scaffold) and 2.3 (profiles and A*) before finishing Phase 1, because 1.6 is waiting on API keys and a licence decision. **2.2 (map with floors) is now done** (floor-polygon export plus the MapLibre station page; see D-019).
 - **1.6 (Tier-1 station data) is in progress, not done.** The first pass without keys is in docs/data-notes.md ("step 1.6, in progress"). Still to do: download the other operators' GTFS and count `wheelchair_boarding`, then propose how Tier-1 stations without data are shown. It needs `ODPT_CONSUMER_KEY` (basic) and `ODPT_CHALLENGE_KEY` (challenge-limited operators) in `.env`, which the user is applying for. **Open decision for the user:** extend the D-012 licence exception to the challenge-limited operators (JR East, Keio, Tobu, Sotetsu, Tokyu) for Tier 1, or keep Tier 1 to basic-licence operators.
 - **1.7 (OTP spike): the Toei half is done and committed.** Build 27 s, 2.4 GiB peak, 1.3 GiB serving, test query saved (see data-notes 2026-10-06 and D-018). **Still to do:** build with the other operators' GTFS once the keys arrive (same `./build.sh <feed>` pattern; add each feed to `feed_zip` in `otp/build.sh`), record time and memory for each, and write the final all-operators-or-subset recommendation in decisions.md. Leave 1.7 unticked until then. That recommendation is an Opus step.
 - **Known gaps carried forward.** 新宿 is flagged "not verified on site" (D-014); 麻布十番 and 新宿西口 have no wheelchair route in the data because the only way down is an 8 to 18% ramp (data-notes, step 1.5); the routing penalty sizes and base timings are assumptions to revisit after user tests (D-015, D-017).
-- **Not yet done on the web side:** the web app is a placeholder home page (no planner); nothing consumes the routing module yet (that is 2.4).
+- **Web app state:** station pages with the floor map and text list work for the 12 Ōedo stations; **no journey planner yet** (2.4), and the routing module is not used by any screen. **Not yet done on the web side:** the web app is a placeholder home page (no planner); nothing consumes the routing module yet (that is 2.4).
 
-To get back on track: finish 1.7 (Toei half), then 1.6 once the keys arrive, then the floor-polygon export and 2.2, then 2.4.
+To get back on track: finish 1.6 and the rest of 1.7 once the keys arrive, then 2.4 (journey planner; an Opus step), 2.5 and so on.
 
 ---
 
@@ -94,7 +94,7 @@ Sonnet 5.5 is enough for routine implementation, setup and docs. **Before starti
 - [x] **2.1 Web scaffold**
 > Scaffold `apps/web` with React + Vite + TypeScript (strict), vite-plugin-pwa, Vitest, Playwright, axe-core, ESLint, Prettier. Add i18n with ja, en, zh-Hant and ja-easy, with no hard-coded strings. Add a Lighthouse CI config that fails below 95 accessibility. Create a minimal home page that passes all checks. Commit.
 
-- [ ] **2.2 Map with floors**
+- [x] **2.2 Map with floors**
 > Add MapLibre GL JS with a free open basemap. Load one station graph and the ほこナビ floor polygons for 大門. Add a floor switcher (B1, B2…) that is keyboard- and screen-reader-accessible. Every map element needs a text equivalent.
 
 - [x] **2.3 Routing profiles + A***

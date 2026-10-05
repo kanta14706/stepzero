@@ -194,3 +194,172 @@ h2 {
     transition: border-color 0.15s ease;
   }
 }
+
+/* --- stations and the inside-station map --- */
+.station-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+}
+
+.station-list a {
+  display: flex;
+  align-items: center;
+  min-height: var(--target);
+  padding: 0 0.75rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.station-list a:hover {
+  background: var(--surface);
+}
+
+main a {
+  color: var(--accent);
+}
+
+.notice-inline {
+  padding: 0.5rem 0.75rem;
+  background: var(--surface);
+  border-left: 6px solid var(--focus);
+  border-radius: 4px;
+}
+
+.floor-switcher {
+  margin: 1rem 0 0.5rem;
+  padding: 0;
+  border: none;
+}
+
+.floor-switcher legend {
+  padding: 0;
+  font-weight: 700;
+}
+
+.floor-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.floor-option {
+  position: relative;
+}
+
+.floor-option input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.floor-option label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--target);
+  min-height: var(--target);
+  padding: 0 0.9rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.floor-option input:checked + label {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 700;
+}
+
+.floor-option input:focus-visible + label {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.floor-status {
+  margin: 0.5rem 0;
+  color: var(--muted);
+}
+
+.station-map {
+  width: 100%;
+  height: min(70vh, 34rem);
+  min-height: 20rem;
+  margin: 0.5rem 0 1rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+}
+
+.floor-list dl {
+  margin: 0;
+}
+
+.floor-row {
+  display: grid;
+  grid-template-columns: minmax(8rem, 12rem) 1fr;
+  gap: 0.25rem 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.floor-row dt {
+  font-weight: 700;
+}
+
+.floor-row dd {
+  margin: 0;
+}
+
+.legend ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.swatch {
+  display: inline-block;
+  width: 2.5rem;
+  height: 0;
+  margin-right: 0.75rem;
+  vertical-align: middle;
+  border-top: 3px solid currentcolor;
+}
+
+.swatch-elevator {
+  color: #14803c;
+  border-top-width: 6px;
+}
+
+.swatch-escalator {
+  color: #c2570c;
+  border-top-style: dotted;
+}
+
+.swatch-stairs {
+  color: #b91c1c;
+  border-top-style: dashed;
+}
+
+.swatch-walk {
+  color: #4b5563;
+}
+
+@media (max-width: 36rem) {
+  .floor-row {
+    grid-template-columns: 1fr;
+  }
+}

@@ -37,7 +37,15 @@ export function edge(
 export function graph(nodes: GraphNode[], edges: GraphEdge[]): StationGraph {
   return {
     schemaVersion: 1,
-    station: { id: 'T', slug: 't', name: { ja: 'テスト' }, platforms: [], warnings: [] },
+    station: {
+      id: 'T',
+      slug: 't',
+      name: { ja: 'テスト' },
+      levels: [],
+      bbox: [139, 35, 139.001, 35.001],
+      platforms: [],
+      warnings: [],
+    },
     nodes,
     edges,
   };

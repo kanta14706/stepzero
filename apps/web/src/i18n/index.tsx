@@ -85,3 +85,10 @@ export function useI18n(): I18n {
   if (!ctx) throw new Error('useI18n must be used inside <I18nProvider>');
   return ctx;
 }
+
+/** Fill `{name}`-style placeholders. Placeholders stay visible when a value is missing. */
+export function fmt(template: string, values: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (whole, key: string) =>
+    key in values ? String(values[key]) : whole,
+  );
+}

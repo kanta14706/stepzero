@@ -46,6 +46,9 @@ export interface StationGraph {
     id: string;
     slug: string;
     name: Partial<Record<string, string>>;
+    levels: number[];
+    /** [minLon, minLat, maxLon, maxLat] */
+    bbox: [number, number, number, number];
     platforms: { id: string; code?: string; nodeIds: NodeId[] }[];
     warnings: { code: string; message: string }[];
   };
