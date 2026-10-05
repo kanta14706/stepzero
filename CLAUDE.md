@@ -139,6 +139,7 @@ An edge with an active `out_of_service` or `blocked` report costs ∞. If no rou
 ```bash
 # importer
 cd importer && uv sync && uv run python -m importer.download              # raw data → data/raw/ + manifest.json
+uv run python -m importer.graph.stitch           # stitch report → data/build/reports/stitch/
 uv run python -m importer.run --stations oedo   # → data/build/ (from step 1.5)
 # OTP
 cd otp && ./build.sh && docker compose up otp

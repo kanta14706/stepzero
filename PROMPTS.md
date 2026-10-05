@@ -39,7 +39,7 @@ Later prompts assume earlier ones worked. If a finding changes the plan (e.g. a 
 - [x] **1.3 Explore ほこナビ**
 > Create `02_hokonavi.ipynb`. Load the walking network and station maps for the same stations. Report the schema (which attributes exist: steps, slope, width, elevator), the coordinate system, how floors are encoded, and coverage. Plot one station (大門) per floor. Add findings to docs/data-notes.md.
 
-- [ ] **1.4 Stitch pathways ↔ walking network**
+- [x] **1.4 Stitch pathways ↔ walking network**
 > Create `03_stitch.ipynb` and then `importer/importer/graph/stitch.py`. Match GTFS-Pathways nodes to ほこナビ nodes by level and distance, as CLAUDE.md describes. Report match rate per station and list the unmatched nodes. Propose how to handle the failures (manual overrides file, distance threshold) before implementing.
 
 - [ ] **1.5 Export station graphs**

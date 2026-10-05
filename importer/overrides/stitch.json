@@ -1,0 +1,25 @@
+{
+  "_doc": "Per-station stitching overrides, keyed by GTFS station_id. force_match: {pathway node: hokonavi node}. no_match_pathway / no_match_hokonavi: node ids to leave unmatched. accepted_anomalies: {pathway_id: reason} for pathways known to have no agreeing hokonavi link; the stitch tests fail on any anomaly not listed here.",
+  "425": {
+    "accepted_anomalies": {
+      "425L0136": "escalator, 20.1 m: no direct hokonavi link between the matched nodes (data-notes 2026-10-05)"
+    }
+  },
+  "426": {
+    "accepted_anomalies": {
+      "426L0284": "walkway, 6.8 m: hokonavi joins the matched nodes with a different link type (data-notes 2026-10-05)"
+    }
+  },
+  "429": {
+    "accepted_anomalies": {
+      "429L0008": "walkway, 26.9 m: no direct hokonavi link (data-notes 2026-10-05)",
+      "429L0009": "walkway, 7.9 m: no direct hokonavi link",
+      "429L0037": "walkway, 12.6 m: no direct hokonavi link",
+      "429L0038": "walkway, 2.3 m: no direct hokonavi link",
+      "429L0111": "no direct hokonavi link",
+      "429L0141": "no direct hokonavi link",
+      "429L0142": "no direct hokonavi link",
+      "429L0144": "no direct hokonavi link"
+    }
+  }
+}
