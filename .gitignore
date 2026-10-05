@@ -167,5 +167,6 @@ env/
 # Downloaded and generated data (READMEs stay tracked)
 data/raw/*
 !data/raw/README.md
+!data/raw/manifest.json
 data/build/*
 !data/build/README.md

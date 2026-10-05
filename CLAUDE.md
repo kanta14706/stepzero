@@ -58,9 +58,11 @@ apps/web/            PWA (React + Vite)
   src/map/           MapLibre layers, floor switching, 3D view
   src/features/      planner, station-view, report, share
   src/i18n/          ja, en, zh-Hant, ja-easy (やさしい日本語)
-importer/            Python pipeline → data/build/
-  sources/           one adapter per dataset (download + normalise)
-  graph/             stitching pathways ↔ walking network
+importer/            Python pipeline → data/build/ (uv project; package in importer/importer/)
+  importer/sources/  one adapter per dataset (download + normalise)
+  importer/graph/    stitching pathways ↔ walking network
+  notebooks/         exploration notebooks
+  tests/             pytest
 otp/                 OTP config, build scripts, Dockerfile
 supabase/            migrations, RLS policies, edge functions
 data/raw/            downloaded inputs (git-ignored)
@@ -81,7 +83,7 @@ docs/                decisions.md, data-notes.md, feed-spec.md
 
 Rules:
 - The ODPT API key lives in `.env` as `ODPT_CONSUMER_KEY`. Never commit it or ship it to the client; proxy through the back end.
-- **Licences:** use the ODPT basic licence for core features. Datasets marked 「チャレンジ限定」 (e.g. Haneda TIAT flight data) may appear **only** in stretch features and must be listed in `docs/data-notes.md`.
+- **Licences:** use the ODPT basic licence for core features. Datasets marked 「チャレンジ限定」 (e.g. Haneda TIAT flight data) may appear **only** in stretch features and must be listed in `docs/data-notes.md`. **Exception (decided 2026-10-05):** the Toei GTFS-Pathways file and the ほこナビ Ōedo station datasets are contest-period-only releases (ほこナビ until 2027-03-12) but are core data for Tier 2; they are recorded in `docs/data-notes.md` and `docs/decisions.md` (D-012).
 - Credit every source on an in-app "Data sources" page, as the licences require.
 - Record every data quirk you discover (missing levels, mismatched IDs, wrong coordinates) in `docs/data-notes.md`. These notes become the "data quality" findings in the entry.
 
@@ -136,7 +138,8 @@ An edge with an active `out_of_service` or `blocked` report costs ∞. If no rou
 
 ```bash
 # importer
-cd importer && uv sync && uv run python -m importer.run --stations oedo   # → data/build/
+cd importer && uv sync && uv run python -m importer.download              # raw data → data/raw/ + manifest.json
+uv run python -m importer.run --stations oedo   # → data/build/ (from step 1.5)
 # OTP
 cd otp && ./build.sh && docker compose up otp
 # web

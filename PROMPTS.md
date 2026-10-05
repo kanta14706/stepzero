@@ -30,7 +30,7 @@ Later prompts assume earlier ones worked. If a finding changes the plan (e.g. a 
 
 ## Phase 1 — Data spike (weeks 1–3)
 
-- [ ] **1.1 Importer project + downloads**
+- [x] **1.1 Importer project + downloads**
 > Set up `importer/` as a Python project with uv (geopandas, gtfs-kit, networkx, shapely, pandas, jupyter, ruff, pytest). Write a source adapter that downloads the Toei GTFS (including GTFS-Pathways) from ODPT and the ほこナビ walking-network and station-map datasets for the 12 Ōedo stations into `data/raw/`, recording each source URL, licence and download date in a manifest. The ODPT key comes from `.env`; ask me before running anything that needs it.
 
 - [ ] **1.2 Explore GTFS-Pathways**
@@ -40,7 +40,7 @@ Later prompts assume earlier ones worked. If a finding changes the plan (e.g. a 
 > Create `02_hokonavi.ipynb`. Load the walking network and station maps for the same stations. Report the schema (which attributes exist: steps, slope, width, elevator), the coordinate system, how floors are encoded, and coverage. Plot one station (大門) per floor. Add findings to docs/data-notes.md.
 
 - [ ] **1.4 Stitch pathways ↔ walking network**
-> Create `03_stitch.ipynb` and then `importer/graph/stitch.py`. Match GTFS-Pathways nodes to ほこナビ nodes by level and distance, as CLAUDE.md describes. Report match rate per station and list the unmatched nodes. Propose how to handle the failures (manual overrides file, distance threshold) before implementing.
+> Create `03_stitch.ipynb` and then `importer/importer/graph/stitch.py`. Match GTFS-Pathways nodes to ほこナビ nodes by level and distance, as CLAUDE.md describes. Report match rate per station and list the unmatched nodes. Propose how to handle the failures (manual overrides file, distance threshold) before implementing.
 
 - [ ] **1.5 Export station graphs**
 > Implement `python -m importer.run --stations oedo` to export one graph JSON per station to `data/build/graphs/`, matching the GraphNode/GraphEdge types in CLAUDE.md (pathwayId preserved). Add pytest tests: graph is connected, every platform node exists, a wheelchair-valid path exists from at least one entrance to each platform (or the gap is logged). Also export a JSON Schema for the graph format to `docs/graph.schema.json`.

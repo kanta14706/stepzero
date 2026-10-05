@@ -73,3 +73,18 @@ The first entries (D-001 to D-011) record the initial stack from CLAUDE.md. Thei
 - **Decision:** Tier 1 (all Tokyo, station-to-station) and Tier 2 (in-station detail, starting with the Toei Ōedo Line, 12 stations). Tier shown in the UI. Out of scope: native apps, indoor positioning, accounts beyond anonymous/optional auth, regions outside Tokyo.
 - **Reason:** Hard deadline 2027-01-11; Pathways and ほこナビ data exist only for some stations, and users must know how far to trust guidance.
 - **Alternatives considered:** Tokyo-wide in-station detail (data not available); a single-line-only app (too narrow for the social-impact criterion).
+
+---
+
+## D-012 Contest-period-only datasets are core data for Tier 2
+- **Date:** 2026-10-05
+- **Decision:** The Toei GTFS-Pathways file (【コンテスト期間限定公開】) and the ほこナビ walking-network and station-map datasets for the 12 Ōedo stations (limited to the contest period, until 2027-03-12) are treated as core data, not stretch-only. This is an exception to the 「チャレンジ限定」 rule in CLAUDE.md.
+- **Reason:** Tier-2 in-station guidance, the demo centrepiece, cannot exist without them.
+- **Alternatives considered:** Keeping them stretch-only (leaves no Tier-2 data); using only the generally licensed data (Tier 1 only).
+- **Consequence:** The app's Data sources page must state the contest-period limit. The feature set after 2027-03-12 needs a fallback to Tier 1 or a renewed licence.
+
+## D-013 Importer package nested at importer/importer/
+- **Date:** 2026-10-05
+- **Decision:** `sources/` and `graph/` live inside the Python package, at `importer/importer/`.
+- **Reason:** `cd importer && uv run python -m importer.run` needs a package named `importer` directly under the project directory.
+- **Alternatives considered:** Flat layout via build configuration (non-standard, fragile).
