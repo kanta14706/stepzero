@@ -148,3 +148,23 @@ def test_unknown_attributes_stay_absent_not_zero(graphs):
     unknown = [e for e in g["edges"] if "slopePct" not in e]
     assert unknown, "大門 has 9 links with unknown attributes"
     assert all("stepHeightCm" not in e and "widthM" not in e for e in unknown)
+
+
+def test_elevator_rides_take_the_modelled_time(graphs):
+    """Hall to hall on a different level: the wait once plus a few seconds per level (D-023)."""
+    import networkx as nx
+
+    for sid, g in graphs.items():
+        level = {n["id"]: n["level"] for n in g["nodes"]}
+        halls = {x for e in g["edges"] if e["mode"] != "elevator" for x in (e["from"], e["to"])}
+        cab = nx.Graph()
+        for e in g["edges"]:
+            if e["mode"] == "elevator":
+                cab.add_edge(e["from"], e["to"], s=e["seconds"])
+        for comp in nx.connected_components(cab):
+            ends = sorted(n for n in comp if n in halls)
+            for i, a in enumerate(ends):
+                for b in ends[i + 1 :]:
+                    if level[a] != level[b]:
+                        ride = nx.shortest_path_length(cab, a, b, weight="s")
+                        assert 30 <= ride <= 60, (sid, a, b, ride)

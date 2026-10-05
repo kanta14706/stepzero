@@ -172,6 +172,8 @@ def build_station_graph(
             "bidirectional": bidirectional,
         }))
 
+    timing.time_elevators(nodes, edges)
+
     station_stop = stops.loc[station_id]
     index = travel.stop_index(feed)
     node_by_id = {n["id"]: n for n in nodes}
