@@ -15,7 +15,7 @@ import pandas as pd
 
 from importer.analysis import hokonavi as H
 from importer.analysis import pathways as P
-from importer.graph import timing, validate
+from importer.graph import timing, travel, validate
 from importer.graph.stitch import STATION_SLUGS, StationStitch, stitch_station
 from importer.manifest import REPO_ROOT, load_manifest
 
@@ -65,8 +65,25 @@ def _edge_mode(route_type: int, pathway_mode: str | None, link_id: str) -> str:
     raise ValueError(f"link {link_id}: unknown route type and no pathway to say what it is")
 
 
-def build_station_graph(feed: P.Feed, station_id: str, s: StationStitch | None = None) -> dict:
+_SERVICES: dict[str, travel.PlatformService] | None = None
+
+
+def _services() -> dict[str, travel.PlatformService]:
+    """Timetable facts per platform, read once per process (stop_times is the big file)."""
+    global _SERVICES
+    if _SERVICES is None:
+        _SERVICES = travel.load_services()
+    return _SERVICES
+
+
+def build_station_graph(
+    feed: P.Feed,
+    station_id: str,
+    s: StationStitch | None = None,
+    services: dict[str, travel.PlatformService] | None = None,
+) -> dict:
     s = s or stitch_station(feed, station_id)
+    services = services if services is not None else _services()
     slug = STATION_SLUGS[station_id]
     st = H.load_station(slug)
     stops = feed.stops.set_index("stop_id")
@@ -156,11 +173,23 @@ def build_station_graph(feed: P.Feed, station_id: str, s: StationStitch | None =
         }))
 
     station_stop = stops.loc[station_id]
+    index = travel.stop_index(feed)
+    node_by_id = {n["id"]: n for n in nodes}
+    # Boarding areas the street reaches without a fare gate are data errors: keep the node for
+    # walking, but do not route to it or use it for the boarding position.
+    unpaid = validate.outside_fare_gates(nodes, edges)
+    outside: list[str] = []
     platforms = []
     for plat_id, ids in sorted(platform_nodes.items()):
         code = stops.loc[plat_id].platform_code if plat_id in stops.index else None
+        inside = sorted(i for i in ids if i not in unpaid)
+        outside += sorted(i for i in ids if i in unpaid)
+        areas = [node_by_id[i] for i in inside]
         platforms.append(_clean({
-            "id": plat_id, "code": code if pd.notna(code) else None, "nodeIds": sorted(ids)
+            "id": plat_id,
+            "code": code if pd.notna(code) else None,
+            "nodeIds": inside,
+            "travel": travel.platform_travel(areas, services.get(plat_id), index),
         }))
 
     graph: dict[str, Any] = {
@@ -189,7 +218,7 @@ def build_station_graph(feed: P.Feed, station_id: str, s: StationStitch | None =
         "nodes": nodes,
         "edges": edges,
     }
-    graph["station"]["warnings"] = _warnings(graph, s)
+    graph["station"]["warnings"] = _warnings(graph, s, outside)
     graph["station"]["reachability"] = {
         "optimistic": validate.step_free_reachability(graph, strict=False),
         "strict": validate.step_free_reachability(graph, strict=True),
@@ -207,7 +236,7 @@ def _sources(slug: str) -> list[dict]:
     return sorted(out, key=lambda x: x["id"])
 
 
-def _warnings(graph: dict, s: StationStitch) -> list[dict]:
+def _warnings(graph: dict, s: StationStitch, outside_gates: list[str]) -> list[dict]:
     warnings: list[dict] = []
     sid = graph["station"]["id"]
     if sid in UNVERIFIED:
@@ -223,6 +252,16 @@ def _warnings(graph: dict, s: StationStitch) -> list[dict]:
             "code": "pathway_without_link",
             "message": "Pathways with no agreeing ほこナビ link; not added to the graph.",
             "pathwayIds": sorted(s.anomalies),
+        })
+    if outside_gates:
+        warnings.append({
+            "code": "boarding_area_outside_gates",
+            "message": (
+                "Boarding areas reachable from the street without a fare gate; "
+                "left out of their platforms (not routed to, not used for boarding position)."
+            ),
+            "count": len(outside_gates),
+            "nodeIds": outside_gates,
         })
     comps = validate.components(graph)
     if len(comps) > 1:

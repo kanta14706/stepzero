@@ -20,12 +20,13 @@ Last updated 2026-10-06. The checkboxes below are the source of truth for what i
 
 **Still open from 2.5, do not forget:** (a) **the manual VoiceOver pass** (section 4 of `docs/a11y-checklist.md`) has not been done; only the user can do it on a device; (b) **native-speaker review** of the zh-Hant and ja-easy wording (see `apps/web/src/i18n/README.md`); (c) **elevator time is overcounted** by the importer (40 s per elevator edge, so a ride counts 80 to 160 s; data-notes 2026-10-06, step 2.5): fix it in the importer before the journey timeline in 2.4; (d) the map colours are placeholders for 2.11.
 
-**Next, in this order** (2.6 and 2.7 were missing from an earlier version of this list):
-1. **2.6 Boarding position** (Opus): which platform end, and the car if the data allows, is nearest the step-free exit; builds on the platform boarding areas in the graphs.
-2. **2.8 Supabase and outage reports** (Opus) so the broken-elevator reroute demo works: the router already takes `blockedEdgeIds` and `blockedPathwayIds` (see `routing/worker-protocol.ts`), and the planner reroutes on any change, so the UI only needs outage reports in and out.
-3. **2.4 Journey planner** (Opus): wraps the in-station route with OTP train legs into one timeline. Needs OTP reachable from the app, and the elevator-time fix from "Still open from 2.5" (c) first.
-4. **2.7 Live train status**: Supabase edge function proxying the ODPT real-time feed. **Blocked until the ODPT keys arrive.**
-5. **2.9 Offline PWA** (Opus), **2.10 Coverage tiers in the UI** (Sonnet), then **2.11 Visual design pass** (Opus; consult the user on the visual direction first).
+**2.6 (boarding position) is done** (D-021): each platform step says front, middle or back of the train, named by the next station, with the platform picker showing each platform's direction; no car numbers, because the data has none. It also found a data error: a 都庁前 platform-2 boarding area outside the fare gates, now left out by the importer (data-notes 2026-10-06, step 2.6). **Still open from 2.6:** verify the positions on site, especially 六本木 and 新宿 (few boarding areas) and 新宿西口 (direction estimated).
+
+**Next, in this order:**
+1. **2.8 Supabase and outage reports** (Opus) so the broken-elevator reroute demo works: the router already takes `blockedEdgeIds` and `blockedPathwayIds` (see `routing/worker-protocol.ts`), and the planner reroutes on any change, so the UI only needs outage reports in and out.
+2. **2.4 Journey planner** (Opus): wraps the in-station route with OTP train legs into one timeline, and can use the destination station's "where to ride" (2.6) for the whole trip. Needs OTP reachable from the app, and the elevator-time fix from "Still open from 2.5" (c) first.
+3. **2.7 Live train status**: Supabase edge function proxying the ODPT real-time feed. **Blocked until the ODPT keys arrive.**
+4. **2.9 Offline PWA** (Opus), **2.10 Coverage tiers in the UI** (Sonnet), then **2.11 Visual design pass** (Opus; consult the user on the visual direction first).
 
 Finish 1.6 and the rest of 1.7 whenever the ODPT keys arrive.
 
@@ -122,7 +123,7 @@ Sonnet 5.5 is enough for routine implementation, setup and docs. **Before starti
 - [x] **2.5 Inside-station step view**
 > For each in-station segment, show a step list with floor, landmark-style instructions ("Take elevator E2 to B2; the gates are ahead on the right") and the highlighted path on the floor map. Check it with VoiceOver-style reading order (axe + a manual checklist in docs/a11y-checklist.md).
 
-- [ ] **2.6 Boarding position**
+- [x] **2.6 Boarding position**
 > Using platform geometry and pathway nodes, work out which end of the platform (and if possible which car) is closest to the step-free exit for each Tier-2 station. If the data can't support a car number, fall back to "front / middle / back". Document the method and its limits in docs/data-notes.md.
 
 - [ ] **2.7 Live train status**

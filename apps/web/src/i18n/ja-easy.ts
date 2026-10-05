@@ -70,6 +70,8 @@ export const jaEasy: Dictionary = {
   routeEntranceOption: '{label}の でいりぐち',
   routeEntranceOptionSide: '{label}の でいりぐち（{side}がわ）',
   routePlatform: 'ホーム',
+  routePlatformToward: '{platform}（{next}の ほう）',
+  routePlatformTerminating: '{platform}（この えきで おわり）',
   routeProfile: 'うごきかた',
   routeStepsTitle: 'みち',
   routeSummary: 'あるく きょり やく{m}メートル・エレベーター {rides}かい',
@@ -167,6 +169,21 @@ export const jaEasy: Dictionary = {
     stairsSameFloor: 'かいだんを つかいます。',
     escalator: 'エスカレーターで {floor}へ {dir}。',
     escalatorSameFloor: 'エスカレーターに のります。',
+    boardingIn: 'ホームに つく ところは、{next}の ほうへ いく でんしゃの {part}です。',
+    boardingOut:
+      '{next}の ほうへ いく でんしゃで この えきに くる ときは、{part}の しゃりょうに のると、おりて すぐ この みちを つかえます。',
+    boardingOutTerminating:
+      'この えきで おわる でんしゃで くる ときは、{part}の しゃりょうに のると、おりて すぐ この みちを つかえます。',
+    boardingInTerminating:
+      'この ばんせんの でんしゃは、ぜんぶ この えきで おわります。のる ばんせんを たしかめて ください。',
+    boardingWeak: 'でんしゃが すすむ むきは、となりの えきの ばしょから かんがえた ものです。',
+    boardingApproximate: 'ホームの ばしょの データが すくないので、だいたいの ばしょです。',
+    boardingNoCar: 'なんごうしゃかは データに ないので、まえ・まんなか・うしろで しめして います。',
+    parts: {
+      front: 'まえの ほう',
+      middle: 'まんなか',
+      back: 'うしろの ほう',
+    },
     groundFloor: 'ちじょう',
   },
   noRoute: {

@@ -177,6 +177,60 @@ Memory was sampled every 2 s with a 6 GB heap cap, so the peak is approximate. M
 - **Router config detail:** in OTP 2.10, `onlyConsiderAccessible` cannot be combined with `unknownCost` or `inaccessibleCost` in the same block (startup error), so the strict mode needs its own config.
 - **Not yet done** (needs the ODPT keys): build with Tokyo Metro, TWR, Tsukuba Express and Tama Monorail (basic licence), then with the challenge-limited operators, and record time and memory for each.
 
+### 2026-10-06: boarding position, front / middle / back (step 2.6)
+
+Logic: `importer/importer/graph/travel.py` (direction per platform, exported as `travel` on each platform, `docs/graph.schema.json`) and `apps/web/src/routing/boarding.ts` (where a point lies along the platform). Tests: `importer/tests/test_graph_travel.py`, `apps/web/src/routing/boarding.test.ts` and the boarding block in `golden.test.ts`.
+
+**Method.**
+1. The platform axis is the principal axis of its boarding areas (GTFS location_type 4). Platform stops (location_type 0) have no coordinates of their own (step 1.2 notes), so boarding areas are the only geometry.
+2. The front end comes from the timetable: each platform's trips continue to a next stop (the front points towards it) and came from a previous stop (the back points that way). Each neighbour votes on its own; if any vote disagrees, or the neighbours lie across the axis (combined |cos| under 0.2), no direction is given. Under 0.5 the direction is flagged `weak`.
+3. The point where the route meets the platform is projected onto the line between the outermost boarding areas and split into thirds: front, middle, back.
+4. The UI says where you reach the platform ("trains towards 汐留, middle") when the route ends there, and where to ride ("ride in the middle to get off close to this route") when it starts there.
+
+**What the data supports, and what it does not.**
+- **No car numbers.** The data has no car or door positions and no stop marks. Boarding areas are path junctions, not doors (15 on each 大門 platform, against the 24 doors of an 8-car train), so a car number would be invented. The app says front, middle or back and says why.
+- **The thirds run between the outermost boarding areas,** not the platform ends: 104 to 137 m here, about the length of an Ōedo train. 六本木 (4 boarding areas) and 新宿 (5) have so few that their ends are uncertain; they are flagged `approximate`, and at both the lift is at an outermost area, so "front"/"back" there may really be nearer the middle.
+- **Curved tunnels.** At 新宿西口 the neighbouring stations lie 66 to 72 degrees off the platform axis; next and previous still agree, so the direction is given but flagged `weak` and the UI says it is estimated. Every other platform scores 0.73 or more.
+- **Every platform has one direction.** All trips through a platform continue to the same next stop. 都庁前 platform 3 is arrivals only (every trip ends there), platforms 1 and 4 have a few terminating trips; platform 2 has no previous stop (trips start there).
+- **Near the boundaries.** 大門's lift sits at 0.61 (platform 3) and 0.38 (platform 4), 6 to 8 m inside the middle third. An error of a boarding-area spacing could move it to "back"/"front". Verify on site.
+- **Self-check:** the same lift seen from the two directions of an island platform should mirror (fractions summing to 1). They do at every station tested (大門, 東新宿, 国立競技場, 六本木).
+- **To verify on site:** Toei publishes barrier-free car positions on its own website, but not as open data and not under the ODPT licence, so they are not used. Compare on site before the user tests.
+
+**Data error found: a boarding area outside the fare gates (都庁前 platform 2).** The wheelchair route to 都庁前 platform 2 ended on boarding area `9b5a8360` without passing any fare gate: the walkway that crosses levels -2 to -3 (429L0021, 429L0022, step 1.2 anomalies) connects it to the unpaid side. On the Tokyo subway no platform is outside the gates, so this is a data error. The importer now leaves any boarding area the street reaches without a fare gate out of its platform (not routed to, not used for boarding position; the node stays walkable) and reports it as warning `boarding_area_outside_gates`. It is the only one in the 12 stations. Before the fix the step list for platform 2 had no ticket-gate step, and its boarding position was "back"; it is now "middle" (0.60). A web test now checks that every route from the street to a platform passes a fare gate, for every station and profile.
+
+Wheelchair route from the street, where it meets each platform:
+
+| station | platform | trains towards | boarding areas | extent | direction | wheelchair route meets the platform at |
+|---|---|---|---|---|---|---|
+| 新宿西口 | 1 | 都庁前 | 6 | 126 m | weak | no wheelchair route |
+| 新宿西口 | 2 | 東新宿 | 6 | 125 m | weak | no wheelchair route |
+| 東新宿 | 1 | 新宿西口 | 11 | 129 m | clear | middle (0.60) |
+| 東新宿 | 2 | 若松河田 | 11 | 129 m | clear | middle (0.40) |
+| 上野御徒町 | 1 | 本郷三丁目 | 11 | 130 m | clear | middle (0.55) |
+| 上野御徒町 | 2 | 新御徒町 | 11 | 130 m | clear | middle (0.45) |
+| 大門 | 3 | 汐留 | 15 | 131 m | clear | middle (0.61) |
+| 大門 | 4 | 赤羽橋 | 15 | 132 m | clear | middle (0.38) |
+| 赤羽橋 | 1 | 大門 | 11 | 121 m | clear | middle (0.44) |
+| 赤羽橋 | 2 | 麻布十番 | 11 | 121 m | clear | middle (0.56) |
+| 麻布十番 | 1 | 赤羽橋 | 14 | 133 m | clear | no wheelchair route |
+| 麻布十番 | 2 | 六本木 | 14 | 133 m | clear | no wheelchair route |
+| 六本木 | 1 | 麻布十番 | 4 | 104 m | clear, approximate | back (1.00) |
+| 六本木 | 2 | 青山一丁目 | 4 | 120 m | clear, approximate | front (0.00) |
+| 青山一丁目 | 1 | 六本木 | 15 | 137 m | clear | middle (0.52) |
+| 青山一丁目 | 2 | 国立競技場 | 15 | 137 m | clear | middle (0.48) |
+| 国立競技場 | 1 | 青山一丁目 | 18 | 128 m | clear | middle (0.45) |
+| 国立競技場 | 2 | 代々木 | 18 | 129 m | clear | middle (0.55) |
+| 代々木 | 1 | 国立競技場 | 13 | 132 m | clear | middle (0.56) |
+| 代々木 | 2 | 新宿 | 13 | 132 m | clear | middle (0.44) |
+| 新宿 | 6 | 代々木 | 5 | 131 m | clear, approximate | front (0.00) |
+| 新宿 | 7 | 都庁前 | 5 | 132 m | clear, approximate | back (1.00) |
+| 都庁前 | 1 | 新宿 | 13 | 127 m | clear | middle (0.51) |
+| 都庁前 | 2 | 新宿西口 | 14 | 127 m | clear | middle (0.60) |
+| 都庁前 | 3 | (all trains end here) | 12 | 127 m | clear | middle (0.49) |
+| 都庁前 | 4 | 西新宿五丁目 | 13 | 127 m | clear | middle (0.49) |
+
+The number is the distance from the front end of the platform as a share of the extent (0 front, 1 back). The step-free lift reaches mid-platform at 8 of the 10 stations with a wheelchair route; at 六本木 and 新宿 it is at an outermost boarding area.
+
 ### 2026-10-06: routes turned into steps (step 2.5, slice 1)
 
 Logic: `apps/web/src/routing/steps.ts`. Tests: `steps.test.ts` and the step blocks in `golden.test.ts` (every station, every profile, both directions).

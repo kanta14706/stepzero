@@ -5,8 +5,9 @@
  */
 import { fmt } from '../../i18n';
 import type { Dictionary } from '../../i18n/ja';
+import type { BoardingPosition } from '../../routing/boarding';
 import type { Place, Step } from '../../routing/steps';
-import type { AlternativeCode, BlockReason, NoRoute, ProfileId } from '../../routing/types';
+import type { AlternativeCode, BlockReason, Names, NoRoute, ProfileId } from '../../routing/types';
 
 export interface StepText {
   text: string;
@@ -29,6 +30,40 @@ export function roundMetres(m: number): number {
 export function stepFloor(panel: number, t: Dictionary): string {
   if (panel === 0) return t.steps.groundFloor;
   return panel < 0 ? fmt(t.floorBelow, { n: -panel }) : fmt(t.floorAbove, { n: panel });
+}
+
+/** A place name in the page language, or in Japanese when the data has no translation. */
+export function nameIn(names: Names, lang: string): string {
+  return names[lang] ?? names['ja'] ?? '';
+}
+
+/**
+ * Where to be on the train, for the platform end of a route. `end` is 'arrive' when the route
+ * ends on the platform (the person boards here) and 'start' when it starts there (the person got
+ * off a train here, so the advice is where to ride).
+ */
+export function boardingNotes(
+  b: BoardingPosition,
+  end: 'start' | 'arrive',
+  t: Dictionary,
+  lang: string,
+): string[] {
+  const s = t.steps;
+  const part = s.parts[b.part];
+  const notes: string[] = [];
+  if (end === 'arrive') {
+    if (b.terminating === 'all' || b.nextStop === null) notes.push(s.boardingInTerminating);
+    else notes.push(fmt(s.boardingIn, { next: nameIn(b.nextStop, lang), part }));
+  } else if (b.nextStop === null) {
+    notes.push(fmt(s.boardingOutTerminating, { part }));
+  } else {
+    notes.push(fmt(s.boardingOut, { next: nameIn(b.nextStop, lang), part }));
+  }
+  if (notes[0] === s.boardingInTerminating) return notes;
+  if (b.confidence === 'weak') notes.push(s.boardingWeak);
+  if (b.approximate) notes.push(s.boardingApproximate);
+  notes.push(s.boardingNoCar);
+  return notes;
 }
 
 function platformName(code: string | null, t: Dictionary): string {
@@ -55,7 +90,12 @@ function placeText(place: Place, end: 'start' | 'arrive', t: Dictionary): string
   }
 }
 
-export function describeStep(step: Step, t: Dictionary, profile: ProfileId): StepText {
+export function describeStep(
+  step: Step,
+  t: Dictionary,
+  profile: ProfileId,
+  lang: string,
+): StepText {
   const s = t.steps;
   const notes: string[] = [];
   const vertical = (dir: 'up' | 'down') => (dir === 'up' ? s.goUp : s.goDown);
@@ -65,6 +105,9 @@ export function describeStep(step: Step, t: Dictionary, profile: ProfileId): Ste
     case 'start':
     case 'arrive':
       text = placeText(step.place, step.kind, t);
+      if (step.place.type === 'platform' && step.place.boarding) {
+        notes.push(...boardingNotes(step.place.boarding, step.kind, t, lang));
+      }
       break;
 
     case 'walk': {

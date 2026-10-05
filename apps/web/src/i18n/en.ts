@@ -70,6 +70,8 @@ export const en: Dictionary = {
   routeEntranceOption: 'Exit {label}',
   routeEntranceOptionSide: 'Exit {label} ({side} side)',
   routePlatform: 'Platform',
+  routePlatformToward: '{platform} (towards {next})',
+  routePlatformTerminating: '{platform} (trains end here)',
   routeProfile: 'How you travel',
   routeStepsTitle: 'Directions',
   routeSummary: 'About {m} m on foot · Elevator rides: {rides}',
@@ -164,6 +166,21 @@ export const en: Dictionary = {
     stairsSameFloor: 'Take the stairs.',
     escalator: 'Take the escalator {dir} to {floor}.',
     escalatorSameFloor: 'Take the escalator.',
+    boardingIn: 'You reach the platform near the {part} of trains towards {next}.',
+    boardingOut:
+      'Coming here on a train towards {next}? Ride near the {part} to get off close to this route.',
+    boardingOutTerminating:
+      'Coming here on a train that ends here? Ride near the {part} to get off close to this route.',
+    boardingInTerminating: 'Every train on this platform ends here. Check which platform you need.',
+    boardingWeak:
+      'Which end is the front of the train is estimated from where the neighbouring stations are.',
+    boardingApproximate: 'There is little position data for this platform, so this is approximate.',
+    boardingNoCar: 'Car numbers are not in the data, so this says front, middle or back.',
+    parts: {
+      front: 'front',
+      middle: 'middle',
+      back: 'back',
+    },
     groundFloor: 'street level',
   },
   noRoute: {

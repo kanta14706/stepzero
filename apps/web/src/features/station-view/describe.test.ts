@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { LANGUAGES, dictionaries } from '../../i18n';
 import { findRoute, indexGraph } from '../../routing/astar';
 import { routeToSteps } from '../../routing/steps';
+import type { BoardingPosition } from '../../routing/boarding';
 import type { Step } from '../../routing/steps';
 import type { NoRoute, StationGraph } from '../../routing/types';
 import { describeFailure, describeStep, roundMetres, stepFloor } from './describe';
@@ -35,16 +36,40 @@ const elevator = (extra: Partial<Extract<Step, { kind: 'elevator' }>> = {}): Ste
   ...extra,
 });
 
+const boarding = (extra: Partial<BoardingPosition> = {}): BoardingPosition => ({
+  part: 'front',
+  fromFront: 0.1,
+  confidence: 'clear',
+  approximate: false,
+  nextStop: { ja: '汐留', en: 'Shiodome' },
+  prevStop: { ja: '赤羽橋', en: 'Akabanebashi' },
+  terminating: null,
+  ...extra,
+});
+const onPlatform = (kind: 'start' | 'arrive', b: BoardingPosition): Step => ({
+  ...base,
+  kind,
+  place: { type: 'platform', nodeId: 'n', platformId: 'P', code: '3', boarding: b },
+});
+
 /** One of every kind of step and variant, to check that every language renders all of them. */
 const EVERY_STEP: Step[] = [
+  onPlatform('start', boarding()),
+  onPlatform('start', boarding({ nextStop: null, terminating: 'all', part: 'back' })),
+  onPlatform('arrive', boarding({ confidence: 'weak', approximate: true, part: 'middle' })),
+  onPlatform('arrive', boarding({ nextStop: null, terminating: 'all' })),
   { ...base, kind: 'start', place: { type: 'entrance', nodeId: 'n', label: 'A1' } },
   { ...base, kind: 'start', place: { type: 'entrance', nodeId: 'n', label: null } },
   { ...base, kind: 'start', place: { type: 'street', nodeId: 'n' } },
-  { ...base, kind: 'start', place: { type: 'platform', nodeId: 'n', platformId: 'P', code: '3' } },
   {
     ...base,
     kind: 'start',
-    place: { type: 'platform', nodeId: 'n', platformId: null, code: null },
+    place: { type: 'platform', nodeId: 'n', platformId: 'P', code: '3', boarding: null },
+  },
+  {
+    ...base,
+    kind: 'start',
+    place: { type: 'platform', nodeId: 'n', platformId: null, code: null, boarding: null },
   },
   { ...base, kind: 'start', place: { type: 'other', nodeId: 'n', kind: 'junction' } },
   walk(),
@@ -68,7 +93,11 @@ const EVERY_STEP: Step[] = [
   { ...base, kind: 'arrive', place: { type: 'entrance', nodeId: 'n', label: 'A1' } },
   { ...base, kind: 'arrive', place: { type: 'entrance', nodeId: 'n', label: null } },
   { ...base, kind: 'arrive', place: { type: 'street', nodeId: 'n' } },
-  { ...base, kind: 'arrive', place: { type: 'platform', nodeId: 'n', platformId: 'P', code: '3' } },
+  {
+    ...base,
+    kind: 'arrive',
+    place: { type: 'platform', nodeId: 'n', platformId: 'P', code: '3', boarding: null },
+  },
   { ...base, kind: 'arrive', place: { type: 'other', nodeId: 'n', kind: 'junction' } },
 ];
 
@@ -97,7 +126,7 @@ describe('stepFloor', () => {
 describe('describeStep', () => {
   it.each(LANGUAGES)('%s: renders every kind of step with no leftover placeholders', (lang) => {
     for (const step of EVERY_STEP) {
-      const { text, notes } = describeStep(step, dictionaries[lang], 'wheelchair');
+      const { text, notes } = describeStep(step, dictionaries[lang], 'wheelchair', lang);
       for (const s of [text, ...notes]) {
         expect(s.trim(), JSON.stringify(step)).not.toBe('');
         expect(s, JSON.stringify(step)).not.toMatch(/[{}]|undefined|null|NaN/);
@@ -106,21 +135,22 @@ describe('describeStep', () => {
   });
 
   it('builds walk sentences from the turn, distance and target', () => {
-    expect(describeStep(walk(), en, 'wheelchair').text).toBe('Go 10 m.');
-    expect(describeStep(walk({ target: 'fare_gate' }), en, 'wheelchair').text).toBe(
+    expect(describeStep(walk(), en, 'wheelchair', 'en').text).toBe('Go 10 m.');
+    expect(describeStep(walk({ target: 'fare_gate' }), en, 'wheelchair', 'en').text).toBe(
       'Go 10 m to the ticket gates.',
     );
-    expect(describeStep(walk({ turn: 'left', target: 'elevator' }), en, 'wheelchair').text).toBe(
-      'Turn left and go 10 m to the elevator.',
-    );
-    expect(describeStep(walk({ turn: 'left', target: 'elevator' }), ja, 'wheelchair').text).toBe(
-      '左に曲がり、エレベーターまで10m進みます。',
-    );
+    expect(
+      describeStep(walk({ turn: 'left', target: 'elevator' }), en, 'wheelchair', 'en').text,
+    ).toBe('Turn left and go 10 m to the elevator.');
+    expect(
+      describeStep(walk({ turn: 'left', target: 'elevator' }), ja, 'wheelchair', 'ja').text,
+    ).toBe('左に曲がり、エレベーターまで10m進みます。');
   });
 
   it('describes ramps from the slope bucket, and says when the slope is unknown', () => {
     const ramp = (maxSlopePct: number | null) =>
-      describeStep(walk({ ramps: { count: 1, lengthM: 21, maxSlopePct } }), en, 'wheelchair').notes;
+      describeStep(walk({ ramps: { count: 1, lengthM: 21, maxSlopePct } }), en, 'wheelchair', 'en')
+        .notes;
     expect(ramp(8)).toEqual(['There is a slope on the way (20 m, up to 8%).']);
     expect(ramp(18)).toEqual(['There is a steep slope on the way (20 m, over 8%).']);
     expect(ramp(null)[0]).toMatch(/not in the data/);
@@ -128,14 +158,14 @@ describe('describeStep', () => {
   });
 
   it('says when a stretch has no slope or step data', () => {
-    expect(describeStep(walk({ uncertainEdgeIds: ['x'] }), en, 'wheelchair').notes).toEqual([
+    expect(describeStep(walk({ uncertainEdgeIds: ['x'] }), en, 'wheelchair', 'en').notes).toEqual([
       'Part of this stretch has no slope or step data. Please take care.',
     ]);
   });
 
   it('names an elevator by its entrance when it is at or near one, and by its floor otherwise', () => {
     const text = (e: Partial<Extract<Step, { kind: 'elevator' }>>) =>
-      describeStep(elevator(e), en, 'wheelchair').text;
+      describeStep(elevator(e), en, 'wheelchair', 'en').text;
     expect(text({ entrance: { label: 'B5', distanceM: 0 } })).toBe(
       'Take the elevator at exit B5 down to B3.',
     );
@@ -151,9 +181,61 @@ describe('describeStep', () => {
 
   it('suggests the wide gate only to profiles that need it', () => {
     const gate: Step = { ...base, kind: 'fare_gate', direction: 'in' };
-    expect(describeStep(gate, en, 'wheelchair').notes).toHaveLength(1);
-    expect(describeStep(gate, en, 'stroller_luggage').notes).toHaveLength(1);
-    expect(describeStep(gate, en, 'sensory').notes).toHaveLength(0);
+    expect(describeStep(gate, en, 'wheelchair', 'en').notes).toHaveLength(1);
+    expect(describeStep(gate, en, 'stroller_luggage', 'en').notes).toHaveLength(1);
+    expect(describeStep(gate, en, 'sensory', 'en').notes).toHaveLength(0);
+  });
+});
+
+describe('boarding notes', () => {
+  const notes = (step: Step, lang: 'ja' | 'en' = 'en') =>
+    describeStep(step, dictionaries[lang], 'wheelchair', lang).notes;
+
+  it('says where on the train you reach the platform, by the next station', () => {
+    expect(notes(onPlatform('arrive', boarding()))).toEqual([
+      'You reach the platform near the front of trains towards Shiodome.',
+      'Car numbers are not in the data, so this says front, middle or back.',
+    ]);
+    expect(notes(onPlatform('arrive', boarding()), 'ja')[0]).toBe(
+      'ホームに着く場所は、汐留方面行きの電車の前の方です。',
+    );
+  });
+
+  it('says where to ride when the route starts on the platform', () => {
+    expect(notes(onPlatform('start', boarding({ part: 'back' })), 'ja')[0]).toBe(
+      '汐留方面行きの電車でこの駅に来るときは、後ろの方の車両に乗ると、降りてすぐこの道順を使えます。',
+    );
+    expect(notes(onPlatform('start', boarding({ nextStop: null, terminating: 'all' })))[0]).toBe(
+      'Coming here on a train that ends here? Ride near the front to get off close to this route.',
+    );
+  });
+
+  it('warns that nobody boards on a platform where every train ends', () => {
+    expect(notes(onPlatform('arrive', boarding({ nextStop: null, terminating: 'all' })))).toEqual([
+      'Every train on this platform ends here. Check which platform you need.',
+    ]);
+  });
+
+  it('flags an estimated direction and an approximate position', () => {
+    const n = notes(onPlatform('arrive', boarding({ confidence: 'weak', approximate: true })));
+    expect(n).toHaveLength(4);
+    expect(n[1]).toMatch(/estimated/);
+    expect(n[2]).toMatch(/approximate/);
+  });
+
+  it('uses the Japanese station name when there is no translation', () => {
+    const b = boarding({ nextStop: { ja: '汐留' } });
+    expect(notes(onPlatform('arrive', b))[0]).toMatch(/towards 汐留/);
+  });
+
+  it('adds nothing when the data cannot tell the direction', () => {
+    expect(
+      notes({
+        ...base,
+        kind: 'arrive',
+        place: { type: 'platform', nodeId: 'n', platformId: 'P', code: '3', boarding: null },
+      }),
+    ).toEqual([]);
   });
 });
 
@@ -206,7 +288,7 @@ describe.skipIf(!existsSync(resolve(GRAPHS, '421.json')))(
     });
     const steps = route.ok ? routeToSteps(idx, route) : [];
     const texts = (lang: 'ja' | 'en') =>
-      steps.map((s) => describeStep(s, dictionaries[lang], 'wheelchair').text);
+      steps.map((s) => describeStep(s, dictionaries[lang], 'wheelchair', lang).text);
 
     it('reads naturally in Japanese', () => {
       expect(texts('ja')).toEqual([

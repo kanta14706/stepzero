@@ -13,6 +13,8 @@
  * - Unknown slope or step height is flagged per step (`uncertainEdgeIds`), never hidden.
  */
 import type { GraphIndex } from './astar';
+import { boardingPosition } from './boarding';
+import type { BoardingPosition } from './boarding';
 import type { GraphNode, NodeId, RouteLeg, RouteResult } from './types';
 
 export type Turn = 'straight' | 'slight_left' | 'left' | 'slight_right' | 'right' | 'u_turn';
@@ -24,7 +26,14 @@ export type Place =
   | { type: 'entrance'; nodeId: NodeId; label: string | null }
   /** An outside node with no entrance in the data (e.g. 新宿's step-free way in). */
   | { type: 'street'; nodeId: NodeId }
-  | { type: 'platform'; nodeId: NodeId; platformId: string | null; code: string | null }
+  | {
+      type: 'platform';
+      nodeId: NodeId;
+      platformId: string | null;
+      code: string | null;
+      /** Front, middle or back of the train at this point; null when the data cannot say. */
+      boarding: BoardingPosition | null;
+    }
   | { type: 'other'; nodeId: NodeId; kind: GraphNode['kind'] };
 
 /** What a walk leads to, so the text can say "… to the ticket gates". */
@@ -181,6 +190,7 @@ function placeOf(n: GraphNode, index: GraphIndex): Place {
         nodeId: n.id,
         platformId: n.platformId ?? null,
         code: platform?.code ?? null,
+        boarding: boardingPosition(index, n.platformId ?? null, n.id),
       };
     }
     default:

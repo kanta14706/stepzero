@@ -129,3 +129,22 @@ test('a step button shows its floor and the route on the map, without errors', a
   );
   expect(errors).toEqual([]);
 });
+
+test('大門: platforms are named by direction and the step list says where on the train', async ({
+  page,
+}) => {
+  await page.goto(STATION);
+  const planner = page.getByRole('region', { name: '駅の中の道順' });
+  await expect(planner.getByRole('combobox', { name: 'ホーム' })).toContainText(
+    '3番線ホーム（汐留方面）',
+  );
+  const last = planner.locator('ol.steps > li').last();
+  await expect(last).toContainText('3番線ホームに着きます');
+  await expect(last).toContainText('汐留方面行きの電車の真ん中です');
+  await expect(last).toContainText('号車の番号はデータにない');
+  // leaving the station: the advice is where to ride
+  await planner.getByRole('radio', { name: /駅を出る/ }).check();
+  await expect(planner.locator('ol.steps > li').first()).toContainText(
+    '真ん中の車両に乗ると、降りてすぐこの道順を使えます',
+  );
+});

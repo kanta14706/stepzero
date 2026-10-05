@@ -88,3 +88,16 @@ def step_free_reachability(graph: dict, strict: bool) -> dict[str, dict[str, boo
             "out": bool(ids & reaches_entrance),
         }
     return out
+
+
+def outside_fare_gates(nodes: list[dict], edges: list[dict]) -> set[str]:
+    """Nodes reachable from an entrance or the street without passing a fare gate.
+
+    On the Tokyo subway every platform is inside the gates, so a boarding area in this set is a
+    data error (at 都庁前 a walkway crosses levels into a platform-2 boarding area).
+    """
+    graph = {"nodes": nodes, "edges": edges}
+    adj = _adjacency(graph, lambda e: e["mode"] != "fare_gate")
+    street = {n["id"] for n in nodes if n["kind"] in ("entrance", "street")}
+    return _reach(adj, street)
+

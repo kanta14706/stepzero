@@ -38,7 +38,7 @@
         "stationId": { "type": "string" },
         "name": { "$ref": "#/$defs/names", "description": "Entrance labels (e.g. D1). Only languages present in the source are given." },
         "gtfsStopId": { "type": "string", "description": "Matched GTFS-Pathways stop_id, when there is one." },
-        "platformId": { "type": "string", "description": "For boarding areas (kind 'platform'): the GTFS platform stop_id, e.g. 421P3." },
+        "platformId": { "type": "string", "description": "For boarding areas (kind 'platform'): the GTFS platform stop_id, e.g. 421P3. A boarding area left out of its platform's nodeIds (warning boarding_area_outside_gates) keeps it." },
         "gtfsLevel": { "type": "number", "description": "Present only when the Pathways level_id differs from `level` (a level conflict); `level` is kept." }
       }
     },
@@ -67,13 +67,31 @@
       "required": ["code", "message"],
       "properties": {
         "code": {
-          "enum": ["unverified_on_site", "gtfs_level_conflicts", "pathway_without_link", "disconnected_nodes", "no_step_free_route_optimistic", "no_step_free_route_strict"]
+          "enum": ["unverified_on_site", "gtfs_level_conflicts", "pathway_without_link", "boarding_area_outside_gates", "disconnected_nodes", "no_step_free_route_optimistic", "no_step_free_route_strict"]
         },
         "message": { "type": "string" },
         "count": { "type": "integer" },
         "pathwayIds": { "type": "array", "items": { "type": "string" } },
         "nodeIds": { "type": "array", "items": { "type": "string" } },
         "platformIds": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "travel": {
+      "type": "object",
+      "description": "Which way trains run along the platform (step 2.6, boarding position). Absent when the timetable and the station positions cannot tell. Derived, not published by the operator: see docs/data-notes.md.",
+      "required": ["frontNodeId", "backNodeId", "lengthM", "areas", "confidence"],
+      "additionalProperties": false,
+      "properties": {
+        "frontNodeId": { "$ref": "#/$defs/nodeId", "description": "Boarding area at the end of the platform where the front of the train stops." },
+        "backNodeId": { "$ref": "#/$defs/nodeId", "description": "Boarding area at the other end." },
+        "lengthM": { "type": "number", "description": "Distance between the outermost boarding areas along the platform axis; not necessarily the platform length." },
+        "areas": { "type": "integer", "description": "Number of boarding areas the axis is taken from." },
+        "confidence": { "enum": ["clear", "weak"], "description": "'weak' when the neighbouring stations lie well off the platform axis (curved tunnel); both still agree on the direction." },
+        "approximate": { "const": true, "description": "Fewer than 6 boarding areas: the ends of the platform are uncertain." },
+        "nextStop": { "$ref": "#/$defs/names", "description": "Station most trips go to next. Absent when every trip ends here." },
+        "prevStop": { "$ref": "#/$defs/names", "description": "Station most trips come from. Absent when every trip starts here." },
+        "headsigns": { "type": "array", "items": { "$ref": "#/$defs/names" }, "description": "Headsigns shown by at least 10% of the platform's trips, most common first." },
+        "terminating": { "enum": ["all", "some"], "description": "Whether trips end at this platform." }
       }
     },
     "reach": {
@@ -104,7 +122,8 @@
             "properties": {
               "id": { "type": "string" },
               "code": { "type": "string" },
-              "nodeIds": { "type": "array", "items": { "$ref": "#/$defs/nodeId" }, "minItems": 1 }
+              "nodeIds": { "type": "array", "items": { "$ref": "#/$defs/nodeId" }, "minItems": 1 },
+              "travel": { "$ref": "#/$defs/travel" }
             }
           }
         },

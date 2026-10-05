@@ -40,6 +40,30 @@ export interface GraphEdge {
   bidirectional: boolean;
 }
 
+export type Names = Partial<Record<string, string>>;
+
+/** Which way trains run along a platform (docs/graph.schema.json `travel`, step 2.6). */
+export interface PlatformTravel {
+  frontNodeId: NodeId;
+  backNodeId: NodeId;
+  lengthM: number;
+  areas: number;
+  confidence: 'clear' | 'weak';
+  approximate?: true;
+  nextStop?: Names;
+  prevStop?: Names;
+  headsigns?: Names[];
+  terminating?: 'all' | 'some';
+}
+
+export interface Platform {
+  id: string;
+  code?: string;
+  nodeIds: NodeId[];
+  /** Absent when the data cannot tell which way trains run. */
+  travel?: PlatformTravel;
+}
+
 export interface StationGraph {
   schemaVersion: 1;
   station: {
@@ -49,7 +73,7 @@ export interface StationGraph {
     levels: number[];
     /** [minLon, minLat, maxLon, maxLat] */
     bbox: [number, number, number, number];
-    platforms: { id: string; code?: string; nodeIds: NodeId[] }[];
+    platforms: Platform[];
     warnings: { code: string; message: string }[];
   };
   nodes: GraphNode[];

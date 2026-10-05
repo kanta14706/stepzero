@@ -6,8 +6,8 @@ import { indexGraph } from '../../routing/astar';
 import type { WorkerLike } from '../../routing/client';
 import { PROFILES } from '../../routing/profiles';
 import { routeToSteps } from '../../routing/steps';
-import type { GraphNode, ProfileId, StationGraph } from '../../routing/types';
-import { describeFailure, describeStep, roundMetres } from './describe';
+import type { GraphNode, Platform, ProfileId, StationGraph } from '../../routing/types';
+import { describeFailure, describeStep, nameIn, roundMetres } from './describe';
 import { useStationRoute } from './useStationRoute';
 
 type Direction = 'in' | 'out';
@@ -93,7 +93,7 @@ export function RoutePlanner({
   onSelectStep,
   onSkipToMap,
 }: Props) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const uid = useId();
   const [direction, setDirection] = useState<Direction>('in');
   const [entrance, setEntrance] = useState(''); // '' = any
@@ -132,8 +132,14 @@ export function RoutePlanner({
     onRouteChange?.(planned);
   }, [planned, onRouteChange]);
 
-  const platformLabel = (id: string, code: string | undefined) =>
-    code ? fmt(t.steps.platform, { code }) : id;
+  const platformLabel = (p: Platform) => {
+    const name = p.code ? fmt(t.steps.platform, { code: p.code }) : p.id;
+    if (p.travel?.terminating === 'all') return fmt(t.routePlatformTerminating, { platform: name });
+    if (p.travel?.nextStop) {
+      return fmt(t.routePlatformToward, { platform: name, next: nameIn(p.travel.nextStop, lang) });
+    }
+    return name;
+  };
 
   return (
     <section aria-labelledby={`${uid}-title`} className="planner">
@@ -186,7 +192,7 @@ export function RoutePlanner({
         >
           {graph.station.platforms.map((p) => (
             <option key={p.id} value={p.id}>
-              {platformLabel(p.id, p.code)}
+              {platformLabel(p)}
             </option>
           ))}
         </select>
@@ -235,7 +241,7 @@ export function RoutePlanner({
           )}
           <ol className="steps">
             {steps.map((step, i) => {
-              const { text, notes } = describeStep(step, t, profile);
+              const { text, notes } = describeStep(step, t, profile, lang);
               return (
                 <li key={i} data-kind={step.kind} data-step={i} data-selected={selectedStep === i}>
                   <span>{text}</span>

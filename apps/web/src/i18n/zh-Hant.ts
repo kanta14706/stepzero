@@ -64,6 +64,8 @@ export const zhHant: Dictionary = {
   routeEntranceOption: '{label}出入口',
   routeEntranceOptionSide: '{label}出入口（{side}側）',
   routePlatform: '月台',
+  routePlatformToward: '{platform}（往{next}方向）',
+  routePlatformTerminating: '{platform}（本站終點）',
   routeProfile: '移動方式',
   routeStepsTitle: '路線',
   routeSummary: '步行約{m}公尺・搭電梯{rides}次',
@@ -156,6 +158,19 @@ export const zhHant: Dictionary = {
     stairsSameFloor: '走樓梯。',
     escalator: '搭電扶梯{dir}到{floor}。',
     escalatorSameFloor: '搭電扶梯。',
+    boardingIn: '抵達月台的位置，靠近往{next}方向列車的{part}。',
+    boardingOut: '搭往{next}方向的列車到本站時，請搭乘{part}的車廂，下車後馬上就能走這條路線。',
+    boardingOutTerminating:
+      '搭以本站為終點的列車抵達時，請搭乘{part}的車廂，下車後馬上就能走這條路線。',
+    boardingInTerminating: '這個月台的列車都以本站為終點。請確認要搭乘的月台。',
+    boardingWeak: '列車的行進方向是依相鄰車站的位置推估的。',
+    boardingApproximate: '這個月台的位置資料較少，僅為大約的位置。',
+    boardingNoCar: '資料中沒有車廂編號，因此以前段、中段、後段表示。',
+    parts: {
+      front: '前段',
+      middle: '中段',
+      back: '後段',
+    },
     groundFloor: '地面',
   },
   noRoute: {

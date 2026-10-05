@@ -64,6 +64,8 @@ const jaLiterals = {
   routeEntranceOption: '{label}出入口',
   routeEntranceOptionSide: '{label}出入口（{side}側）',
   routePlatform: 'ホーム',
+  routePlatformToward: '{platform}（{next}方面）',
+  routePlatformTerminating: '{platform}（この駅止まり）',
   routeProfile: '移動の条件',
   routeStepsTitle: '道順',
   routeSummary: '歩く距離 約{m}m・エレベーター {rides}回',
@@ -157,6 +159,20 @@ const jaLiterals = {
     stairsSameFloor: '階段を通ります。',
     escalator: 'エスカレーターで{floor}へ{dir}。',
     escalatorSameFloor: 'エスカレーターに乗ります。',
+    boardingIn: 'ホームに着く場所は、{next}方面行きの電車の{part}です。',
+    boardingOut:
+      '{next}方面行きの電車でこの駅に来るときは、{part}の車両に乗ると、降りてすぐこの道順を使えます。',
+    boardingOutTerminating:
+      'この駅が終点の電車で来るときは、{part}の車両に乗ると、降りてすぐこの道順を使えます。',
+    boardingInTerminating: 'この番線の電車は、すべてこの駅が終点です。乗る番線を確かめてください。',
+    boardingWeak: '電車の進む向きは、となりの駅の位置から推定しています。',
+    boardingApproximate: 'ホームの位置のデータが少ないため、だいたいの位置です。',
+    boardingNoCar: '号車の番号はデータにないため、前・真ん中・後ろで示しています。',
+    parts: {
+      front: '前の方',
+      middle: '真ん中',
+      back: '後ろの方',
+    },
     groundFloor: '地上',
   },
   noRoute: {

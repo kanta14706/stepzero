@@ -9,6 +9,7 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { dijkstraCost, findRoute, indexGraph } from './astar';
 import type { GraphIndex } from './astar';
+import { boardingPosition } from './boarding';
 import { buildOutageIndex } from './outages';
 import { routeToSteps } from './steps';
 import { expectCoversLegs } from './expect-steps';
@@ -215,6 +216,70 @@ describe.skipIf(!HAVE_DATA)('大門 (421): wheelchair steps, street to platform 
     expect(steps[steps.length - 2]).toMatchObject({ kind: 'walk', target: 'platform' });
     // Every walk after the first elevator has a heading to turn from.
     expect(walksOnly.every((w) => w.turn !== null)).toBe(true);
+  });
+});
+
+describe.skipIf(!HAVE_DATA)('boarding position (step 2.6)', () => {
+  /** Where the wheelchair route from the street meets platform `platformId`. */
+  function arrival(id: string, platformId: string) {
+    const idx = load(id);
+    const r = findRoute(idx, {
+      from: [...ids(idx, 'entrance'), ...ids(idx, 'street')],
+      to: platformNodes(idx, platformId),
+      profile: 'wheelchair',
+    });
+    if (!r.ok) throw new Error(`no wheelchair route to ${platformId}`);
+    return boardingPosition(idx, platformId, r.nodes[r.nodes.length - 1] as string);
+  }
+
+  it('大門: the lift reaches both platforms in the middle of the train', () => {
+    expect(arrival('421', '421P3')).toMatchObject({ part: 'middle', confidence: 'clear' });
+    expect(arrival('421', '421P4')).toMatchObject({ part: 'middle', confidence: 'clear' });
+  });
+
+  it.each([
+    ['421', '421P3', '421P4'],
+    ['403', '403P1', '403P2'],
+    ['426', '426P1', '426P2'],
+    ['424', '424P1', '424P2'],
+  ])('%s: the same lift seen from the two directions mirrors front and back', (id, a, b) => {
+    const pa = arrival(id, a);
+    const pb = arrival(id, b);
+    expect((pa?.fromFront ?? NaN) + (pb?.fromFront ?? NaN)).toBeCloseTo(1, 1);
+  });
+
+  it('六本木: the lift is at an end of the platform, flagged approximate (4 boarding areas)', () => {
+    expect(arrival('424', '424P1')).toMatchObject({ part: 'back', approximate: true });
+    expect(arrival('424', '424P2')).toMatchObject({ part: 'front', approximate: true });
+  });
+
+  it.each(STATIONS)('%s: every route from the street to a platform passes a fare gate', (id) => {
+    const idx = load(id);
+    const from = [...ids(idx, 'entrance'), ...ids(idx, 'street')];
+    for (const p of idx.graph.station.platforms) {
+      for (const profile of ['wheelchair', 'sensory'] as const) {
+        const r = findRoute(idx, { from, to: p.nodeIds, profile });
+        if (r.ok) expect(modes(r), `${p.id} ${profile}`).toContain('fare_gate');
+      }
+    }
+  });
+
+  it.each(STATIONS)('%s: every platform end of a route has a boarding position', (id) => {
+    const idx = load(id);
+    for (const p of idx.graph.station.platforms) {
+      const r = findRoute(idx, {
+        from: [...ids(idx, 'entrance'), ...ids(idx, 'street')],
+        to: p.nodeIds,
+        profile: 'sensory',
+      });
+      if (!r.ok) throw new Error(`${p.id}: no route`);
+      const steps = routeToSteps(idx, r);
+      const arrive = steps[steps.length - 1];
+      expect(arrive?.kind === 'arrive' && arrive.place.type === 'platform').toBe(true);
+      if (arrive?.kind === 'arrive' && arrive.place.type === 'platform') {
+        expect(arrive.place.boarding, p.id).not.toBeNull();
+      }
+    }
   });
 });
 

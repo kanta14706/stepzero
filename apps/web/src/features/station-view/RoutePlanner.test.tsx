@@ -181,4 +181,48 @@ describe('RoutePlanner', () => {
       .click(await screen.findByRole('button', { name: /道順の一覧を飛ばして/ }));
     expect(onSkip).toHaveBeenCalledOnce();
   });
+
+  it('names each platform by where its trains go', async () => {
+    const g = stepFreeGraph();
+    const withTravel: StationGraph = {
+      ...g,
+      station: {
+        ...g.station,
+        platforms: [
+          {
+            id: 'P1',
+            code: '3',
+            nodeIds: ['p'],
+            travel: {
+              frontNodeId: 'p',
+              backNodeId: 'p',
+              lengthM: 0,
+              areas: 1,
+              confidence: 'clear',
+              nextStop: { ja: '汐留', en: 'Shiodome' },
+            },
+          },
+          {
+            id: 'P2',
+            code: '4',
+            nodeIds: ['p'],
+            travel: {
+              frontNodeId: 'p',
+              backNodeId: 'p',
+              lengthM: 0,
+              areas: 1,
+              confidence: 'clear',
+              terminating: 'all',
+            },
+          },
+        ],
+      },
+    };
+    renderPlanner(withTravel);
+    await screen.findAllByRole('listitem');
+    const options = within(screen.getByRole('combobox', { name: 'ホーム' }))
+      .getAllByRole('option')
+      .map((o) => o.textContent);
+    expect(options).toEqual(['3番線ホーム（汐留方面）', '4番線ホーム（この駅止まり）']);
+  });
 });

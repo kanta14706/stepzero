@@ -51,9 +51,17 @@ def test_every_platform_node_exists_and_is_a_platform(graphs):
             for nid in p["nodeIds"]:
                 assert by_id[nid]["kind"] == "platform", (sid, nid)
                 assert by_id[nid]["platformId"] == p["id"]
+        # boarding areas outside the fare gates are left out of their platform, but named
+        excluded = [
+            nid
+            for w in g["station"]["warnings"]
+            if w["code"] == "boarding_area_outside_gates"
+            for nid in w["nodeIds"]
+        ]
+        assert all(by_id[nid]["kind"] == "platform" for nid in excluded)
         assert sum(n["kind"] == "platform" for n in g["nodes"]) == sum(
             len(p["nodeIds"]) for p in platforms
-        )
+        ) + len(excluded)
 
 
 def test_entrances_and_platforms_are_in_the_main_component(graphs):
