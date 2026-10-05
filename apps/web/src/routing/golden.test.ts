@@ -10,6 +10,8 @@ import { describe, expect, it } from 'vitest';
 import { dijkstraCost, findRoute, indexGraph } from './astar';
 import type { GraphIndex } from './astar';
 import { buildOutageIndex } from './outages';
+import { routeToSteps } from './steps';
+import { expectCoversLegs } from './expect-steps';
 import type { OutageReport, ProfileId, RouteResult, StationGraph } from './types';
 
 const DIR = resolve(import.meta.dirname, '../../../../data/build/graphs');
@@ -174,6 +176,78 @@ describe.skipIf(!HAVE_DATA)('新宿 (428): the step-free exit is an unnamed stre
     const r = findRoute(idx, { from: ids(idx, 'street'), to: platforms, profile: 'wheelchair' });
     expect(r.ok).toBe(true);
     expect(modes(r)).not.toContain('stairs');
+  });
+});
+
+describe.skipIf(!HAVE_DATA)('大門 (421): wheelchair steps, street to platform 3', () => {
+  const idx = HAVE_DATA ? load('421') : (undefined as never);
+  const route = HAVE_DATA
+    ? findRoute(idx, {
+        from: ids(idx, 'entrance'),
+        to: platformNodes(idx, '421P3'),
+        profile: 'wheelchair',
+      })
+    : (undefined as never);
+  const steps = HAVE_DATA && route.ok ? routeToSteps(idx, route) : [];
+
+  it('is exit B5, elevator to B3, ticket gates, elevator to B5, platform 3', () => {
+    expect(steps.filter((s) => s.kind !== 'walk')).toMatchObject([
+      { kind: 'start', place: { type: 'entrance', label: 'B5' } },
+      {
+        kind: 'elevator',
+        direction: 'down',
+        panel: 0,
+        toPanel: -3,
+        entrance: { label: 'B5', distanceM: 0 },
+      },
+      { kind: 'fare_gate', direction: 'in', panel: -3 },
+      { kind: 'elevator', direction: 'down', panel: -3, toPanel: -5, entrance: null },
+      { kind: 'arrive', place: { type: 'platform', platformId: '421P3', code: '3' }, panel: -5 },
+    ]);
+  });
+
+  it('leads each walk to what comes next, without stray one-metre stretches', () => {
+    const walksOnly = steps.filter((s) => s.kind === 'walk');
+    expect(walksOnly.length).toBeLessThanOrEqual(10);
+    for (const w of walksOnly.slice(0, -1)) expect(w.lengthM).toBeGreaterThanOrEqual(4);
+    const before = (kind: string) => steps[steps.findIndex((s) => s.kind === kind) - 1];
+    expect(before('fare_gate')).toMatchObject({ kind: 'walk', target: 'fare_gate' });
+    expect(steps[steps.length - 2]).toMatchObject({ kind: 'walk', target: 'platform' });
+    // Every walk after the first elevator has a heading to turn from.
+    expect(walksOnly.every((w) => w.turn !== null)).toBe(true);
+  });
+});
+
+describe.skipIf(!HAVE_DATA)('steps on every Ōedo station and profile', () => {
+  const PROFILES: ProfileId[] = [
+    'wheelchair',
+    'walker_cane',
+    'stroller_luggage',
+    'low_stamina',
+    'sensory',
+  ];
+  it.each(STATIONS)('%s: steps cover the route and match its summary', (id) => {
+    const idx = load(id);
+    const from = [...ids(idx, 'entrance'), ...ids(idx, 'street')];
+    for (const p of idx.graph.station.platforms) {
+      for (const profile of PROFILES) {
+        for (const [a, b] of [
+          [from, p.nodeIds],
+          [p.nodeIds, from],
+        ] as const) {
+          const r = findRoute(idx, { from: a, to: b, profile });
+          if (!r.ok) continue;
+          const steps = routeToSteps(idx, r);
+          expectCoversLegs(steps, r.legs.length);
+          expect(steps.filter((s) => s.kind === 'elevator')).toHaveLength(r.summary.elevators);
+          const uncertain = steps.flatMap((s) => s.uncertainEdgeIds);
+          expect(uncertain).toEqual(r.uncertainEdgeIds);
+          if (profile === 'wheelchair') {
+            expect(steps.some((s) => s.kind === 'stairs' || s.kind === 'escalator')).toBe(false);
+          }
+        }
+      }
+    }
   });
 });
 

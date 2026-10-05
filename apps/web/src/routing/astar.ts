@@ -249,11 +249,20 @@ export function findRoute(index: GraphIndex, request: RouteRequest): RouteResult
     summary: {
       seconds: Math.round(found.legs.reduce((s, l) => s + l.seconds, 0)),
       lengthM: Math.round(found.legs.reduce((s, l) => s + l.edge.lengthM, 0)),
-      elevators: found.legs.filter((l) => l.edge.mode === 'elevator').length,
+      elevators: countElevatorRides(found.legs),
       levelChanges,
     },
     uncertainEdgeIds: found.uncertain,
   };
+}
+
+/** Separate elevator rides on a route: a ride's cab hops and shaft legs count once. */
+export function countElevatorRides(legs: readonly RouteLeg[]): number {
+  let rides = 0;
+  legs.forEach((leg, i) => {
+    if (leg.edge.mode === 'elevator' && legs[i - 1]?.edge.mode !== 'elevator') rides += 1;
+  });
+  return rides;
 }
 
 /** Exposed for tests: plain Dijkstra cost under a profile, to check A* against. */

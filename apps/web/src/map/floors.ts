@@ -1,4 +1,5 @@
 import { fmt } from '../i18n';
+import { panelOf } from '../routing/steps';
 import type { Dictionary } from '../i18n/ja';
 import type { GraphEdge, GraphNode, StationGraph, StationMapData } from './types';
 
@@ -7,9 +8,6 @@ export function floorLabel(panel: number, t: Dictionary): string {
   if (panel === 0) return t.floorGround;
   return panel < 0 ? fmt(t.floorBelow, { n: -panel }) : fmt(t.floorAbove, { n: panel });
 }
-
-/** The whole floor a graph level is shown on: half floors sit on the floor below. */
-export const panelOf = (level: number): number => Math.floor(level);
 
 /** Elements on one floor, from the graph (the routing source of truth) and the station map. */
 export interface FloorSummary {
@@ -25,6 +23,9 @@ export interface FloorSummary {
   /** `null` when the floor has no station-map polygons, so the count is unknown. */
   toilets: number | null;
 }
+
+/** The whole floor a graph level is shown on (defined with the routing steps). */
+export { panelOf };
 
 const TOILET_FACILITIES = new Set(['F001', 'F002', 'F003', 'F004']);
 

@@ -7,7 +7,7 @@ Later prompts assume earlier ones worked. If a finding changes the plan (e.g. a 
 
 ## Where we are (read this first; update it whenever the order or status changes)
 
-Last updated 2026-10-05. The checkboxes below are the source of truth for what is done; this section explains the exceptions.
+Last updated 2026-10-06. The checkboxes below are the source of truth for what is done; this section explains the exceptions.
 
 - **Out of order on purpose.** We did 2.1 (web scaffold) and 2.3 (profiles and A*) before finishing Phase 1, because 1.6 is waiting on API keys and a licence decision. **2.2 (map with floors) is now done** (floor-polygon export plus the MapLibre station page; see D-019).
 - **1.6 (Tier-1 station data) is in progress, not done.** The first pass without keys is in docs/data-notes.md ("step 1.6, in progress"). Still to do: download the other operators' GTFS and count `wheelchair_boarding`, then propose how Tier-1 stations without data are shown. It needs `ODPT_CONSUMER_KEY` (basic) and `ODPT_CHALLENGE_KEY` (challenge-limited operators) in `.env`, which the user is applying for. **Open decision for the user:** extend the D-012 licence exception to the challenge-limited operators (JR East, Keio, Tobu, Sotetsu, Tokyu) for Tier 1, or keep Tier 1 to basic-licence operators.
@@ -16,7 +16,9 @@ Last updated 2026-10-05. The checkboxes below are the source of truth for what i
 - **The UI is temporary scaffolding.** A dedicated visual design step (2.11) is planned after 2.5; it must start by consulting the user on the visual direction.
 - **Web app state:** station pages with the floor map and text list work for the 12 Ōedo stations; **no journey planner yet** (2.4), and the routing module is not used by any screen. **Not yet done on the web side:** the web app is a placeholder home page (no planner); nothing consumes the routing module yet (that is 2.4).
 
-**Next: 2.5 (inside-station step view) before 2.4.** 2.5 needs no OTP or keys: it uses the station graphs, routing profiles, A* router and the station map that already exist, and it is the demo centrepiece. 2.4 later wraps it with OTP train legs. It is an Opus step (switch with `/model` first). Work in slices, committing and pushing after each, and update this section ("2.5 in progress, slice N done") so a new session can resume:
+**2.5 in progress, slice 1 done** (`routeToSteps` in `apps/web/src/routing/steps.ts`, D-020). **Next: slice 2.** Before 2.4, fix the elevator timing in the importer (40 s per elevator edge, so a ride counts 80 to 160 s; see data-notes 2026-10-06, step 2.5).
+
+**Plan: 2.5 (inside-station step view) before 2.4.** 2.5 needs no OTP or keys: it uses the station graphs, routing profiles, A* router and the station map that already exist, and it is the demo centrepiece. 2.4 later wraps it with OTP train legs. Slice 1 and the slice 2 strings are Opus; the rest is Sonnet (see the model guide). Work in slices, committing and pushing after each, and update this section ("2.5 in progress, slice N done") so a new session can resume:
 1. **Route to steps.** Pure logic in `apps/web/src/routing/` (or `src/features/station-view/`): turn a `RouteResult` into steps ("take the elevator to B2", "ticket gates are ahead on the right"), with left/right from the angle between consecutive path segments, floor changes, boarding area. Unit tests on the real graphs (golden: 大門 street to platform, wheelchair). Elevator names do not exist in the data: say "the elevator near entrance A1" or give a position. Unknown slope or step: say so (`uncertainEdgeIds`).
 2. **Picker and step list.** Choose station, entrance, platform and profile; show the steps as an accessible ordered list in all four languages (new i18n keys; Chinese and easy-Japanese wording should get a native-speaker check later, note it in the docs).
 3. **Map highlight.** Draw the route on the floor map and follow floor changes; every highlight needs a text equivalent (the step list).
@@ -37,7 +39,8 @@ Sonnet 5.5 is enough for routine implementation, setup and docs. **Before starti
 | 1.6 proposal for Tier-1 stations without data | Opus | data strategy and licence judgement |
 | 1.7 recommendation (all operators or a subset) | Opus | trade-off from measurements |
 | 2.4 Journey planner | Opus | main design: OTP legs plus in-station legs in one timeline |
-| 2.5 Step view and landmark wording | Opus | quality of Japanese and accessibility wording |
+| 2.5 slice 1 (route to steps) and slice 2 strings (ja, ja-easy, zh-Hant, en wording) | Opus | quality of Japanese and accessibility wording |
+| 2.5 slice 2 UI (picker, step list), slice 3 (map highlight), slice 4 (a11y checklist and test runs) | Sonnet | well specified; switch to Opus if slice 4 fixes turn out ambiguous |
 | 2.6 Boarding position | Opus | ambiguous geometry; honest limits |
 | 2.8 Supabase, RLS, rate limiting, realtime | Opus | security-sensitive |
 | 2.11 Visual design pass | Opus | design judgement; **ask the user for visual direction first** |
