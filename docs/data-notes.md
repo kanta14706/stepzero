@@ -146,3 +146,16 @@ Step-free reachability screen (no stairs or escalators, slope <= 8%, step <= 5 c
 - **Elevator links carry the "under 1 m" width bucket** (`widthM` = 0). This is the cab hop, not a corridor, so the router must not apply the width rule to elevators.
 - **Entrance labels are exit codes, not names, and can repeat.** 大門 uses A1 to A6 and B1 to B5, with B4 on three separate entrance nodes; 麻布十番 uses 4, 5a, 5b, 6 and 7. Only this one label exists (no English or kana), so the UI shows it as is and must tell repeated labels apart by position.
 - **Assumed timings, not data:** the open data has no traversal times, so `seconds` uses assumed speeds (D-015).
+
+### 2026-10-05: station-level data for Tier 1, first pass without API keys (step 1.6, in progress)
+
+Sources checked: the ODPT catalogue (ckan.odpt.org, 363 datasets, scraped from the HTML because the CKAN API is not exposed), the ほこナビ catalogue (CKAN API), and the public ODPT endpoints that need no key. OpenStreetMap via Overpass was tried and timed out twice, so it is untested.
+
+- **ODPT has no barrier-free or station-facility dataset.** For rail operators the catalogue offers GTFS (`train-*`), station information (`r_station-*`), timetables, fares, passenger counts, images and real-time feeds. The v4 `odpt:StationFacility` type does not exist on the public endpoint (404).
+- **Toei has no station-level accessibility data.** `odpt:Station` carries only title, code, position, railway and timetable links. `wheelchair_boarding` is empty on all 149 stops in the plain Toei GTFS (and on all 2,735 stops in the Pathways file).
+- **GTFS train datasets in the Tokyo area:** Toei, Tokyo Metro, TWR Rinkai, Tsukuba Express (MIR) and Tama Monorail under the ODPT basic licence (key from `api.odpt.org`); JR East, Keio, Tobu and Sotetsu under the 「チャレンジ限定」 licence (key from `api-challenge.odpt.org`).
+- **No GTFS train dataset at all** in the catalogue for Tokyu, Odakyu, Seibu, Keikyu and Yurikamome (JSON station and timetable data only), and nothing for Keisei, Tokyo Monorail or Toden. Tier-1 timetable routing for these operators is not possible from ODPT GTFS.
+- **Licence split.** Basic licence: Toei, Tokyo Metro, TWR, MIR, Tama Monorail, Yurikamome (JSON only). Challenge-limited: JR East, Keio, Tobu, Sotetsu, Tokyu (and other private railways' JSON). Using the challenge-limited ones for core Tier-1 needs the same kind of exception as D-012.
+- **ほこナビ has more than the Ōedo stations.** 43 datasets: street-level walking networks around Tokyo-area stations (赤羽, 上野, 渋谷 south, 千駄ヶ谷, 新宿, 東京, 池袋, 新木場, 国際展示場, 東京テレポート, お台場海浜公園, 大門 surroundings, 府中, 千代田・中央, and several in Kawasaki and Yokohama) plus 「バリアフリー施設等データ（東京都・車椅子使用者対応トイレのバリアフリー情報）」. Licence pdl-jp-1.0. These are outdoor or station-surround networks, not in-station detail, and the toilet data is useful for the effort summary (step 3.5).
+- **Superseded datasets on ODPT:** the `mlit_nwd_oedo_*` datasets are marked 【公開終了】; the ほこナビ copies are the ones in use. A Tokyo geospatial 3D point cloud of 都庁前 (`ext-mg_tokyo-geosp-tochomae-3d-pointcloud`) is listed; it could feed the 3D view (step 3.4) but has not been examined.
+- **Still to do** (needs the ODPT keys): download the GTFS of the other operators and count `wheelchair_boarding` per operator, then propose how Tier-1 stations without data are shown.
