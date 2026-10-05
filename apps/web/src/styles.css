@@ -489,3 +489,7 @@ main a {
 .steps li[data-selected='true'] {
   background: var(--surface);
 }
+
+.skip-steps {
+  margin: 0.5rem 0;
+}

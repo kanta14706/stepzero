@@ -14,9 +14,11 @@ vi.mock('./StationMap', () => ({
     panel,
     route,
     selectedStep,
+    locale,
   }: {
     label: string;
     panel: number;
+    locale: Record<string, string>;
     route?: { features: unknown[] } | null;
     selectedStep?: number | null;
   }) => (
@@ -26,6 +28,7 @@ vi.mock('./StationMap', () => ({
       data-panel={panel}
       data-route-features={route?.features.length ?? 0}
       data-selected={selectedStep ?? ''}
+      data-zoom-in={locale['NavigationControl.ZoomIn']}
     />
   ),
 }));
@@ -170,5 +173,21 @@ describe('StationPage route on the map', () => {
         '',
       );
     });
+  });
+
+  it("gives the map's own controls the page language, not MapLibre's English", async () => {
+    renderWith(<StationPage id="T" />);
+    expect(await screen.findByRole('region', { name: /駅構内マップ/ })).toHaveAttribute(
+      'data-zoom-in',
+      '拡大',
+    );
+  });
+
+  it('moves the focus from the step list to the floor choice', async () => {
+    const user = userEvent.setup();
+    renderWith(<StationPage id="T" />);
+    await user.click(await screen.findByRole('radio', { name: '感覚過敏' }));
+    await user.click(await screen.findByRole('button', { name: /道順の一覧を飛ばして/ }));
+    expect(screen.getByRole('radio', { name: '地上' })).toHaveFocus();
   });
 });

@@ -75,6 +75,21 @@ export function StationPage({ id }: { id: string }) {
     },
     [route, hasPanel],
   );
+  // Keyboard users can jump past a long step list to the floor choice.
+  const focusFloorSwitcher = useCallback(() => {
+    document.querySelector<HTMLInputElement>('.floor-switcher input:checked')?.focus();
+  }, []);
+
+  // MapLibre's own labels ("Map", "Zoom in", ...) are English unless told otherwise.
+  const mapLocale = useMemo(
+    () => ({
+      'Map.Title': t.mapCanvasTitle,
+      'NavigationControl.ZoomIn': t.mapZoomIn,
+      'NavigationControl.ZoomOut': t.mapZoomOut,
+      'AttributionControl.ToggleAttribution': t.mapToggleAttribution,
+    }),
+    [t],
+  );
   const routeData = useMemo(
     () => (ready && route ? routeFeatures(ready.graph, route) : null),
     [ready, route],
@@ -105,6 +120,7 @@ export function StationPage({ id }: { id: string }) {
             onRouteChange={onRouteChange}
             selectedStep={selectedStep}
             onSelectStep={onSelectStep}
+            onSkipToMap={focusFloorSwitcher}
           />
           <FloorSwitcher panels={ready.map.panels} value={panel} onChange={setPanel} />
           <p role="status" aria-live="polite" className="floor-status">
@@ -118,6 +134,7 @@ export function StationPage({ id }: { id: string }) {
               panel={panel}
               basemap={basemapFromUrl()}
               label={`${fmt(t.mapAriaLabel, { floor: floorLabel(panel, t) })}${routeData ? ` ${t.mapRouteNote}` : ''}`}
+              locale={mapLocale}
               route={routeData}
               selectedStep={selectedStep}
             />

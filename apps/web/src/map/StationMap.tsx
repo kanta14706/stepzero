@@ -27,6 +27,8 @@ interface Props {
   basemap: Basemap;
   /** Accessible name of the map region (already translated). */
   label: string;
+  /** MapLibre's built-in UI strings (control labels, canvas title) in the page language. */
+  locale: Record<string, string>;
   /** The route to draw (`routeFeatures`), or null for none. */
   route?: FeatureCollection | null;
   /** Index of the step to emphasise, or null for the whole route alike. */
@@ -296,6 +298,7 @@ export default function StationMap(props: Props) {
       ],
       fitBoundsOptions: { padding: 40, animate: false },
       attributionControl: false,
+      locale: props.locale,
       fadeDuration: reduced ? 0 : 300,
       keyboard: true,
       maxZoom: 21,
@@ -313,8 +316,8 @@ export default function StationMap(props: Props) {
       mapRef.current = null;
       loaded.current = false;
     };
-    // The map is rebuilt only when the station or basemap changes; the floor is applied below.
-  }, [props.graph, props.mapData, props.basemap]);
+    // The map is rebuilt only when the station, basemap or language changes; the floor is applied below.
+  }, [props.graph, props.mapData, props.basemap, props.locale]);
 
   // Change floor without rebuilding the map.
   useEffect(() => {

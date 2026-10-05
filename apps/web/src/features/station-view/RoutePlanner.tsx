@@ -80,6 +80,8 @@ interface Props {
   /** The step the map is showing, and the way to change it. Without them the buttons are hidden. */
   selectedStep?: number | null;
   onSelectStep?: (step: number | null) => void;
+  /** Moves the focus past the step list, to the floor switcher. Shows a skip button when given. */
+  onSkipToMap?: () => void;
 }
 
 /** Pick direction, entrance, platform and profile; shows the steps or why there is no route. */
@@ -89,6 +91,7 @@ export function RoutePlanner({
   onRouteChange,
   selectedStep = null,
   onSelectStep,
+  onSkipToMap,
 }: Props) {
   const { t } = useI18n();
   const uid = useId();
@@ -225,6 +228,11 @@ export function RoutePlanner({
               rides: state.result.summary.elevators,
             })}
           </p>
+          {onSkipToMap && (
+            <button type="button" className="step-button skip-steps" onClick={onSkipToMap}>
+              {t.routeSkipToMap}
+            </button>
+          )}
           <ol className="steps">
             {steps.map((step, i) => {
               const { text, notes } = describeStep(step, t, profile);

@@ -164,4 +164,21 @@ describe('RoutePlanner', () => {
     expect(route?.steps[0]?.kind).toBe('start');
     expect(route?.steps.at(-1)?.kind).toBe('arrive');
   });
+
+  it('offers a way past the step list only when the page can take the focus', async () => {
+    const onSkip = vi.fn();
+    const { unmount } = renderPlanner(stepFreeGraph());
+    await screen.findAllByRole('listitem');
+    expect(screen.queryByRole('button', { name: /道順の一覧を飛ばして/ })).toBeNull();
+    unmount();
+    render(
+      <I18nProvider>
+        <RoutePlanner graph={stepFreeGraph()} onSkipToMap={onSkip} />
+      </I18nProvider>,
+    );
+    await userEvent
+      .setup()
+      .click(await screen.findByRole('button', { name: /道順の一覧を飛ばして/ }));
+    expect(onSkip).toHaveBeenCalledOnce();
+  });
 });
