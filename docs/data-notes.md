@@ -118,3 +118,14 @@ Step-free = no stairs or escalators, from a floor-0 outside or boundary node to 
 - **`brail_tile`:** 1401 links with tactile paving, 1579 without, 61 unknown.
 - **Nodes inside map spaces: 56 to 84%.** The rest are on floor 0 or half floors, which have no polygons, plus some on spaces the map omits.
 - **Dataset text errors:** the 大門 description says it is based on 新宿駅 data (copy-paste); see also the earlier note about the 赤羽橋 PDF title.
+
+### 2026-10-05: stitching Pathways nodes to ほこナビ nodes (step 1.4, exploration)
+
+Notebook: `importer/notebooks/03_stitch.ipynb`. Logic: `importer/importer/analysis/stitch.py`. Both layers projected to EPSG:6677; matching is one-to-one per level (assignment problem) with a distance cap.
+
+- **At 10 of 12 stations the two datasets share the same nodes.** Every Pathways node has a ほこナビ node on the same level within 7 cm (the JGD2011/WGS84 datum difference). The match rate is 100% for any cap from 0.25 m to 10 m, and 2,332 of the 2,334 pathways at those stations have a ほこナビ link between their matched endpoints with an agreeing mode (stairs, escalator, elevator, walkway); the two exceptions are listed below. The Pathways file was evidently derived from the ほこナビ network.
+- **ほこナビ is a superset there.** It has 3 to 23 extra links per station with no pathway, and the same number of extra nodes (e.g. 大門: 14 nodes, 14 links). Most are dead-end spurs (degree 1), some are short chains; all have known attributes (rank SSS/ASS/CSS), so they are not the unknown-attribute street links. At 新宿 the extras are much larger (see below).
+- **新宿 (E-27) disagrees between the layers.** 59 of 206 Pathways nodes (levels -1, -2, -2.5) and 86 of 233 ほこナビ nodes (mostly level -1) have no counterpart within 1 m; nearest unmatched pairs are 4 to 50 m apart with no constant offset. 73 of 236 pathways have an unmatched endpoint. ほこナビ has 100 links with no pathway at 新宿: 72 flat, 15 escalators, 9 stairs and 4 elevators. This matches the earlier finding that Pathways had no step-free route at 新宿 while ほこナビ did: the Pathways file for 新宿 is incomplete or out of date relative to ほこナビ, not the other way round.
+- **都庁前 (E-28):** 2 of 256 Pathways nodes stay unmatched at 1 m (429N0009 at 0.96 m, 429N0069 at 3.5 m from the nearest ほこナビ node), and 4 pathways have no direct ほこナビ link (429L0008, 429L0009, 429L0037, 429L0038, walkways of 2.3 to 26.9 m).
+- **Single edge anomalies:** 425L0136 (青山一丁目, escalator, 20.1 m) has no direct ほこナビ link; 426L0284 (国立競技場, walkway, 6.8 m) joins nodes that ほこナビ connects with a link of a different type.
+- **Matching rule:** CLAUDE.md says only "by level and distance". The data shows the level must match exactly and distance is nearly irrelevant where the datasets agree; a distance cap only matters at 新宿 and 都庁前.
