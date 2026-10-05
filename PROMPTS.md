@@ -5,6 +5,20 @@ Later prompts assume earlier ones worked. If a finding changes the plan (e.g. a 
 
 ---
 
+## Where we are (read this first; update it whenever the order or status changes)
+
+Last updated 2026-10-05. The checkboxes below are the source of truth for what is done; this section explains the exceptions.
+
+- **Out of order on purpose.** We did 2.1 (web scaffold) and 2.3 (profiles and A*) before finishing Phase 1, because 1.6 is waiting on API keys and a licence decision. **2.2 (map with floors) was skipped for now**; it needs the ほこナビ floor polygons exported in a web-friendly form first (a small importer addition), so do that export before 2.2.
+- **1.6 (Tier-1 station data) is in progress, not done.** The first pass without keys is in docs/data-notes.md ("step 1.6, in progress"). Still to do: download the other operators' GTFS and count `wheelchair_boarding`, then propose how Tier-1 stations without data are shown. It needs `ODPT_CONSUMER_KEY` (basic) and `ODPT_CHALLENGE_KEY` (challenge-limited operators) in `.env`, which the user is applying for. **Open decision for the user:** extend the D-012 licence exception to the challenge-limited operators (JR East, Keio, Tobu, Sotetsu, Tokyu) for Tier 1, or keep Tier 1 to basic-licence operators.
+- **1.7 (OTP spike) is in progress.** `otp/` has a pinned image (2.10.0), configs, `build.sh` and `docker-compose.yml`, but they are **uncommitted until a Toei-only graph builds** and the 新宿 to 大門 `wheelchair=true` query is saved. The image pull and the Tokyo OSM download were very slow on this network (both resumable). The "more operators" half waits for the keys.
+- **Known gaps carried forward.** 新宿 is flagged "not verified on site" (D-014); 麻布十番 and 新宿西口 have no wheelchair route in the data because the only way down is an 8 to 18% ramp (data-notes, step 1.5); the routing penalty sizes and base timings are assumptions to revisit after user tests (D-015, D-017).
+- **Not yet done on the e2e side:** the web app is a placeholder home page (no planner); nothing consumes the routing module yet (that is 2.4).
+
+To get back on track: finish 1.7 (Toei half), then 1.6 once the keys arrive, then the floor-polygon export and 2.2, then 2.4.
+
+---
+
 ## Every session
 
 **Start of session**
