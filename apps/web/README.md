@@ -24,3 +24,7 @@ Pure functions: `profiles.ts` (cost per edge for each profile), `outages.ts` (ac
 ## Station map (`src/map/`)
 
 `StationPage` (loaded at `#/station/<id>`) shows a floor switcher, the MapLibre map (lazy chunk, GSI vector tiles) and a text list for the selected floor. `?basemap=off` draws only the station data. Data comes from `public/data/` (see `scripts/sync-data.mjs`); the Playwright map tests skip themselves when it is missing.
+
+## Outage reports (`src/features/report/`)
+
+`useOutages(stationId)` follows a station's reports and gives the planner the edges that are out of service; the route is planned again when they change. `supabaseSource.ts` reads `outage_reports` (initial load, then Realtime, reloading after every reconnect) and reports through `report_outage` with an anonymous session; supabase-js is a lazy chunk. Without `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` the app runs without live reports and says so. For local development copy `.env.example` to `.env.development.local` and fill in the key that `supabase status` prints. Unit tests never use a real back end (`FakeOutageSource`, and `vite.config.ts` blanks the variables).

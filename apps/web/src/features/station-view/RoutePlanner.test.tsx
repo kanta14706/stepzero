@@ -30,6 +30,28 @@ function stepFreeGraph(): StationGraph {
   };
 }
 
+/** Exit A1 with two lifts down to the platform; the near one is faster. */
+function twoLiftGraph(): StationGraph {
+  const g = graph(
+    [
+      { ...node('a1', 'entrance', 0), name: { ja: 'A1' } },
+      node('l1-top', 'elevator', 0),
+      node('l2-top', 'elevator', 0),
+      { ...node('p', 'platform', -1), platformId: 'P1' },
+    ],
+    [
+      edge('w1', 'a1', 'l1-top', 'walk'),
+      edge('lift1', 'l1-top', 'p', 'elevator', { seconds: 40 }),
+      edge('w2', 'a1', 'l2-top', 'walk', { seconds: 60, lengthM: 70 }),
+      edge('lift2', 'l2-top', 'p', 'elevator', { seconds: 40 }),
+    ],
+  );
+  return {
+    ...g,
+    station: { ...g.station, platforms: [{ id: 'P1', code: '1', nodeIds: ['p'] }] },
+  };
+}
+
 function renderPlanner(g: StationGraph) {
   return render(
     <I18nProvider>
@@ -224,5 +246,32 @@ describe('RoutePlanner', () => {
       .getAllByRole('option')
       .map((o) => o.textContent);
     expect(options).toEqual(['3番線ホーム（汐留方面）', '4番線ホーム（この駅止まり）']);
+  });
+
+  it('plans again around an elevator reported out of service, and explains when none is left', async () => {
+    const g = twoLiftGraph();
+    const onRouteChange = vi.fn();
+    const ui = (blocked: string[]) => (
+      <I18nProvider>
+        <RoutePlanner graph={g} onRouteChange={onRouteChange} blockedEdgeIds={blocked} />
+      </I18nProvider>
+    );
+    const usedEdges = () => {
+      const last = onRouteChange.mock.lastCall?.[0] as
+        { legs: { edge: { id: string } }[] } | null | undefined;
+      return last?.legs.map((l) => l.edge.id) ?? null;
+    };
+    const { rerender } = render(ui([]));
+    await vi.waitFor(() => {
+      expect(usedEdges()).toEqual(['w1', 'lift1']);
+    });
+    rerender(ui(['lift1']));
+    await vi.waitFor(() => {
+      expect(usedEdges()).toEqual(['w2', 'lift2']);
+    });
+    rerender(ui(['lift1', 'lift2']));
+    const alert = await screen.findByRole('alert');
+    expect(within(alert).getByText(/故障/)).toBeVisible();
+    expect(usedEdges()).toBeNull();
   });
 });

@@ -1,4 +1,5 @@
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
+import { useOutages } from '../features/report/useOutages';
 import { RoutePlanner } from '../features/station-view/RoutePlanner';
 import { fmt, useI18n } from '../i18n';
 import { FloorSummaryList } from './FloorSummaryList';
@@ -31,6 +32,7 @@ export function StationPage({ id }: { id: string }) {
   const [panel, setPanel] = useState<number | null>(null);
   const [route, setRoute] = useState<PlannedRoute | null>(null);
   const [selectedStep, setSelectedStep] = useState<number | null>(null);
+  const outages = useOutages(id);
 
   useEffect(() => {
     let cancelled = false;
@@ -115,7 +117,11 @@ export function StationPage({ id }: { id: string }) {
             {t.tierLine}: {t.tier2Name}
           </p>
           <StationWarnings graph={ready.graph} />
+          <p className="hint outage-status" data-status={outages.status}>
+            {t.outageStatus[outages.status]}
+          </p>
           <RoutePlanner
+            blockedEdgeIds={outages.blockedEdgeIds}
             graph={ready.graph}
             onRouteChange={onRouteChange}
             selectedStep={selectedStep}

@@ -52,6 +52,12 @@ export const zhHant: Dictionary = {
   legendRoute: '路線（黃色、黑邊的粗線；圓圈中的數字為步驟編號）',
   warningUnverified: '這個車站的資料尚未在現場確認。',
   warningStepFree: '依資料，這個車站找不到從出入口到月台的無段差路線。',
+  outageStatus: {
+    connecting: '正在載入故障回報。',
+    live: '已採用其他乘客的故障回報。有新的回報時，路線會自動更新。',
+    offline: '無法連線取得故障回報。目前顯示的路線可能未包含最新的故障。',
+    unavailable: '此環境無法使用故障回報。',
+  },
   tierLine: '導引類型',
   routeTitle: '站內無段差路線',
   routeIntro:

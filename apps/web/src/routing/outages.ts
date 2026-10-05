@@ -14,12 +14,15 @@ export const NO_OUTAGES: OutageIndex = {
 /**
  * Build the outage index. Reports expire at `expiresAt`. For each edge the newest active
  * report decides: `out_of_service` and `blocked` block it, `working` clears it, and
- * `data_wrong` is not an outage (it feeds the data-quality loop instead).
+ * `data_wrong` is not an outage (it feeds the data-quality loop instead). A report the server
+ * ended because a newer status replaced it has `expiresAt` equal to `createdAt` (D-022); it is
+ * skipped whatever the device clock says.
  */
 export function buildOutageIndex(reports: readonly OutageReport[], now: Date): OutageIndex {
   const newest = new Map<string, OutageReport>();
   for (const r of reports) {
-    if (new Date(r.expiresAt).getTime() <= now.getTime()) continue;
+    const expires = new Date(r.expiresAt).getTime();
+    if (expires <= now.getTime() || expires <= new Date(r.createdAt).getTime()) continue;
     const key = r.edgeId;
     const prev = newest.get(key);
     if (!prev || new Date(r.createdAt).getTime() >= new Date(prev.createdAt).getTime()) {

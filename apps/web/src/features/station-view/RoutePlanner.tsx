@@ -82,6 +82,8 @@ interface Props {
   onSelectStep?: (step: number | null) => void;
   /** Moves the focus past the step list, to the floor switcher. Shows a skip button when given. */
   onSkipToMap?: () => void;
+  /** Edges out of service (outage reports). The route is planned again whenever they change. */
+  blockedEdgeIds?: readonly string[];
 }
 
 /** Pick direction, entrance, platform and profile; shows the steps or why there is no route. */
@@ -92,6 +94,7 @@ export function RoutePlanner({
   selectedStep = null,
   onSelectStep,
   onSkipToMap,
+  blockedEdgeIds,
 }: Props) {
   const { t, lang } = useI18n();
   const uid = useId();
@@ -103,6 +106,9 @@ export function RoutePlanner({
   const index = useMemo(() => indexGraph(graph), [graph]);
   const entrances = useMemo(() => entranceOptions(graph, t), [graph, t]);
 
+  // Compared by content, so an update that does not change what is blocked does not re-route.
+  const blockedKey = blockedEdgeIds?.join('\n') ?? '';
+
   const query = useMemo(() => {
     const platformNodes = graph.station.platforms.find((p) => p.id === platform)?.nodeIds ?? [];
     // "Any" also starts from street nodes: at 新宿 the only step-free way in is an unnamed one.
@@ -111,8 +117,8 @@ export function RoutePlanner({
       : graph.nodes.filter((n) => n.kind === 'entrance' || n.kind === 'street').map((n) => n.id);
     const [from, to] =
       direction === 'in' ? [entranceNodes, platformNodes] : [platformNodes, entranceNodes];
-    return { from, to, profile };
-  }, [graph, direction, entrance, platform, profile]);
+    return { from, to, profile, blockedEdgeIds: blockedKey ? blockedKey.split('\n') : [] };
+  }, [graph, direction, entrance, platform, profile, blockedKey]);
 
   const state = useStationRoute(graph, query, createWorker);
 

@@ -52,6 +52,13 @@ const jaLiterals = {
   legendRoute: '道順（黄色、黒い縁の太い線。丸の中の数字は道順のステップ番号）',
   warningUnverified: 'この駅のデータは、現地ではまだ確認されていません。',
   warningStepFree: 'この駅は、データ上、段差のない出入口からホームまでの道が見つかりません。',
+  outageStatus: {
+    connecting: '故障情報を読み込んでいます。',
+    live: '利用者からの故障情報を反映しています。新しい報告があると、道順を自動で変えます。',
+    offline:
+      '故障情報に接続できません。表示中の道順には、最新の故障が反映されていない可能性があります。',
+    unavailable: 'この環境では故障情報を使えません。',
+  },
   tierLine: '案内の種類',
   routeTitle: '駅の中の道順',
   routeIntro:

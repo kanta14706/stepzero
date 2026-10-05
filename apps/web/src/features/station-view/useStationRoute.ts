@@ -7,6 +7,8 @@ export interface RouteQuery {
   from: NodeId[];
   to: NodeId[];
   profile: ProfileId;
+  /** Edges out of service right now (outage reports). */
+  blockedEdgeIds?: string[];
 }
 
 export type RouteState =

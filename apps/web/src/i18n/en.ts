@@ -58,6 +58,12 @@ export const en: Dictionary = {
   warningUnverified: 'The data for this station has not been checked on site yet.',
   warningStepFree:
     'In the data, no step-free way was found between the entrances and the platforms of this station.',
+  outageStatus: {
+    connecting: 'Loading outage reports.',
+    live: 'Using outage reports from other riders. The route changes automatically when a new report comes in.',
+    offline: 'Cannot reach outage reports. The route shown may not include the latest outages.',
+    unavailable: 'Outage reports are not available here.',
+  },
   tierLine: 'Type of guidance',
   routeTitle: 'Step-free route inside the station',
   routeIntro:

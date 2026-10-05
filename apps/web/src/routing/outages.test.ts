@@ -32,6 +32,11 @@ describe('outage index', () => {
     const idx = buildOutageIndex([report({ expiresAt: '2026-10-05T11:59:59Z' })], NOW);
     expect(idx.blockedEdgeIds.size).toBe(0);
   });
+  it('ignores a report the server ended, even if the device clock is behind', () => {
+    const ended = report({ createdAt: '2026-10-05T12:00:00Z', expiresAt: '2026-10-05T12:00:00Z' });
+    const idx = buildOutageIndex([ended], new Date('2026-10-05T11:59:30Z'));
+    expect(idx.blockedEdgeIds.size).toBe(0);
+  });
   it('lets the newest report win: a later "working" clears the edge', () => {
     const idx = buildOutageIndex(
       [
