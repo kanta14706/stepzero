@@ -7,8 +7,11 @@ import type { WorkerLike } from '../../routing/client';
 import { PROFILES } from '../../routing/profiles';
 import { routeToSteps } from '../../routing/steps';
 import type { GraphNode, Platform, ProfileId, StationGraph } from '../../routing/types';
+import { StepReport } from '../report/ReportControls';
+import type { SendReport } from '../report/ReportControls';
 import { describeFailure, describeStep, nameIn, roundMetres } from './describe';
 import { useStationRoute } from './useStationRoute';
+import type { RouteQuery, RouteState } from './useStationRoute';
 
 type Direction = 'in' | 'out';
 
@@ -31,6 +34,24 @@ function sideOf(node: GraphNode, bbox: StationGraph['station']['bbox']): (typeof
   const dy = node.lat - lat0;
   const deg = (Math.atan2(dx, dy) * 180) / Math.PI; // clockwise from north
   return SIDES[Math.round((((deg % 360) + 360) % 360) / 45) % 8] as (typeof SIDES)[number];
+}
+
+const routeKey = (state: RouteState): string =>
+  state.status === 'ready' && state.result.ok
+    ? state.result.legs.map((l) => l.edge.id).join('\n')
+    : '';
+const tripKey = (q: RouteQuery): string => [q.profile, q.from.join(), q.to.join()].join('|');
+
+/**
+ * Whether outage reports changed the route: same trip and profile, a different set of blocked
+ * edges, and a different path. The notice stays until the person changes the trip.
+ */
+function nextRerouted(prev: RouteState, next: RouteState, wasRerouted: boolean): boolean {
+  if (next.status !== 'ready' || prev.status !== 'ready') return false;
+  if (tripKey(prev.query) !== tripKey(next.query)) return false;
+  const blockedChanged =
+    (prev.query.blockedEdgeIds ?? []).join() !== (next.query.blockedEdgeIds ?? []).join();
+  return (blockedChanged && routeKey(prev) !== routeKey(next)) || wasRerouted;
 }
 
 interface EntranceOption {
@@ -84,6 +105,9 @@ interface Props {
   onSkipToMap?: () => void;
   /** Edges out of service (outage reports). The route is planned again whenever they change. */
   blockedEdgeIds?: readonly string[];
+  /** Shows "Report a problem" on elevator and escalator steps when given. */
+  onReport?: SendReport | undefined;
+  reportBusy?: boolean;
 }
 
 /** Pick direction, entrance, platform and profile; shows the steps or why there is no route. */
@@ -95,6 +119,8 @@ export function RoutePlanner({
   onSelectStep,
   onSkipToMap,
   blockedEdgeIds,
+  onReport,
+  reportBusy = false,
 }: Props) {
   const { t, lang } = useI18n();
   const uid = useId();
@@ -121,6 +147,17 @@ export function RoutePlanner({
   }, [graph, direction, entrance, platform, profile, blockedKey]);
 
   const state = useStationRoute(graph, query, createWorker);
+
+  // Adjusting state while rendering (React's pattern for "derive from the previous value").
+  const [seen, setSeen] = useState<{ state: RouteState; rerouted: boolean }>({
+    state,
+    rerouted: false,
+  });
+  if (seen.state !== state && state.status !== 'idle') {
+    setSeen({ state, rerouted: nextRerouted(seen.state, state, seen.rerouted) });
+  }
+  const rerouted = seen.rerouted && state.status === 'ready' && state.result.ok;
+  const legs = state.status === 'ready' && state.result.ok ? state.result.legs : [];
 
   const steps = useMemo(
     () => (state.status === 'ready' && state.result.ok ? routeToSteps(index, state.result) : []),
@@ -226,13 +263,16 @@ export function RoutePlanner({
 
       <p role="status" aria-live="polite" className="floor-status">
         {state.status === 'ready' &&
-          (state.result.ok ? fmt(t.routeAnnounce, { n: steps.length }) : t.routeAnnounceNone)}
+          (state.result.ok
+            ? `${rerouted ? `${t.report.rerouted} ` : ''}${fmt(t.routeAnnounce, { n: steps.length })}`
+            : t.routeAnnounceNone)}
       </p>
 
       {state.status === 'error' && <p role="alert">{t.loadError}</p>}
 
       {state.status === 'ready' && state.result.ok && (
         <>
+          {rerouted && <p className="notice-inline rerouted">{t.report.rerouted}</p>}
           <h4>{t.routeStepsTitle}</h4>
           <p>
             {fmt(t.routeSummary, {
@@ -248,6 +288,11 @@ export function RoutePlanner({
           <ol className="steps">
             {steps.map((step, i) => {
               const { text, notes } = describeStep(step, t, profile, lang);
+              const device =
+                onReport && (step.kind === 'elevator' || step.kind === 'escalator')
+                  ? legs.slice(step.legStart, step.legEnd).find((l) => l.edge.mode === step.kind)
+                      ?.edge.id
+                  : undefined;
               return (
                 <li key={i} data-kind={step.kind} data-step={i} data-selected={selectedStep === i}>
                   <span>{text}</span>
@@ -256,19 +301,33 @@ export function RoutePlanner({
                       {n}
                     </span>
                   ))}
-                  {onSelectStep && (
+                  {(onSelectStep ?? device) && (
                     <div className="step-actions">
-                      <button
-                        type="button"
-                        className="step-button"
-                        aria-pressed={selectedStep === i}
-                        aria-label={fmt(t.routeShowOnMapStep, { n: i + 1 })}
-                        onClick={() => {
-                          onSelectStep(selectedStep === i ? null : i);
-                        }}
-                      >
-                        {t.routeShowOnMap}
-                      </button>
+                      {onSelectStep && (
+                        <button
+                          type="button"
+                          className="step-button"
+                          aria-pressed={selectedStep === i}
+                          aria-label={fmt(t.routeShowOnMapStep, { n: i + 1 })}
+                          onClick={() => {
+                            onSelectStep(selectedStep === i ? null : i);
+                          }}
+                        >
+                          {t.routeShowOnMap}
+                        </button>
+                      )}
+                      {device &&
+                        onReport &&
+                        (step.kind === 'elevator' || step.kind === 'escalator') && (
+                          <StepReport
+                            mode={step.kind}
+                            stepNumber={i + 1}
+                            busy={reportBusy}
+                            onSend={(status) => {
+                              onReport(device, status);
+                            }}
+                          />
+                        )}
                     </div>
                   )}
                 </li>

@@ -2,7 +2,7 @@ import type { OutageReport, OutageStatus } from '../../routing/types';
 
 /** Columns of public.outage_reports the app reads (supabase/migrations, D-022). */
 export const OUTAGE_COLUMNS =
-  'id,edge_id,pathway_id,station_id,status,created_at,expires_at,confirmations,source';
+  'id,edge_id,device_id,pathway_id,station_id,status,created_at,expires_at,confirmations,source';
 
 const STATUSES: readonly OutageStatus[] = ['out_of_service', 'working', 'blocked', 'data_wrong'];
 const SOURCES: readonly OutageReport['source'][] = ['community', 'operator'];
@@ -20,6 +20,7 @@ export function fromRow(row: unknown): OutageReport | null {
   const { id, edge_id, pathway_id, station_id, status, created_at, expires_at, confirmations } =
     row;
   const source = row['source'];
+  const deviceId = row['device_id'];
   if (
     typeof id !== 'string' ||
     typeof edge_id !== 'string' ||
@@ -31,7 +32,8 @@ export function fromRow(row: unknown): OutageReport | null {
     Number.isNaN(Date.parse(created_at)) ||
     Number.isNaN(Date.parse(expires_at)) ||
     typeof confirmations !== 'number' ||
-    !SOURCES.includes(source as OutageReport['source'])
+    !SOURCES.includes(source as OutageReport['source']) ||
+    (deviceId !== undefined && typeof deviceId !== 'string')
   ) {
     return null;
   }
@@ -45,6 +47,7 @@ export function fromRow(row: unknown): OutageReport | null {
     expiresAt: expires_at,
     confirmations,
     source: source as OutageReport['source'],
+    ...(typeof deviceId === 'string' ? { deviceId } : {}),
   };
 }
 

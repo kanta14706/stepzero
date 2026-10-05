@@ -95,6 +95,8 @@ export interface OutageReport {
   expiresAt: string;
   confirmations: number;
   source: 'community' | 'operator';
+  /** The device (elevator shaft or escalator) the edge belongs to; set by the back end (D-022). */
+  deviceId?: string;
 }
 
 /** Why an edge cannot be used by a profile. */

@@ -38,6 +38,7 @@ describe('fromRow', () => {
       expiresAt: '2026-10-06T16:00:00+00:00',
       confirmations: 2,
       source: 'community',
+      deviceId: '424:elevator:e1',
     });
   });
   it('accepts a missing pathway id as null', () => {

@@ -274,4 +274,36 @@ describe('RoutePlanner', () => {
     expect(within(alert).getByText(/故障/)).toBeVisible();
     expect(usedEdges()).toBeNull();
   });
+
+  it('says the route changed because of outage reports, and offers to report the elevator', async () => {
+    const user = userEvent.setup();
+    const g = twoLiftGraph();
+    const onReport = vi.fn();
+    const ui = (blocked: string[]) => (
+      <I18nProvider>
+        <RoutePlanner graph={g} blockedEdgeIds={blocked} onReport={onReport} />
+      </I18nProvider>
+    );
+    const { rerender } = render(ui([]));
+    await screen.findAllByRole('listitem');
+    expect(screen.queryByText(/故障情報が更新されたため/)).toBeNull();
+    await user.click(screen.getByRole('button', { name: /の故障を報告/ }));
+    await user.click(screen.getByRole('button', { name: '使えない' }));
+    expect(onReport).toHaveBeenCalledWith('lift1', 'out_of_service');
+
+    rerender(ui(['lift1']));
+    const notices = await screen.findAllByText(/故障情報が更新されたため、道順を変えました。/);
+    expect(notices.some((n) => n.getAttribute('aria-live') === 'polite')).toBe(true);
+    // A change of trip clears the notice.
+    await user.click(screen.getByRole('radio', { name: '駅を出る（ホームから出入口へ）' }));
+    await vi.waitFor(() => {
+      expect(screen.queryByText(/故障情報が更新されたため/)).toBeNull();
+    });
+  });
+
+  it('hides the report buttons when reporting is not available', async () => {
+    renderPlanner(twoLiftGraph());
+    await screen.findAllByRole('listitem');
+    expect(screen.queryByRole('button', { name: /故障を報告/ })).toBeNull();
+  });
 });

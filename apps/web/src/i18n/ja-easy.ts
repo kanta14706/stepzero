@@ -65,6 +65,45 @@ export const jaEasy: Dictionary = {
       'こわれて いる ばしょの じょうほうが よめません。いまの みちは、あたらしい じょうほうが はいって いない かもしれません。',
     unavailable: 'ここでは、こわれて いる ばしょの じょうほうは つかえません。',
   },
+  report: {
+    name: {
+      elevator: 'エレベーター',
+      escalator: 'エスカレーター',
+      escalatorUp: 'のぼりの エスカレーター',
+      escalatorDown: 'くだりの エスカレーター',
+    },
+    device: { elevator: 'エレベーター', escalator: 'エスカレーター' },
+    floors: '{a}から {b}',
+    named: '{name}（{floors}）',
+    near: '{label}の でいりぐちの ちかくの {named}',
+    open: 'こわれて いたら おしえる',
+    openLabel: 'ステップ{n}の {device}が こわれて いたら おしえる',
+    question: 'この {device}は つかえますか？',
+    outOfService: 'つかえない',
+    working: 'つかえる',
+    cancel: 'やめる',
+    sending: 'おくって います…',
+    thanksOut:
+      '「つかえない」と おくりました。ありがとう ございます。ほかの ひとの みちも すぐに かわります。',
+    thanksWorking: '「つかえる」と おくりました。ありがとう ございます。',
+    errors: {
+      rate_limited:
+        'おくった かずが おおすぎます。しばらく してから、もういちど ためして ください。',
+      offline:
+        'つうしん できないので、おくれませんでした。でんぱの ある ところで、もういちど ためして ください。',
+      unavailable: 'ここでは おしえる ことが できません。えきの ひとに しらせて ください。',
+      not_reportable: 'この せつびは おしえる ことが できません。',
+      failed: 'おくれませんでした。もういちど ためして ください。',
+    },
+    listTitle: 'この えきで こわれて いる もの',
+    listIntro:
+      'ほかの ひとが「つかえない」と おしえて くれた ものです。みちは ここを とおりません。',
+    none: 'いま、こわれて いると いう じょうほうは ありません。',
+    reported: '{time}に おしえて もらいました・たしかめた ひと {n}にん',
+    stillBroken: 'まだ つかえない',
+    fixed: 'つかえる ように なった',
+    rerouted: 'こわれて いる ばしょの じょうほうが かわったので、みちを かえました。',
+  },
   tierLine: 'あんないの しゅるい',
   routeTitle: 'えきの なかの みち',
   routeIntro:

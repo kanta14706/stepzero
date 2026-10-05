@@ -493,3 +493,51 @@ main a {
 .skip-steps {
   margin: 0.5rem 0;
 }
+
+/* Outage reports (step 2.8). Placeholder look until the design pass (2.11). */
+.step-actions,
+.report-choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.report-choice {
+  flex-basis: 100%;
+  margin-top: 0.25rem;
+}
+
+.report-choice[hidden] {
+  display: none;
+}
+
+.report-choice p {
+  flex-basis: 100%;
+  margin: 0;
+  font-weight: 700;
+}
+
+.step-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.report-feedback:empty {
+  display: none;
+}
+
+.report-feedback:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.outage-list {
+  margin: 0.5rem 0;
+  padding-left: 1.25rem;
+}
+
+.outage-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}

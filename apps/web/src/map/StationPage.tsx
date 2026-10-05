@@ -1,4 +1,5 @@
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
+import { OutageList, ReportFeedback, useReporter } from '../features/report/ReportControls';
 import { useOutages } from '../features/report/useOutages';
 import { RoutePlanner } from '../features/station-view/RoutePlanner';
 import { fmt, useI18n } from '../i18n';
@@ -33,6 +34,8 @@ export function StationPage({ id }: { id: string }) {
   const [route, setRoute] = useState<PlannedRoute | null>(null);
   const [selectedStep, setSelectedStep] = useState<number | null>(null);
   const outages = useOutages(id);
+  const reporter = useReporter(outages.report);
+  const canReport = outages.status !== 'unavailable';
 
   useEffect(() => {
     let cancelled = false;
@@ -120,14 +123,25 @@ export function StationPage({ id }: { id: string }) {
           <p className="hint outage-status" data-status={outages.status}>
             {t.outageStatus[outages.status]}
           </p>
+          <ReportFeedback feedback={reporter.feedback} busy={reporter.busy} />
           <RoutePlanner
             blockedEdgeIds={outages.blockedEdgeIds}
+            onReport={canReport ? reporter.send : undefined}
+            reportBusy={reporter.busy}
             graph={ready.graph}
             onRouteChange={onRouteChange}
             selectedStep={selectedStep}
             onSelectStep={onSelectStep}
             onSkipToMap={focusFloorSwitcher}
           />
+          {canReport && (
+            <OutageList
+              graph={ready.graph}
+              reports={outages.reports}
+              busy={reporter.busy}
+              onSend={reporter.send}
+            />
+          )}
           <FloorSwitcher panels={ready.map.panels} value={panel} onChange={setPanel} />
           <p role="status" aria-live="polite" className="floor-status">
             {fmt(t.floorAnnouncement, { floor: floorLabel(panel, t) })}

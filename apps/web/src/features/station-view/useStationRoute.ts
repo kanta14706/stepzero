@@ -12,7 +12,10 @@ export interface RouteQuery {
 }
 
 export type RouteState =
-  { status: 'idle' } | { status: 'error' } | { status: 'ready'; result: RouteResult; ms: number };
+  | { status: 'idle' }
+  | { status: 'error' }
+  /** `query` is the query this result answers. */
+  | { status: 'ready'; result: RouteResult; ms: number; query: RouteQuery };
 
 /**
  * Loads the station graph into the router worker once, then re-routes whenever the query
@@ -50,7 +53,7 @@ export function useStationRoute(
     let cancelled = false;
     client.route({ stationId: graph.station.id, ...query }).then(
       ({ result, ms }) => {
-        if (!cancelled) setState({ status: 'ready', result, ms });
+        if (!cancelled) setState({ status: 'ready', result, ms, query });
       },
       () => {
         if (!cancelled) setState({ status: 'error' });
