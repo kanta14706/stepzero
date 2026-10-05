@@ -251,3 +251,10 @@ Command: `uv run python -m importer.run --stations oedo` now also writes `data/b
 - **Space and facility categories that occur** (GSI spec): spaces B007 to B010 (toilets), B018 (station office), B019 (other room, 1,694 of them), B021 (stairs), B022 (elevator), B023 (escalator), B024 (moving walkway), B025 (slope), B026 (non-public), B029 (walkway); facilities F001 to F004 (toilets), F011 to F015 (stairs, elevator, escalator, slope, moving walkway) and, outside the main 1 to 49 range, **F106 (改札口, ticket gate) and F108 (出口, exit)**. The gate and exit points are the best markers for the map and the step view. Their names are blank in the data.
 - **Multi-function toilets** (B011 to B014, F005 to F008) do not occur at the Ōedo stations, only plain male, female and unisex toilets (B007 to B010). Wheelchair-accessible toilets are not identifiable from this dataset; the separate ほこナビ Tokyo toilet dataset is the better source (step 3.5).
 - **Blank values:** the source uses a single space for "no value"; the export turns it into an absent field.
+
+### 2026-10-06: reportable devices for outage reports (step 2.8, slice 1)
+
+- **Dataset / source:** exported station graphs (ほこナビ backbone with Pathways ids).
+- **Finding:** The 12 Ōedo stations have 323 elevator and escalator edges, forming 233 reportable devices: 42 elevator shafts (connected groups of 3 or 5 edges, plus two single-edge shafts at 青山一丁目) and 191 escalators (one edge each). 315 of the 323 edges carry a GTFS `pathway_id`; the other 8 come from ほこナビ links without a pathway and are keyed by `edge_id` only.
+- **Impact:** A broken elevator has to block every edge of its shaft, not just the one the reporter's route used; the open feed carries both ids.
+- **Handling:** `importer/graph/devices.py` groups the edges; the back end expands a report to its device (D-022).

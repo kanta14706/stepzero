@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 
+from importer.graph.devices import export_devices
 from importer.graph.export import export
 from importer.graph.maps import export_maps
 from importer.graph.stitch import STATION_SLUGS
@@ -40,6 +41,7 @@ def main() -> None:
     stitch_reports()
     graphs = export(ids)
     export_maps(graphs)
+    export_devices(graphs)
     for g in graphs:
         st = g["station"]
         print(

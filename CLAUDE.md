@@ -142,14 +142,14 @@ An edge with an active `out_of_service` or `blocked` report costs ∞. If no rou
 # importer
 cd importer && uv sync && uv run python -m importer.download              # raw data → data/raw/ + manifest.json
 uv run python -m importer.graph.stitch           # stitch report → data/build/reports/stitch/
-uv run python -m importer.run --stations oedo   # stitch reports + graphs → data/build/reports/, data/build/graphs/
+uv run python -m importer.run --stations oedo   # stitch reports + graphs + maps + devices seed → data/build/
 uv run pytest && uv run ruff check .             # tests that need data/raw skip themselves without it
 # OTP
 cd otp && ./build.sh && docker compose up otp
 # web
 cd apps/web && pnpm i && pnpm dev | pnpm sync-data | pnpm test | pnpm e2e | pnpm lint | pnpm lighthouse | pnpm build
-# supabase
-supabase start && supabase db reset
+# supabase (run the importer first: it writes the devices seed)
+supabase start && supabase db reset && supabase test db
 ```
 
 Keep these working. If you change a command, update this section in the same commit.
