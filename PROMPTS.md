@@ -13,6 +13,7 @@ Last updated 2026-10-05. The checkboxes below are the source of truth for what i
 - **1.6 (Tier-1 station data) is in progress, not done.** The first pass without keys is in docs/data-notes.md ("step 1.6, in progress"). Still to do: download the other operators' GTFS and count `wheelchair_boarding`, then propose how Tier-1 stations without data are shown. It needs `ODPT_CONSUMER_KEY` (basic) and `ODPT_CHALLENGE_KEY` (challenge-limited operators) in `.env`, which the user is applying for. **Open decision for the user:** extend the D-012 licence exception to the challenge-limited operators (JR East, Keio, Tobu, Sotetsu, Tokyu) for Tier 1, or keep Tier 1 to basic-licence operators.
 - **1.7 (OTP spike): the Toei half is done and committed.** Build 27 s, 2.4 GiB peak, 1.3 GiB serving, test query saved (see data-notes 2026-10-06 and D-018). **Still to do:** build with the other operators' GTFS once the keys arrive (same `./build.sh <feed>` pattern; add each feed to `feed_zip` in `otp/build.sh`), record time and memory for each, and write the final all-operators-or-subset recommendation in decisions.md. Leave 1.7 unticked until then. That recommendation is an Opus step.
 - **Known gaps carried forward.** 新宿 is flagged "not verified on site" (D-014); 麻布十番 and 新宿西口 have no wheelchair route in the data because the only way down is an 8 to 18% ramp (data-notes, step 1.5); the routing penalty sizes and base timings are assumptions to revisit after user tests (D-015, D-017).
+- **The UI is temporary scaffolding.** A dedicated visual design step (2.11) is planned after 2.5; it must start by consulting the user on the visual direction.
 - **Web app state:** station pages with the floor map and text list work for the 12 Ōedo stations; **no journey planner yet** (2.4), and the routing module is not used by any screen. **Not yet done on the web side:** the web app is a placeholder home page (no planner); nothing consumes the routing module yet (that is 2.4).
 
 To get back on track: finish 1.6 and the rest of 1.7 once the keys arrive, then 2.4 (journey planner; an Opus step), 2.5 and so on.
@@ -31,6 +32,7 @@ Sonnet 5.5 is enough for routine implementation, setup and docs. **Before starti
 | 2.5 Step view and landmark wording | Opus | quality of Japanese and accessibility wording |
 | 2.6 Boarding position | Opus | ambiguous geometry; honest limits |
 | 2.8 Supabase, RLS, rate limiting, realtime | Opus | security-sensitive |
+| 2.11 Visual design pass | Opus | design judgement; **ask the user for visual direction first** |
 | 2.9 Offline PWA | Opus | service-worker edge cases |
 | 3.1 Feed spec and the GTFS-Realtime extension proposal | Opus | specification writing |
 | 3.4 3D station view | Opus | rendering and performance |
@@ -120,6 +122,9 @@ Sonnet 5.5 is enough for routine implementation, setup and docs. **Before starti
 
 - [ ] **2.10 Coverage tiers in the UI**
 > Show each station's tier (full detail vs basic) in search results and on the journey, with a short plain-language explanation of what that means for the guidance.
+
+- [ ] **2.11 Visual design pass** (do after 2.5, once the planner and step view exist; then re-check 4.1 items)
+> **First consult the user on the visual direction before designing anything**: ask for reference apps, mood, colours, logo ideas and anything they dislike, then propose 2 or 3 directions (with small mockups or screenshots) and let them choose. Do not pick a direction alone. Then restyle all screens (home, planner, step view, station map, report flow) with a small design system built on the existing CSS variables: type scale, colour tokens for light, dark and high contrast, spacing, icons, a real brand mark and map styling for floors. Keep every accessibility requirement in CLAUDE.md (contrast, 44 px targets, focus, reduced motion) and re-run axe, Lighthouse and the e2e tests. Record the decisions in docs/decisions.md.
 
 ---
 
