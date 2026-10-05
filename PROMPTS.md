@@ -16,7 +16,15 @@ Last updated 2026-10-05. The checkboxes below are the source of truth for what i
 - **The UI is temporary scaffolding.** A dedicated visual design step (2.11) is planned after 2.5; it must start by consulting the user on the visual direction.
 - **Web app state:** station pages with the floor map and text list work for the 12 Ōedo stations; **no journey planner yet** (2.4), and the routing module is not used by any screen. **Not yet done on the web side:** the web app is a placeholder home page (no planner); nothing consumes the routing module yet (that is 2.4).
 
-To get back on track: finish 1.6 and the rest of 1.7 once the keys arrive, then 2.4 (journey planner; an Opus step), 2.5 and so on.
+**Next: 2.5 (inside-station step view) before 2.4.** 2.5 needs no OTP or keys: it uses the station graphs, routing profiles, A* router and the station map that already exist, and it is the demo centrepiece. 2.4 later wraps it with OTP train legs. It is an Opus step (switch with `/model` first). Work in slices, committing and pushing after each, and update this section ("2.5 in progress, slice N done") so a new session can resume:
+1. **Route to steps.** Pure logic in `apps/web/src/routing/` (or `src/features/station-view/`): turn a `RouteResult` into steps ("take the elevator to B2", "ticket gates are ahead on the right"), with left/right from the angle between consecutive path segments, floor changes, boarding area. Unit tests on the real graphs (golden: 大門 street to platform, wheelchair). Elevator names do not exist in the data: say "the elevator near entrance A1" or give a position. Unknown slope or step: say so (`uncertainEdgeIds`).
+2. **Picker and step list.** Choose station, entrance, platform and profile; show the steps as an accessible ordered list in all four languages (new i18n keys; Chinese and easy-Japanese wording should get a native-speaker check later, note it in the docs).
+3. **Map highlight.** Draw the route on the floor map and follow floor changes; every highlight needs a text equivalent (the step list).
+4. **Accessibility.** Write `docs/a11y-checklist.md` (screen-reader reading order, keyboard walkthrough), run axe, Lighthouse and Playwright; fix issues.
+
+After 2.5: 2.8 (Supabase and outage reports, Opus) so the broken-elevator reroute demo works, then 2.4, 2.9, 2.10, then 2.11 (visual design; consult the user first). Finish 1.6 and the rest of 1.7 whenever the ODPT keys arrive.
+
+**Environment notes for a new session.** Installed on the user's Mac: `uv` (importer), `node` and `pnpm` (apps/web), Docker (OTP). Playwright's downloaded browser stalled, so run browser tests with `PW_CHANNEL=msedge pnpm e2e` and Lighthouse with `CHROME_PATH="/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" pnpm lighthouse`. The importer output (`data/build/`) and the OTP inputs (`otp/data/`) are git-ignored; rebuild with `cd importer && uv run python -m importer.run --stations oedo` and `cd otp && ./build.sh toei-pathway`. The dev server is `cd apps/web && pnpm dev`. Network on this Mac has been slow for big downloads. Commit trailers: none (see memory). Nothing is running in the background.
 
 ---
 
