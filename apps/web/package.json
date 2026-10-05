@@ -10,6 +10,7 @@
     "preview": "vite preview --port 4173",
     "test": "vitest run",
     "e2e": "playwright test",
+    "e2e:live": "node scripts/e2e-live.mjs",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "typecheck": "tsc -b",

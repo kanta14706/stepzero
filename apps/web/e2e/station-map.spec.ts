@@ -37,6 +37,8 @@ test('floor switcher works with the keyboard and updates the text list and statu
   page,
 }) => {
   await page.goto(STATION);
+  // A new route moves the map to the floor where it starts; let that happen first.
+  await expect(page.locator('ol.steps > li').first()).toBeVisible();
   const b1 = page.getByRole('radio', { name: '地下1階' });
   await b1.focus();
   await page.keyboard.press('ArrowDown');

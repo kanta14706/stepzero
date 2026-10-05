@@ -1,4 +1,5 @@
 dist
+dist-live
 coverage
 playwright-report
 test-results

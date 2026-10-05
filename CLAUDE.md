@@ -147,7 +147,8 @@ uv run pytest && uv run ruff check .             # tests that need data/raw skip
 # OTP
 cd otp && ./build.sh && docker compose up otp
 # web
-cd apps/web && pnpm i && pnpm dev | pnpm sync-data | pnpm test | pnpm e2e | pnpm lint | pnpm lighthouse | pnpm build
+cd apps/web && pnpm i && pnpm dev | pnpm sync-data | pnpm test | pnpm e2e | pnpm e2e:live | pnpm lint | pnpm lighthouse | pnpm build
+# pnpm e2e:live needs `supabase start`; it runs e2e/*.live.spec.ts against a build with the local keys
 # supabase (run the importer first: it writes the devices seed)
 supabase start && supabase db reset && supabase test db
 ```

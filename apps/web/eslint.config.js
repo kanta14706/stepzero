@@ -5,7 +5,16 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist', 'coverage', 'playwright-report', 'test-results', '.lighthouseci'] },
+  {
+    ignores: [
+      'dist',
+      'dist-live',
+      'coverage',
+      'playwright-report',
+      'test-results',
+      '.lighthouseci',
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
   jsxA11y.flatConfigs.recommended,

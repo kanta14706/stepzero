@@ -21,6 +21,7 @@ describe('useOutages', () => {
   it('starts connecting, then lists the blocked edges from the loaded reports', () => {
     const { source, hook } = setup();
     expect(hook.result.current.status).toBe('connecting');
+    expect(hook.result.current.loaded).toBe(false);
     act(() => {
       source.push(
         'T',
@@ -29,6 +30,7 @@ describe('useOutages', () => {
       );
     });
     expect(hook.result.current.status).toBe('live');
+    expect(hook.result.current.loaded).toBe(true);
     expect(hook.result.current.blockedEdgeIds).toEqual(['e1', 'e2']);
   });
 

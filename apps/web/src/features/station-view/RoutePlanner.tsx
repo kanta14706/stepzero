@@ -105,6 +105,11 @@ interface Props {
   onSkipToMap?: () => void;
   /** Edges out of service (outage reports). The route is planned again whenever they change. */
   blockedEdgeIds?: readonly string[];
+  /**
+   * False until the outage reports have first loaded. Route changes before that are not news:
+   * the first route was simply planned before the reports arrived.
+   */
+  outagesLoaded?: boolean;
   /** Shows "Report a problem" on elevator and escalator steps when given. */
   onReport?: SendReport | undefined;
   reportBusy?: boolean;
@@ -121,6 +126,7 @@ export function RoutePlanner({
   blockedEdgeIds,
   onReport,
   reportBusy = false,
+  outagesLoaded = true,
 }: Props) {
   const { t, lang } = useI18n();
   const uid = useId();
@@ -149,12 +155,25 @@ export function RoutePlanner({
   const state = useStationRoute(graph, query, createWorker);
 
   // Adjusting state while rendering (React's pattern for "derive from the previous value").
-  const [seen, setSeen] = useState<{ state: RouteState; rerouted: boolean }>({
+  // `loaded` is whether the route on screen already takes the loaded outage reports into
+  // account; only changes after that are announced.
+  const [seen, setSeen] = useState<{ state: RouteState; rerouted: boolean; loaded: boolean }>({
     state,
     rerouted: false,
+    loaded: false,
   });
+  const reflectsReports =
+    outagesLoaded &&
+    state.status === 'ready' &&
+    (state.query.blockedEdgeIds ?? []).join('\n') === blockedKey;
   if (seen.state !== state && state.status !== 'idle') {
-    setSeen({ state, rerouted: nextRerouted(seen.state, state, seen.rerouted) });
+    setSeen({
+      state,
+      rerouted: seen.loaded && nextRerouted(seen.state, state, seen.rerouted),
+      loaded: reflectsReports,
+    });
+  } else if (!seen.loaded && reflectsReports) {
+    setSeen({ ...seen, loaded: true });
   }
   const rerouted = seen.rerouted && state.status === 'ready' && state.result.ok;
   const legs = state.status === 'ready' && state.result.ok ? state.result.legs : [];

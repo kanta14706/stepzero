@@ -37,6 +37,8 @@ export function useOutageSource(): OutageSource {
 
 export interface Outages {
   status: LiveStatus;
+  /** True once the station's full list has been loaded; changes after that are news. */
+  loaded: boolean;
   /** Active reports for the station. */
   reports: OutageReport[];
   /** Edges out of service right now, sorted. */
@@ -56,7 +58,8 @@ export function useOutages(stationId: string): Outages {
     stationId: string;
     reports: ReadonlyMap<string, OutageReport>;
     status: LiveStatus;
-  }>({ stationId, reports: new Map(), status: 'connecting' });
+    loaded: boolean;
+  }>({ stationId, reports: new Map(), status: 'connecting', loaded: false });
   const [now, setNow] = useState(() => Date.now());
 
   const apply = useCallback(
@@ -64,8 +67,13 @@ export function useOutages(stationId: string): Outages {
       const t = Date.now();
       setNow(t);
       setState((s) => {
-        const current = s.stationId === stationId ? s : { ...s, stationId, reports: new Map() };
-        return { ...current, reports: mergeReports(current.reports, rows, replace, t) };
+        const current =
+          s.stationId === stationId ? s : { ...s, stationId, reports: new Map(), loaded: false };
+        return {
+          ...current,
+          reports: mergeReports(current.reports, rows, replace, t),
+          loaded: current.loaded || replace,
+        };
       });
     },
     [stationId],
@@ -79,7 +87,7 @@ export function useOutages(stationId: string): Outages {
           setState((s) =>
             s.stationId === stationId
               ? { ...s, status }
-              : { stationId, reports: new Map(), status },
+              : { stationId, reports: new Map(), status, loaded: false },
           );
         },
       }),
@@ -120,5 +128,11 @@ export function useOutages(stationId: string): Outages {
     [source, apply],
   );
 
-  return { status: current?.status ?? 'connecting', reports: list, blockedEdgeIds, report };
+  return {
+    status: current?.status ?? 'connecting',
+    loaded: current?.loaded ?? false,
+    reports: list,
+    blockedEdgeIds,
+    report,
+  };
 }

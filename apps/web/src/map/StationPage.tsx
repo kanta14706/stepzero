@@ -126,6 +126,7 @@ export function StationPage({ id }: { id: string }) {
           <ReportFeedback feedback={reporter.feedback} busy={reporter.busy} />
           <RoutePlanner
             blockedEdgeIds={outages.blockedEdgeIds}
+            outagesLoaded={outages.loaded}
             onReport={canReport ? reporter.send : undefined}
             reportBusy={reporter.busy}
             graph={ready.graph}

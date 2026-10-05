@@ -62,6 +62,9 @@ macOS Safari with VoiceOver, and iOS Safari with VoiceOver, in Japanese and in E
 - [ ] The no-route alert is announced when it appears and its list of alternatives is reachable.
 - [ ] Swipe order on iOS follows section 2.
 - [ ] Switching language keeps the place on the page and the map labels change.
+- [ ] Outage reports (step 2.8, needs Supabase configured): "Report a problem with the elevator in step N, collapsed" is announced; opening it moves to "Not working" inside the group "Is this elevator working?"; Escape returns to the report button.
+- [ ] After a report the focus lands on the thank-you (or error) message and it is read once; when the route then changes, "The route changed because outage reports were updated" is read with the step count, not twice.
+- [ ] In "Outages at this station", each "Still not working" / "Working again" button is read with the device it is about (its description).
 
 TalkBack on Android if a device is available.
 

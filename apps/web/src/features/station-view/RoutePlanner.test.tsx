@@ -306,4 +306,27 @@ describe('RoutePlanner', () => {
     await screen.findAllByRole('listitem');
     expect(screen.queryByRole('button', { name: /故障を報告/ })).toBeNull();
   });
+
+  it('does not call it a change when the reports first arrive after the route', async () => {
+    const g = twoLiftGraph();
+    const onRouteChange = vi.fn();
+    const ui = (blocked: string[], loaded: boolean) => (
+      <I18nProvider>
+        <RoutePlanner
+          graph={g}
+          blockedEdgeIds={blocked}
+          outagesLoaded={loaded}
+          onRouteChange={onRouteChange}
+        />
+      </I18nProvider>
+    );
+    const { rerender } = render(ui([], false));
+    await screen.findAllByRole('listitem');
+    rerender(ui(['lift1'], true));
+    await vi.waitFor(() => {
+      const last = onRouteChange.mock.lastCall?.[0] as { legs: { edge: { id: string } }[] } | null;
+      expect(last?.legs.map((l) => l.edge.id)).toEqual(['w2', 'lift2']);
+    });
+    expect(screen.queryByText(/故障情報が更新されたため/)).toBeNull();
+  });
 });
