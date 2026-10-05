@@ -1,6 +1,21 @@
 {
   "entries": [
     {
+      "id": "hokonavi:akabanebashi:confirmation-pdf",
+      "source": "ほこナビ confirmation-pdf (Ōedo Line, akabanebashi)",
+      "url": "https://ckan.hokonavi.go.jp/dataset/b544bc33-b4bf-416c-949e-edc257989db0/resource/7b30e911-d7a4-4f58-a293-23f170d66e9d/download/station_oedo_akabanebashi.pdf",
+      "local_path": "hokonavi/akabanebashi/station_oedo_akabanebashi.pdf",
+      "licence": "pdl-jp-1.0",
+      "licence_url": "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0",
+      "downloaded_at": "2026-10-05",
+      "sha256": "80ca2c90143f33891f6834bafc0e9f77f0a18368966653101e4fa203ac9a317d",
+      "size_bytes": 166224,
+      "notes": [
+        "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/station_oedo_akanabebashi",
+        "Dataset notes say publication is limited to the contest period."
+      ]
+    },
+    {
       "id": "hokonavi:akabanebashi:network-geojson",
       "source": "ほこナビ network-geojson (Ōedo Line, akabanebashi)",
       "url": "https://ckan.hokonavi.go.jp/dataset/b544bc33-b4bf-416c-949e-edc257989db0/resource/a2d42479-5cbc-4c0b-8a67-b41b66570942/download/nwd_oedo_akabanebashi_geojson.zip",
@@ -27,6 +42,21 @@
       "size_bytes": 31845,
       "notes": [
         "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/station_oedo_akanabebashi",
+        "Dataset notes say publication is limited to the contest period."
+      ]
+    },
+    {
+      "id": "hokonavi:aoyama-itchome:confirmation-pdf",
+      "source": "ほこナビ confirmation-pdf (Ōedo Line, aoyama-itchome)",
+      "url": "https://ckan.hokonavi.go.jp/dataset/ea3daead-46e4-41f8-a18e-e1f65f8835a6/resource/fc0cd536-79b3-45d0-9d73-8fb4bd3f2ab3/download/station_oedo_aoyama-itchome.pdf",
+      "local_path": "hokonavi/aoyama-itchome/station_oedo_aoyama-itchome.pdf",
+      "licence": "pdl-jp-1.0",
+      "licence_url": "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0",
+      "downloaded_at": "2026-10-05",
+      "sha256": "cd21dfb5ae7302cfb9e0947b25adeb855f6856f22169b60e8c6c54007aebf02c",
+      "size_bytes": 219350,
+      "notes": [
+        "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/oedo_aoyama-itchome",
         "Dataset notes say publication is limited to the contest period."
       ]
     },
@@ -61,6 +91,21 @@
       ]
     },
     {
+      "id": "hokonavi:azabu-juban:confirmation-pdf",
+      "source": "ほこナビ confirmation-pdf (Ōedo Line, azabu-juban)",
+      "url": "https://ckan.hokonavi.go.jp/dataset/c12b859f-d53a-440c-99f7-7309ff851a8d/resource/95b6b60b-fc3b-41e2-b0ad-f64287940010/download/station_oedo_azabu-juban.pdf",
+      "local_path": "hokonavi/azabu-juban/station_oedo_azabu-juban.pdf",
+      "licence": "pdl-jp-1.0",
+      "licence_url": "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0",
+      "downloaded_at": "2026-10-05",
+      "sha256": "fbf490da6c131086ea2c50a7e3ffcdf35d0e3e9fb7aa1e89926e2cc60900fa7e",
+      "size_bytes": 219787,
+      "notes": [
+        "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/mlit_station_oedo_azabu-juban",
+        "Dataset notes say publication is limited to the contest period."
+      ]
+    },
+    {
       "id": "hokonavi:azabu-juban:network-geojson",
       "source": "ほこナビ network-geojson (Ōedo Line, azabu-juban)",
       "url": "https://ckan.hokonavi.go.jp/dataset/c12b859f-d53a-440c-99f7-7309ff851a8d/resource/a9d65944-4c99-4e2b-9984-fa82b528abc9/download/nwd_oedo_azabu-juban_geojson.zip",
@@ -87,6 +132,21 @@
       "size_bytes": 44093,
       "notes": [
         "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/mlit_station_oedo_azabu-juban",
+        "Dataset notes say publication is limited to the contest period."
+      ]
+    },
+    {
+      "id": "hokonavi:daimon:confirmation-pdf",
+      "source": "ほこナビ confirmation-pdf (Ōedo Line, daimon)",
+      "url": "https://ckan.hokonavi.go.jp/dataset/a00afe74-d687-42d0-9ca3-65b111249063/resource/471a02ca-4938-4dd1-93b3-ed860b718457/download/station_oedo_daimon.pdf",
+      "local_path": "hokonavi/daimon/station_oedo_daimon.pdf",
+      "licence": "pdl-jp-1.0",
+      "licence_url": "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0",
+      "downloaded_at": "2026-10-05",
+      "sha256": "25851204dfda837bfdf048ec916b90b46b5beb707532acc8994f7c0d905f7b2f",
+      "size_bytes": 259470,
+      "notes": [
+        "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/station_oedo_daimon",
         "Dataset notes say publication is limited to the contest period."
       ]
     },
@@ -121,6 +181,21 @@
       ]
     },
     {
+      "id": "hokonavi:higashi-shinjuku:confirmation-pdf",
+      "source": "ほこナビ confirmation-pdf (Ōedo Line, higashi-shinjuku)",
+      "url": "https://ckan.hokonavi.go.jp/dataset/e45cf561-c947-4d0c-95b5-b4c31207dc08/resource/992f7905-87fc-4e16-b30e-8aca62a224ec/download/station_oedo_higashi-shinjuku.pdf",
+      "local_path": "hokonavi/higashi-shinjuku/station_oedo_higashi-shinjuku.pdf",
+      "licence": "pdl-jp-1.0",
+      "licence_url": "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0",
+      "downloaded_at": "2026-10-05",
+      "sha256": "f78a6fe9ddcca31352d4eb18a2c1e65c074a73fa357d7a3a0530248926733dc5",
+      "size_bytes": 174752,
+      "notes": [
+        "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/mlit_station_oedo_higashi-shinjuku",
+        "Dataset notes say publication is limited to the contest period."
+      ]
+    },
+    {
       "id": "hokonavi:higashi-shinjuku:network-geojson",
       "source": "ほこナビ network-geojson (Ōedo Line, higashi-shinjuku)",
       "url": "https://ckan.hokonavi.go.jp/dataset/e45cf561-c947-4d0c-95b5-b4c31207dc08/resource/84a2a4e6-22d8-4fba-b84c-8be8c44fb09b/download/nwd_oedo_higashi-shinjuku_geojson.zip",
@@ -147,6 +222,21 @@
       "size_bytes": 30834,
       "notes": [
         "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/mlit_station_oedo_higashi-shinjuku",
+        "Dataset notes say publication is limited to the contest period."
+      ]
+    },
+    {
+      "id": "hokonavi:kokuritsu-kyogijo:confirmation-pdf",
+      "source": "ほこナビ confirmation-pdf (Ōedo Line, kokuritsu-kyogijo)",
+      "url": "https://ckan.hokonavi.go.jp/dataset/1108976a-8642-452e-8d2e-ed2ca6a71f71/resource/2a7f2038-e809-46bd-b94c-df008712d731/download/station_oedo_kokuritsu-kyogijo.pdf",
+      "local_path": "hokonavi/kokuritsu-kyogijo/station_oedo_kokuritsu-kyogijo.pdf",
+      "licence": "pdl-jp-1.0",
+      "licence_url": "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0",
+      "downloaded_at": "2026-10-05",
+      "sha256": "9ead7044a9bdedb692a096c3cdf4226e37912f5400f9a94482eddb6a1ffef69c",
+      "size_bytes": 225143,
+      "notes": [
+        "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/station_oedo_kokuritsu-kyogijo",
         "Dataset notes say publication is limited to the contest period."
       ]
     },
@@ -178,6 +268,22 @@
       "notes": [
         "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/station_oedo_kokuritsu-kyogijo",
         "Dataset notes say publication is limited to the contest period."
+      ]
+    },
+    {
+      "id": "hokonavi:roppongi:confirmation-pdf",
+      "source": "ほこナビ confirmation-pdf (Ōedo Line, roppongi)",
+      "url": "https://ckan.hokonavi.go.jp/dataset/dab17927-f6d9-4410-aaec-c5918860324c/resource/ecbfe8de-5df8-410e-a9a0-c0622a815f0b/download/station_oedo_roppongi.pdf",
+      "local_path": "hokonavi/roppongi/station_oedo_roppongi.pdf",
+      "licence": "unspecified in CKAN metadata",
+      "licence_url": "",
+      "downloaded_at": "2026-10-05",
+      "sha256": "9fc9e8709b0c13f8f017dd1f8ad6361f1a1d2429758fe6e867db7f4a2a70d8b4",
+      "size_bytes": 254364,
+      "notes": [
+        "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/mlit_station_oedo_roppongi",
+        "Dataset notes say publication is limited to the contest period.",
+        "CKAN licence_id is empty for this dataset."
       ]
     },
     {
@@ -213,6 +319,21 @@
       ]
     },
     {
+      "id": "hokonavi:shinjuku-nishiguchi:confirmation-pdf",
+      "source": "ほこナビ confirmation-pdf (Ōedo Line, shinjuku-nishiguchi)",
+      "url": "https://ckan.hokonavi.go.jp/dataset/4200135e-9754-4974-a371-bd47bdb6a530/resource/26c0b38d-a6ce-432d-b2a0-ef222ab0f117/download/station_oedo_shinjuku-nishiguchi.pdf",
+      "local_path": "hokonavi/shinjuku-nishiguchi/station_oedo_shinjuku-nishiguchi.pdf",
+      "licence": "pdl-jp-1.0",
+      "licence_url": "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0",
+      "downloaded_at": "2026-10-05",
+      "sha256": "38a501a392c02839492787d48db13cb210cde42efb748fc0358d553ce8674f16",
+      "size_bytes": 203684,
+      "notes": [
+        "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/station_oedo_shinjukunishiguchi",
+        "Dataset notes say publication is limited to the contest period."
+      ]
+    },
+    {
       "id": "hokonavi:shinjuku-nishiguchi:network-geojson",
       "source": "ほこナビ network-geojson (Ōedo Line, shinjuku-nishiguchi)",
       "url": "https://ckan.hokonavi.go.jp/dataset/4200135e-9754-4974-a371-bd47bdb6a530/resource/1ad0189f-f289-4ba0-8bf4-b7a76420a845/download/nwd_oedo_shinjuku-nishiguchi_geojson.zip",
@@ -239,6 +360,21 @@
       "size_bytes": 54859,
       "notes": [
         "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/station_oedo_shinjukunishiguchi",
+        "Dataset notes say publication is limited to the contest period."
+      ]
+    },
+    {
+      "id": "hokonavi:shinjuku:confirmation-pdf",
+      "source": "ほこナビ confirmation-pdf (Ōedo Line, shinjuku)",
+      "url": "https://ckan.hokonavi.go.jp/dataset/2d8ff84b-f110-41ad-b5e5-7b8ec9c6cb45/resource/3b1dede4-10db-4e5f-862a-95983f16cc40/download/station_oedo_shinjuku.pdf",
+      "local_path": "hokonavi/shinjuku/station_oedo_shinjuku.pdf",
+      "licence": "pdl-jp-1.0",
+      "licence_url": "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0",
+      "downloaded_at": "2026-10-05",
+      "sha256": "a150f39ef07028ca9eb382ef44a637bd399c24d8b7a457cccad76da3f57e36f8",
+      "size_bytes": 254058,
+      "notes": [
+        "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/station_oedo_shinjuku",
         "Dataset notes say publication is limited to the contest period."
       ]
     },
@@ -273,6 +409,21 @@
       ]
     },
     {
+      "id": "hokonavi:tochomae:confirmation-pdf",
+      "source": "ほこナビ confirmation-pdf (Ōedo Line, tochomae)",
+      "url": "https://ckan.hokonavi.go.jp/dataset/0497448d-15ca-44be-b27b-89d99f83c85d/resource/2213a4d5-bce2-454b-b265-38d357734352/download/station_oedo_tochomae.pdf",
+      "local_path": "hokonavi/tochomae/station_oedo_tochomae.pdf",
+      "licence": "pdl-jp-1.0",
+      "licence_url": "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0",
+      "downloaded_at": "2026-10-05",
+      "sha256": "8afe1c82bb5f79775e5a5228383b9d119dd5b946144591deec0004b2a9e232ad",
+      "size_bytes": 218555,
+      "notes": [
+        "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/station_oedo_tochomae",
+        "Dataset notes say publication is limited to the contest period."
+      ]
+    },
+    {
       "id": "hokonavi:tochomae:network-geojson",
       "source": "ほこナビ network-geojson (Ōedo Line, tochomae)",
       "url": "https://ckan.hokonavi.go.jp/dataset/0497448d-15ca-44be-b27b-89d99f83c85d/resource/34a413dc-2859-4cb8-b460-b0216d646c5d/download/nwd_oedo_tochomae_geojson.zip",
@@ -303,6 +454,22 @@
       ]
     },
     {
+      "id": "hokonavi:ueno-okachimachi:confirmation-pdf",
+      "source": "ほこナビ confirmation-pdf (Ōedo Line, ueno-okachimachi)",
+      "url": "https://ckan.hokonavi.go.jp/dataset/2e382ada-db20-4aa8-a48c-3cb8673c7db2/resource/d3805541-4cb2-4715-a94f-d14386a24a53/download/station_oedo_ueno-okachimachi.pdf",
+      "local_path": "hokonavi/ueno-okachimachi/station_oedo_ueno-okachimachi.pdf",
+      "licence": "unspecified in CKAN metadata",
+      "licence_url": "",
+      "downloaded_at": "2026-10-05",
+      "sha256": "d9f84a6b77e98e433ec034d32926bc8c7b68732834002a4c795c2ae08738441d",
+      "size_bytes": 1645722,
+      "notes": [
+        "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/mlit_station_oedo_ueno-okachimachi",
+        "Dataset notes say publication is limited to the contest period.",
+        "CKAN licence_id is empty for this dataset."
+      ]
+    },
+    {
       "id": "hokonavi:ueno-okachimachi:network-geojson",
       "source": "ほこナビ network-geojson (Ōedo Line, ueno-okachimachi)",
       "url": "https://ckan.hokonavi.go.jp/dataset/2e382ada-db20-4aa8-a48c-3cb8673c7db2/resource/6a7fe02a-fec1-459e-9e44-846992ba6692/download/nwd_oedo_ueno-okachimachi_geojson.zip",
@@ -330,6 +497,22 @@
       "size_bytes": 51173,
       "notes": [
         "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/mlit_station_oedo_ueno-okachimachi",
+        "Dataset notes say publication is limited to the contest period.",
+        "CKAN licence_id is empty for this dataset."
+      ]
+    },
+    {
+      "id": "hokonavi:yoyogi:confirmation-pdf",
+      "source": "ほこナビ confirmation-pdf (Ōedo Line, yoyogi)",
+      "url": "https://ckan.hokonavi.go.jp/dataset/573faa86-9665-43e9-8435-4940f1749cd5/resource/8dc62679-3212-4ae3-8bf1-dcdb6c2d5366/download/station_oedo_yoyogi.pdf",
+      "local_path": "hokonavi/yoyogi/station_oedo_yoyogi.pdf",
+      "licence": "unspecified in CKAN metadata",
+      "licence_url": "",
+      "downloaded_at": "2026-10-05",
+      "sha256": "67dd8a3d507482ed3841821b69f0a7fccae3fe69961cf03da0729044d697c569",
+      "size_bytes": 176579,
+      "notes": [
+        "CKAN dataset: https://ckan.hokonavi.go.jp/dataset/mlit_station_oedo_yoyogi",
         "Dataset notes say publication is limited to the contest period.",
         "CKAN licence_id is empty for this dataset."
       ]

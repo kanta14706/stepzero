@@ -33,8 +33,9 @@ STATION_SLUGS = {
 class Pair:
     pathway_node: str
     hokonavi_node: str
-    level: float
+    level: float  # Pathways level
     distance_m: float
+    hokonavi_level: float | None = None  # set only when it differs from `level`
 
 
 def pathway_points(feed: P.Feed, station_id: str) -> gpd.GeoDataFrame:
@@ -78,9 +79,12 @@ def nearest_any_level(pw: gpd.GeoDataFrame, hk: gpd.GeoDataFrame) -> pd.DataFram
 
 
 def match(
-    pw: gpd.GeoDataFrame, hk: gpd.GeoDataFrame, max_m: float
+    pw: gpd.GeoDataFrame, hk: gpd.GeoDataFrame, max_m: float, cross_level_m: float = 0.0
 ) -> tuple[list[Pair], list[str], list[str]]:
     """One-to-one matching per level, minimising total distance, capped at max_m.
+
+    With cross_level_m > 0 a second pass matches the leftovers on position alone (any level)
+    within that distance; those pairs record the ほこナビ level in `hokonavi_level`.
 
     Returns (pairs, unmatched Pathways node ids, unmatched ほこナビ node ids).
     """
@@ -101,6 +105,23 @@ def match(
                 pairs.append(Pair(p, h, float(level), float(cost[r, c])))
                 used_pw.add(p)
                 used_hk.add(h)
+    if cross_level_m > 0:
+        # Second pass on the leftovers: ignore level, accept only very close positions.
+        rest_pw = pw[~pw.stop_id.isin(used_pw)]
+        rest_hk = hk[~hk.node_id.isin(used_hk)]
+        if len(rest_pw) and len(rest_hk):
+            a, b = _xy(rest_pw), _xy(rest_hk)
+            cost = np.hypot(a[:, None, 0] - b[None, :, 0], a[:, None, 1] - b[None, :, 1])
+            rows, cols = linear_sum_assignment(np.where(cost <= cross_level_m, cost, 1e6))
+            for r, c in zip(rows, cols, strict=True):
+                if cost[r, c] <= cross_level_m:
+                    p, h = rest_pw.stop_id.iloc[r], rest_hk.node_id.iloc[c]
+                    pairs.append(
+                        Pair(p, h, float(rest_pw.level.iloc[r]), float(cost[r, c]),
+                             float(rest_hk.level.iloc[c]))
+                    )
+                    used_pw.add(p)
+                    used_hk.add(h)
     return (
         pairs,
         [s for s in pw.stop_id if s not in used_pw],
@@ -130,11 +151,13 @@ class StationStitch:
     links_without_pathway: pd.DataFrame
 
 
-def stitch_station(feed: P.Feed, station_id: str, max_m: float = 1.0) -> StationStitch:
+def stitch_station(
+    feed: P.Feed, station_id: str, max_m: float = 1.0, cross_level_m: float = 0.0
+) -> StationStitch:
     slug = STATION_SLUGS[station_id]
     pw, hk = pathway_points(feed, station_id), hokonavi_points(slug)
     st = H.load_station(slug)
-    pairs, upw, uhk = match(pw, hk, max_m)
+    pairs, upw, uhk = match(pw, hk, max_m, cross_level_m)
     p2h = {p.pathway_node: p.hokonavi_node for p in pairs}
 
     links: dict[frozenset[str], list[int]] = {}
@@ -188,10 +211,10 @@ def match_table(
     return pd.DataFrame(rows)
 
 
-def edge_table(feed: P.Feed, max_m: float = 1.0) -> pd.DataFrame:
+def edge_table(feed: P.Feed, max_m: float = 1.0, cross_level_m: float = 0.0) -> pd.DataFrame:
     rows = []
     for sid, slug in STATION_SLUGS.items():
-        s = stitch_station(feed, sid, max_m)
+        s = stitch_station(feed, sid, max_m, cross_level_m)
         total = (
             len(s.edge_ok) + len(s.edge_mode_mismatch) + len(s.edge_no_link)
             + len(s.edge_endpoint_unmatched)
@@ -207,6 +230,7 @@ def edge_table(feed: P.Feed, max_m: float = 1.0) -> pd.DataFrame:
                 "links without pathway": len(s.links_without_pathway),
                 "hokonavi nodes unmatched": len(s.unmatched_hk),
                 "pathways nodes unmatched": len(s.unmatched_pw),
+                "level conflicts": sum(p.hokonavi_level is not None for p in s.pairs),
             }
         )
     return pd.DataFrame(rows)
@@ -229,3 +253,50 @@ def plot_unmatched(s: StationStitch, level: float):
     ax.set_title(f"{s.slug} level {level:g} (metres, EPSG:6677)")
     ax.legend()
     return fig
+
+
+def elevator_space_check(feed: P.Feed, station_id: str) -> pd.DataFrame:
+    """Do elevator endpoints fall inside a map elevator space (category B022) on their floor?
+
+    Compares ほこナビ elevator links and GTFS-Pathways elevator pathways against the station
+    map. Both come from the same MLIT product, so this checks internal consistency, not the
+    real station.
+    """
+    slug = STATION_SLUGS[station_id]
+    st = H.load_station(slug)
+    ordinal = dict(zip(st.floors.id, pd.to_numeric(st.floors.ordinal), strict=True))
+    spaces = st.spaces.assign(ordinal=st.spaces.floor_id.map(ordinal)).to_crs(METRIC_CRS)
+    ev = spaces[spaces.category == "B022"]
+
+    def inside(geom, floor: float) -> bool | None:
+        cand = ev[ev.ordinal == floor]
+        if cand.empty:
+            return None
+        return bool(cand.geometry.buffer(0.5).contains(geom).any())
+
+    s = stitch_station(feed, station_id)
+    nodes = s.hk.set_index("node_id")
+    matched = {p.hokonavi_node for p in s.pairs}
+    rows = []
+    for r in st.links[st.links.route_type == 4].itertuples():
+        a, b = nodes.loc[r.start_id], nodes.loc[r.end_id]
+        rows.append({
+            "layer": "hokonavi link", "id": r.link_id[:8],
+            "floors": f"{a.level:g} -> {b.level:g}", "length m": r.distance,
+            "in elevator space": f"{inside(a.geometry, a.level)} / {inside(b.geometry, b.level)}",
+            "other layer has it": r.start_id in matched and r.end_id in matched,
+        })
+    pw = s.pw.set_index("stop_id")
+    unmatched = set(s.unmatched_pw)
+    for e in feed.pathways[feed.pathways.pathway_mode == "5"].itertuples():
+        if e.from_stop_id not in pw.index or e.to_stop_id not in pw.index:
+            continue
+        a, b = pw.loc[e.from_stop_id], pw.loc[e.to_stop_id]
+        rows.append({
+            "layer": "pathway", "id": e.pathway_id,
+            "floors": f"{a.level:g} -> {b.level:g}", "length m": float(e.length),
+            "in elevator space": f"{inside(a.geometry, a.level)} / {inside(b.geometry, b.level)}",
+            "other layer has it": e.from_stop_id not in unmatched
+            and e.to_stop_id not in unmatched,
+        })
+    return pd.DataFrame(rows)

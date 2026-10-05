@@ -25,6 +25,7 @@ EXPECTED_STATIONS = 12
 WANTED = {
     "network-geojson": re.compile(r"^nwd_oedo_(?P<slug>.+)_geojson\.zip$"),
     "stationmap-geojson": re.compile(r"^stationmap_oedo_(?P<slug>.+)_geojson\.zip$"),
+    "confirmation-pdf": re.compile(r"^station_oedo_(?P<slug>.+)\.pdf$"),
 }
 
 

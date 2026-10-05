@@ -10,14 +10,18 @@ def pkg(title: str, name: str, files: list[str], licence: str = "pdl-jp-1.0") ->
     }
 
 
-def test_picks_network_and_stationmap_geojson_only():
+def test_picks_geojson_and_confirmation_pdf_only():
     pkgs = [pkg("歩行空間ネットワークデータ（都営地下鉄大江戸線 大門駅）", "station_oedo_daimon", [
         "nwd_oedo_daimon_csv.zip", "nwd_oedo_daimon_geojson.zip",
         "stationmap_oedo_daimon_geojson.zip", "stationmap_oedo_daimon_shapefile.zip",
         "station_oedo_daimon.pdf",
     ])]
     got = {(r.station, r.kind) for r in parse_packages(pkgs)}
-    assert got == {("daimon", "network-geojson"), ("daimon", "stationmap-geojson")}
+    assert got == {
+        ("daimon", "network-geojson"),
+        ("daimon", "stationmap-geojson"),
+        ("daimon", "confirmation-pdf"),
+    }
 
 
 def test_hyphenated_slug_and_other_lines_ignored():
