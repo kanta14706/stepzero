@@ -2,7 +2,7 @@
 # Build the OTP2 graph: street network from OpenStreetMap, transit from the GTFS feeds in
 # data/raw. Prints build time and peak container memory.
 #
-#   ./build.sh                 # Toei only
+#   ./build.sh                 # Toei with pathways (the feed the app needs, D-018)
 #   ./build.sh toei metro ...  # named feeds; each must be listed in feed_zip
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -18,7 +18,7 @@ feed_zip() {
     *) echo "unknown feed $1" >&2; return 1 ;;
   esac
 }
-feeds=("${@:-toei}")
+feeds=("${@:-toei-pathway}")
 
 mkdir -p data
 cp config/build-config.json config/router-config.json data/

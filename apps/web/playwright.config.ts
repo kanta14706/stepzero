@@ -11,6 +11,8 @@ const live = process.env['E2E_LIVE'] === '1';
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
+  // The live tests share one database and the same stations' reports: one at a time.
+  ...(live && { workers: 1 }),
   reporter: 'list',
   use: { trace: 'on-first-retry', locale: 'ja-JP' },
   projects: live

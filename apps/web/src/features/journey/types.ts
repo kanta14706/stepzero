@@ -1,4 +1,5 @@
 /** Types for the journey planner (step 2.4): places, train itineraries from OTP, journeys. */
+import type { GraphIndex } from '../../routing/astar';
 import type { BoardingPosition } from '../../routing/boarding';
 import type { Names, NoRoute, AlternativeCode, ProfileId, RouteResult } from '../../routing/types';
 
@@ -102,6 +103,8 @@ export type StationSegment =
       /** Full detail: the in-station route. */
       tier: 2;
       route: RouteOk;
+      /** The station graph the route is on (for the step list and the station page). */
+      index: GraphIndex;
       /** Where the route meets the platform the train is boarded from (access and transfer). */
       boardAt: BoardingPosition | null;
     }

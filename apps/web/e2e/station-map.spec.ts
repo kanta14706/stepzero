@@ -92,7 +92,10 @@ test('shows step-by-step wheelchair directions for 大門 and changes them with 
   const text = await steps.allTextContents();
   expect(text.join('')).toContain('エレベーターで');
   expect(text.join('')).not.toMatch(/階段で|エスカレーターで/);
-  // a profile that may use stairs gets a different route
+  // From A1, a profile that may use stairs gets a different route. (From the nearest step-free
+  // entrance every profile takes the lift: a ride costs 36 to 54 s, D-023.)
+  await planner.getByLabel('出入口', { exact: true }).selectOption({ label: 'A1出入口' });
+  await expect(steps.first()).toContainText('A1出入口から出発します');
   await planner.getByRole('radio', { name: '感覚過敏' }).check();
   await expect(steps.filter({ hasText: '階段で' }).first()).toBeVisible();
 });

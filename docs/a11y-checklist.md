@@ -65,6 +65,10 @@ macOS Safari with VoiceOver, and iOS Safari with VoiceOver, in Japanese and in E
 - [ ] Outage reports (step 2.8, needs Supabase configured): "Report a problem with the elevator in step N, collapsed" is announced; opening it moves to "Not working" inside the group "Is this elevator working?"; Escape returns to the report button.
 - [ ] After a report the focus lands on the thank-you (or error) message and it is read once; when the route then changes, "The route changed because outage reports were updated" is read with the step count, not twice.
 - [ ] In "Outages at this station", each "Still not working" / "Working again" button is read with the device it is about (its description).
+- [ ] Journey planner (step 2.4): "From" and "To" are read as groups; typing a station name lists the matching stations as buttons (with "Routes inside the station" for tier 2); after choosing, the focus is on "Change From" and the choice is read ("From: Daimon Station").
+- [ ] "Search addresses and places" reads its status ("Searching…", the result or the failure) once, and the results are reachable as buttons right after it.
+- [ ] After "Find routes" the focus moves to "Route options"; "3 route options found" is read once; each option button reads its times and facts and its pressed state.
+- [ ] The timeline reads in order: street walk, station (heading, then its steps), train (line, times, where to ride), station. Report buttons inside a journey say which step they belong to (step numbers restart in each station: check this is not confusing).
 
 TalkBack on Android if a device is available.
 

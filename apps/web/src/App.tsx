@@ -1,14 +1,16 @@
 import { LanguageSwitcher } from './components/LanguageSwitcher';
+import { JourneyPlanner } from './features/journey/JourneyPlanner';
 import { useI18n } from './i18n';
 import { StationList } from './map/StationList';
 import { StationPage } from './map/StationPage';
 import { useRoute } from './router';
 
-function Home() {
+function Home({ journeyParams }: { journeyParams: string }) {
   const { t } = useI18n();
   return (
     <>
       <p className="lead">{t.intro}</p>
+      <JourneyPlanner params={journeyParams} />
       <section aria-labelledby="status-title" className="notice">
         <h2 id="status-title">{t.statusTitle}</h2>
         <p>{t.statusBody}</p>
@@ -48,7 +50,11 @@ export function App() {
         <LanguageSwitcher />
       </header>
       <main id="main" tabIndex={-1}>
-        {route.page === 'station' ? <StationPage key={route.id} id={route.id} /> : <Home />}
+        {route.page === 'station' ? (
+          <StationPage key={route.id} id={route.id} />
+        ) : (
+          <Home journeyParams={route.page === 'journey' ? route.params : ''} />
+        )}
       </main>
       <footer className="site-footer">
         <p>{t.footerData}</p>

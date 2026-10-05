@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { FakeOutageSource, outage } from './fakeSource';
-import { OutageSourceProvider, useOutages } from './useOutages';
+import { OutageSourceProvider, useOutages, useOutagesFor } from './useOutages';
 
 function setup(stationId = 'T') {
   const source = new FakeOutageSource();
@@ -87,5 +87,32 @@ describe('useOutages', () => {
   it('says "unavailable" when no back end is configured', () => {
     const { result } = renderHook(() => useOutages('T'));
     expect(result.current.status).toBe('unavailable');
+  });
+});
+
+describe('useOutagesFor', () => {
+  it('follows several stations, applies an answer to its own station, and reports the weakest status', async () => {
+    const source = new FakeOutageSource();
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <OutageSourceProvider source={source}>{children}</OutageSourceProvider>
+    );
+    const hook = renderHook(() => useOutagesFor(['A', 'B']), { wrapper });
+    expect(hook.result.current.status).toBe('connecting');
+    act(() => {
+      source.push('A', [outage({ stationId: 'A', edgeId: 'a1' })], true);
+    });
+    expect(hook.result.current.status).toBe('connecting'); // B is not live yet
+    expect(hook.result.current.loaded).toBe(false);
+    act(() => {
+      source.push('B', [], true);
+    });
+    expect(hook.result.current.status).toBe('live');
+    expect(hook.result.current.loaded).toBe(true);
+    source.answer = () => Promise.resolve([outage({ id: 'x', stationId: 'B', edgeId: 'b1' })]);
+    await act(async () => {
+      await hook.result.current.report('b1', 'out_of_service');
+    });
+    expect(hook.result.current.byStation.get('A')?.blockedEdgeIds).toEqual(['a1']);
+    expect(hook.result.current.byStation.get('B')?.blockedEdgeIds).toEqual(['b1']);
   });
 });

@@ -47,60 +47,111 @@ export interface Outages {
   report: (edgeId: string, status: CommunityStatus) => Promise<OutageReport[]>;
 }
 
+export type StationOutages = Omit<Outages, 'report'>;
+
+export interface ManyOutages {
+  /** One entry per station asked for, in the order asked. */
+  byStation: ReadonlyMap<string, StationOutages>;
+  /** The weakest status: 'live' only when every station is live. */
+  status: LiveStatus;
+  /** True once every station's list has loaded. */
+  loaded: boolean;
+  report: Outages['report'];
+}
+
 // setTimeout overflows above 2^31 - 1 ms.
 const MAX_TIMEOUT_MS = 2 ** 31 - 1;
 
+interface StationState {
+  reports: ReadonlyMap<string, OutageReport>;
+  status: LiveStatus;
+  loaded: boolean;
+}
+
+const EMPTY: StationState = { reports: new Map(), status: 'connecting', loaded: false };
+const STATUS_ORDER: LiveStatus[] = ['unavailable', 'offline', 'connecting', 'live'];
+
 /** Follows one station's outage reports, and drops each report when it expires. */
 export function useOutages(stationId: string): Outages {
+  const ids = useMemo(() => [stationId], [stationId]);
+  const many = useOutagesFor(ids);
+  const one = many.byStation.get(stationId);
+  return {
+    status: one?.status ?? 'connecting',
+    loaded: one?.loaded ?? false,
+    reports: one?.reports ?? NO_REPORTS,
+    blockedEdgeIds: one?.blockedEdgeIds ?? NO_REPORTS_IDS,
+    report: many.report,
+  };
+}
+
+const NO_REPORTS: OutageReport[] = [];
+const NO_REPORTS_IDS: string[] = [];
+
+/**
+ * Follows the outage reports of several stations (a journey's), and drops each report when it
+ * expires. State is keyed by the set of stations, so reports of stations no longer asked for are
+ * never shown.
+ */
+export function useOutagesFor(stationIds: readonly string[]): ManyOutages {
   const source = useOutageSource();
-  // Keyed by station, so a previous station's reports never show for a new one.
-  const [state, setState] = useState<{
-    stationId: string;
-    reports: ReadonlyMap<string, OutageReport>;
-    status: LiveStatus;
-    loaded: boolean;
-  }>({ stationId, reports: new Map(), status: 'connecting', loaded: false });
+  const key = [...new Set(stationIds)].join('\n');
+  const [state, setState] = useState<{ key: string; byStation: ReadonlyMap<string, StationState> }>(
+    { key, byStation: new Map() },
+  );
   const [now, setNow] = useState(() => Date.now());
 
-  const apply = useCallback(
-    (rows: OutageReport[], replace: boolean) => {
-      const t = Date.now();
-      setNow(t);
-      setState((s) => {
-        const current =
-          s.stationId === stationId ? s : { ...s, stationId, reports: new Map(), loaded: false };
-        return {
-          ...current,
-          reports: mergeReports(current.reports, rows, replace, t),
-          loaded: current.loaded || replace,
-        };
+  const update = useCallback(
+    (stationId: string, change: (s: StationState) => StationState) => {
+      setState((prev) => {
+        const base = prev.key === key ? prev.byStation : new Map<string, StationState>();
+        const next = new Map(base);
+        next.set(stationId, change(base.get(stationId) ?? EMPTY));
+        return { key, byStation: next };
       });
     },
-    [stationId],
+    [key],
   );
 
-  useEffect(
-    () =>
+  const apply = useCallback(
+    (stationId: string, rows: OutageReport[], replace: boolean) => {
+      const t = Date.now();
+      setNow(t);
+      update(stationId, (s) => ({
+        ...s,
+        reports: mergeReports(s.reports, rows, replace, t),
+        loaded: s.loaded || replace,
+      }));
+    },
+    [update],
+  );
+
+  useEffect(() => {
+    if (!key) return;
+    const stops = key.split('\n').map((stationId) =>
       source.watch(stationId, {
-        onReports: apply,
+        onReports: (rows, replace) => {
+          apply(stationId, rows, replace);
+        },
         onStatus: (status) => {
-          setState((s) =>
-            s.stationId === stationId
-              ? { ...s, status }
-              : { stationId, reports: new Map(), status, loaded: false },
-          );
+          update(stationId, (s) => ({ ...s, status }));
         },
       }),
-    [source, stationId, apply],
-  );
+    );
+    return () => {
+      for (const stop of stops) stop();
+    };
+  }, [source, key, apply, update]);
 
-  const current = state.stationId === stationId ? state : null;
-  const reports = current?.reports;
+  const current = state.key === key ? state.byStation : null;
 
   // Re-evaluate when the next report expires.
   useEffect(() => {
-    if (!reports) return;
-    const next = nextExpiry(reports.values(), now);
+    if (!current) return;
+    const next = nextExpiry(
+      [...current.values()].flatMap((s) => [...s.reports.values()]),
+      now,
+    );
     if (next === null) return;
     const timer = setTimeout(
       () => {
@@ -111,28 +162,45 @@ export function useOutages(stationId: string): Outages {
     return () => {
       clearTimeout(timer);
     };
-  }, [reports, now]);
+  }, [current, now]);
 
-  const list = useMemo(() => [...(reports?.values() ?? [])], [reports]);
-  const blockedEdgeIds = useMemo(
-    () => [...buildOutageIndex(list, new Date(now)).blockedEdgeIds].sort(),
-    [list, now],
-  );
+  const byStation = useMemo(() => {
+    const out = new Map<string, StationOutages>();
+    for (const id of key ? key.split('\n') : []) {
+      const s = current?.get(id) ?? EMPTY;
+      const reports = [...s.reports.values()];
+      out.set(id, {
+        status: s.status,
+        loaded: s.loaded,
+        reports,
+        blockedEdgeIds: [...buildOutageIndex(reports, new Date(now)).blockedEdgeIds].sort(),
+      });
+    }
+    return out;
+  }, [key, current, now]);
 
   const report = useCallback(
     async (edgeId: string, status: CommunityStatus) => {
       const rows = await source.report(edgeId, status);
-      apply(rows, false);
+      const watched = new Set(key.split('\n'));
+      const groups = new Map<string, OutageReport[]>();
+      for (const r of rows) {
+        if (watched.has(r.stationId))
+          groups.set(r.stationId, [...(groups.get(r.stationId) ?? []), r]);
+      }
+      for (const [stationId, list] of groups) apply(stationId, list, false);
       return rows;
     },
-    [source, apply],
+    [source, key, apply],
   );
 
-  return {
-    status: current?.status ?? 'connecting',
-    loaded: current?.loaded ?? false,
-    reports: list,
-    blockedEdgeIds,
-    report,
-  };
+  const all = [...byStation.values()];
+  const status = all.length
+    ? all.reduce<LiveStatus>(
+        (worst, s) =>
+          STATUS_ORDER.indexOf(s.status) < STATUS_ORDER.indexOf(worst) ? s.status : worst,
+        'live',
+      )
+    : 'connecting';
+  return { byStation, status, loaded: all.length > 0 && all.every((s) => s.loaded), report };
 }

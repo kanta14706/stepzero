@@ -1,11 +1,18 @@
 import { useEffect, useState } from 'react';
 
-export type Route = { page: 'home' } | { page: 'station'; id: string };
+export type Route =
+  | { page: 'home' }
+  | { page: 'station'; id: string }
+  /** `params` is the query string after `#/journey?` (features/journey/url.ts reads it). */
+  | { page: 'journey'; params: string };
 
-/** `#/station/421` opens a station; anything else is the home page. */
+/** `#/station/421` opens a station, `#/journey?...` a journey; anything else is the home page. */
 export function parseHash(hash: string): Route {
   const m = /^#\/station\/([\w-]+)$/.exec(hash);
-  return m?.[1] ? { page: 'station', id: m[1] } : { page: 'home' };
+  if (m?.[1]) return { page: 'station', id: m[1] };
+  const j = /^#\/journey(?:\?(.*))?$/.exec(hash);
+  if (j) return { page: 'journey', params: j[1] ?? '' };
+  return { page: 'home' };
 }
 
 export function stationHref(id: string): string {

@@ -8,7 +8,8 @@ export const jaEasy: Dictionary = {
   intro:
     'かいだんや エスカレーターが つかえない ひとの ために、えきの そとから でんしゃの とびらまでの、だんさの ない みちを おしえます。',
   statusTitle: 'いま つくって います',
-  statusBody: 'みちの けんさくは まだ つかえません。いまは さいしょの がめんだけを みせて います。',
+  statusBody:
+    'とえいせんの えきから えきまでの みちと、おおえどせん 12えきの えきの なかの みちを しらべられます。げんちでは まだ たしかめて いません。',
   coverageTitle: 'おしえられる ところ',
   coverageIntro:
     'えきに よって、おしえる ないようの くわしさと、しんじて よい ていどが ちがいます。',
@@ -102,6 +103,99 @@ export const jaEasy: Dictionary = {
     reported: '{time}に おしえて もらいました・たしかめた ひと {n}にん',
     stillBroken: 'まだ つかえない',
     fixed: 'つかえる ように なった',
+    rerouted: 'こわれて いる ばしょの じょうほうが かわったので、みちを かえました。',
+  },
+  journey: {
+    title: 'みちを しらべる',
+    intro:
+      'でる ところと いく ところを、えきの なまえ、じゅうしょ、たてものの なまえで えらんで ください。でんしゃの じこくと、えきの なかの みちを つないで、だんさの ない みちを しらべます。',
+    from: 'でる ところ',
+    to: 'いく ところ',
+    fieldHint: 'えきの なまえ（れい：大門）、じゅうしょ、たてものの なまえ',
+    stationMatches: '{field}の えきの こうほ',
+    noStationMatch: 'あう えきが ありません。じゅうしょや たてものの なまえで さがせます。',
+    searchPlaces: 'じゅうしょ・たてもので さがす',
+    searchPlacesLabel: '{field}を じゅうしょ・たてもので さがす',
+    searchingPlaces: 'さがして います…',
+    placeResults: '{field}の じゅうしょ・たてものの こうほ',
+    noPlaceResults: 'みつかりませんでした。ちがう ことばで ためして ください。',
+    placeSearchFailed: 'じゅうしょや たてものを さがす ことが できませんでした。',
+    placeSearchPartial: 'いちぶを さがす ことが できませんでした。',
+    placeSearchNote:
+      'じゅうしょは こくどちりいん、たてものは OpenStreetMap で さがします。かいた もじが それぞれの サービスに おくられます。',
+    chosen: '{field}：{label}',
+    change: 'えらびなおす',
+    changeLabel: '{field}を えらびなおす',
+    swap: 'でる ところと いく ところを いれかえる',
+    stationLabel: '{name}えき',
+    stationOption: '{name}えき（{lines}）',
+    stationTier2: 'えきの なかの みち あり',
+    lineSeparator: '・',
+    pointAddress: 'じゅうしょ：{label}',
+    pointPlace: '{label}',
+    when: 'でる じかん',
+    now: 'いますぐ',
+    at: 'じかんを きめる',
+    atLabel: 'でる じかん（にほんの じかん）',
+    submit: 'みちを しらべる',
+    missingEnds: 'でる ところと いく ところを えらんで ください。',
+    sameEnds: 'でる ところと いく ところが おなじです。',
+    planning: 'みちを しらべて います…',
+    resultsTitle: 'みちの こうほ',
+    resultsAnnounce: 'みちの こうほが {n}こ みつかりました。',
+    option: 'こうほ{n}',
+    optionSummary: '{dep}に でる → {arr}に つく（{min}ぷん ぐらい）',
+    optionDepartOnly: 'でんしゃ {dep}に でる → {arr}に つく（{min}ぷん ぐらい）',
+    optionFacts: 'のりかえ {transfers}かい・エレベーター {lifts}かい',
+    optionUnverified: 'だんさの ない みちを たしかめて いない えきが あります。',
+    leaveAt: '{time}ごろ でる',
+    arriveAt: '{time}ごろ つく',
+    leaveUnknown:
+      'さいしょの えきの なかで かかる じかんが わからないので、でんしゃの じかんだけ かいて います。',
+    timesNote:
+      'でんしゃの じかんは じこくひょうの とおりです。えきの なかと みちを あるく じかんは だいたいで、でんしゃに のるまで {margin}ふん よゆうを みて います。',
+    timelineTitle: 'こうほ{n}の みち',
+    streetAccess:
+      '{place}から {station}えきの いりぐちまで あるきます。{m}メートル ぐらい、{min}ぷん ぐらい。',
+    streetEgress:
+      '{station}えきの でぐちから {place}まで あるきます。{m}メートル ぐらい、{min}ぷん ぐらい。',
+    streetStraight:
+      'みちを しらべられなかったので、まっすぐの きょりから だいたいを だして います。だんさや さかは たしかめて いません。',
+    streetOsm: 'みちの だんさや さかは、OpenStreetMap の データで よけて います。',
+    accessTitle: '{station}えき：いりぐちから ホームへ',
+    transferTitle: '{station}えき：のりかえ',
+    egressTitle: '{station}えき：ホームから でぐちへ',
+    inStation: 'えきの なか {m}メートル ぐらい・{min}ぷん ぐらい・エレベーター {lifts}かい',
+    tier1:
+      'この えきは、なかの みちの データが ないので、だんさの ない みちを たしかめて いません。えきの ひとに てつだって もらえます。',
+    rideTitle: '{line}　{headsign}いき',
+    rideNoHeadsign: '{line}',
+    rideTimes: '{from} {dep}に でる → {to} {arr}に つく（{stops}えき さき）',
+    rideAdviceExit:
+      '{part}の しゃりょうに のると、{station}えきで おりて すぐ、だんさの ない でぐちへの みちを つかえます。',
+    rideAdviceTransfer:
+      '{part}の しゃりょうに のると、{station}えきで おりて すぐ、のりかえの みちを つかえます。',
+    walkTransfer:
+      '{from}えきから {to}えきまで あるいて のりかえます。{m}メートル ぐらい、{min}ぷん ぐらい。だんさが ないかは たしかめて いません。',
+    tight:
+      'この のりかえは、えきの なかの いどうに じかんが かかります。つぎの でんしゃに なる かもしれません。',
+    stationPage: '{station}えきの なかの ちずを ひらく',
+    errors: {
+      unavailable:
+        'でんしゃの みちを しらべる ことが できません。つうしんを たしかめるか、しばらく してから ためして ください。',
+      no_trains: 'この 2つの ばしょの あいだの でんしゃの みちが みつかりませんでした。',
+      outside_service_period:
+        'この ひと じかんの じこくひょうが ありません。ちがう ひや じかんで ためして ください。',
+      location_not_found: 'えらんだ ばしょが、でんしゃの みちの データに ありません。',
+      failed: 'みちを しらべられませんでした。もういちど ためして ください。',
+    },
+    noJourney: 'この じょうけんで、だんさの ない みちが みつかりませんでした。',
+    noJourneyAt: '{station}えき（{role}）',
+    roles: {
+      access: 'いりぐちから ホームまで',
+      transfer: 'のりかえ',
+      egress: 'ホームから でぐちまで',
+    },
     rerouted: 'こわれて いる ばしょの じょうほうが かわったので、みちを かえました。',
   },
   tierLine: 'あんないの しゅるい',

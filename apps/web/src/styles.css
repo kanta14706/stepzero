@@ -541,3 +541,131 @@ main a {
   padding: 0.5rem 0;
   border-bottom: 1px solid var(--border);
 }
+
+/* Journey planner (step 2.4). Placeholder look until the design pass (2.11). */
+.journey {
+  margin: 1.5rem 0;
+}
+
+.place-picker {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+}
+
+.place-picker legend {
+  padding: 0 0.25rem;
+  font-weight: 700;
+}
+
+div.place-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+}
+
+.place-field {
+  margin: 0;
+  font-weight: 700;
+}
+
+.field input {
+  min-height: var(--target);
+  max-width: 100%;
+  padding: 0 0.75rem;
+  font: inherit;
+  color: var(--fg);
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+}
+
+.field input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.place-options,
+.journey-options {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.place-option,
+.journey-option {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  text-align: start;
+}
+
+.journey-option {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.option-name {
+  font-weight: 700;
+}
+
+.tier-tag {
+  padding: 0 0.5rem;
+  font-size: 0.875rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+}
+
+.primary-button {
+  min-height: var(--target);
+  margin: 0.5rem 0;
+  padding: 0 1.5rem;
+  font: inherit;
+  font-weight: 700;
+  color: var(--accent-contrast);
+  background: var(--accent);
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.primary-button:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.timeline {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.timeline-item {
+  padding: 0.5rem 0 1rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.timeline-item h4 {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.25rem 0;
+}
+
+.line-mark {
+  flex: none;
+  width: 0.75rem;
+  height: 1.5rem;
+  border-radius: 2px;
+  outline: 1px solid var(--fg);
+}
+
+.ride-advice {
+  font-weight: 700;
+}

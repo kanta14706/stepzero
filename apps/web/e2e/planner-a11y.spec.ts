@@ -190,6 +190,10 @@ test('keyboard: arrow keys change the profile and the route updates', async ({
   test.skip(isMobile, 'keyboard walkthrough runs on the desktop project');
   await page.goto(STATION);
   await waitForRoute(page);
+  // From A1 the stairs are faster than the lifts (from the nearest entrance every profile takes
+  // the lift, D-023).
+  await page.getByLabel('出入口', { exact: true }).selectOption({ label: 'A1出入口' });
+  await expect(page.locator('ol.steps > li').first()).toContainText('A1出入口から出発します');
   const wheelchair = page.getByRole('radio', { name: '車いす' });
   await wheelchair.focus();
   const before = await page.locator('ol.steps > li').count();

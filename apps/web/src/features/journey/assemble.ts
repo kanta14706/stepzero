@@ -174,6 +174,7 @@ export async function assembleJourney(
       stationId: exitId,
       tier: 2,
       route: r,
+      index: exitIndex,
       boardAt: null,
     });
     if (destination) {
@@ -239,6 +240,7 @@ export async function assembleJourney(
         stationId: atId,
         tier: 2,
         route: r,
+        index,
         boardAt: end ? boardingPosition(index, ride.from.stopId, end) : null,
       });
       const gap = (Date.parse(ride.departure) - Date.parse(prev.arrival)) / 1000;
@@ -308,6 +310,7 @@ export async function assembleJourney(
       stationId: entryId,
       tier: 2,
       route: r,
+      index: entryIndex,
       boardAt: end ? boardingPosition(entryIndex, first.from.stopId, end) : null,
     });
   } else {

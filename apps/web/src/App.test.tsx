@@ -26,7 +26,7 @@ describe('App', () => {
     expect(document.documentElement.lang).toBe('ja');
   });
 
-  it('says that route search is not available yet', () => {
+  it('shows what the app can do so far', () => {
     renderApp();
     expect(screen.getByText(dictionaries.ja.statusBody)).toBeVisible();
   });
