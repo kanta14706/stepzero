@@ -55,13 +55,13 @@ Later prompts assume earlier ones worked. If a finding changes the plan (e.g. a 
 
 ## Phase 2 — Core app (must-haves, weeks 4–10)
 
-- [ ] **2.1 Web scaffold**
+- [x] **2.1 Web scaffold**
 > Scaffold `apps/web` with React + Vite + TypeScript (strict), vite-plugin-pwa, Vitest, Playwright, axe-core, ESLint, Prettier. Add i18n with ja, en, zh-Hant and ja-easy, with no hard-coded strings. Add a Lighthouse CI config that fails below 95 accessibility. Create a minimal home page that passes all checks. Commit.
 
 - [ ] **2.2 Map with floors**
 > Add MapLibre GL JS with a free open basemap. Load one station graph and the ほこナビ floor polygons for 大門. Add a floor switcher (B1, B2…) that is keyboard- and screen-reader-accessible. Every map element needs a text equivalent.
 
-- [ ] **2.3 Routing profiles + A***
+- [x] **2.3 Routing profiles + A***
 > Implement `src/routing/profiles.ts` and an A* router in a Web Worker over the station graph, exactly as CLAUDE.md specifies (Infinity = forbidden; active outages = Infinity). Write unit tests per profile and golden-route tests for 大門 (street → Ōedo platform, wheelchair). When no route exists, return a structured reason, never an empty result.
 
 - [ ] **2.4 Journey planner**
