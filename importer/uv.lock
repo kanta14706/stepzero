@@ -3089,6 +3089,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "jsonschema" },
     { name = "jupyter" },
     { name = "matplotlib" },
     { name = "pytest" },
@@ -3107,6 +3108,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "jsonschema", specifier = ">=4.26.0" },
     { name = "jupyter" },
     { name = "matplotlib", specifier = ">=3.11.2" },
     { name = "pytest" },

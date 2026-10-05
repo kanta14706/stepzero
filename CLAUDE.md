@@ -67,7 +67,7 @@ otp/                 OTP config, build scripts, Dockerfile
 supabase/            migrations, RLS policies, edge functions
 data/raw/            downloaded inputs (git-ignored)
 data/build/          generated graphs and tiles (git-ignored)
-docs/                decisions.md, data-notes.md, feed-spec.md
+docs/                decisions.md, data-notes.md, feed-spec.md, graph.schema.json
 ```
 
 ## Data sources
@@ -91,12 +91,14 @@ Rules:
 
 ```ts
 type NodeId = string;                     // "<station_id>:<source>:<local_id>"
-interface GraphNode { id: NodeId; lon: number; lat: number; level: number; kind: 'entrance'|'gate'|'platform'|'elevator'|'junction'|'street'; stationId?: string; name?: Record<Lang,string>; }
+interface GraphNode { id: NodeId; lon: number; lat: number; level: number; kind: 'entrance'|'gate'|'platform'|'elevator'|'junction'|'street'; stationId?: string; name?: Record<Lang,string>;
+  gtfsStopId?: string; platformId?: string; gtfsLevel?: number; }   // gtfsLevel only when Pathways disagrees with `level`
 interface GraphEdge {
   id: string; from: NodeId; to: NodeId;
   mode: 'walk'|'stairs'|'escalator'|'elevator'|'ramp'|'moving_walkway'|'fare_gate';
   lengthM: number; seconds: number;
-  slopePct?: number; widthM?: number; stepCount?: number;
+  slopePct?: number; widthM?: number; stepCount?: number;  // absent = unknown. ほこナビ gives buckets, stored as bounds (see docs/graph.schema.json); stepCount is not in the data
+  stepHeightCm?: number; roofed?: boolean; tactilePaving?: boolean;
   pathwayId?: string;                    // GTFS pathway_id when present (key for outage reports)
   bidirectional: boolean;
 }
@@ -140,7 +142,8 @@ An edge with an active `out_of_service` or `blocked` report costs ∞. If no rou
 # importer
 cd importer && uv sync && uv run python -m importer.download              # raw data → data/raw/ + manifest.json
 uv run python -m importer.graph.stitch           # stitch report → data/build/reports/stitch/
-uv run python -m importer.run --stations oedo   # → data/build/ (from step 1.5)
+uv run python -m importer.run --stations oedo   # stitch reports + graphs → data/build/reports/, data/build/graphs/
+uv run pytest && uv run ruff check .             # tests that need data/raw skip themselves without it
 # OTP
 cd otp && ./build.sh && docker compose up otp
 # web

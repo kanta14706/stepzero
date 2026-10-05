@@ -132,3 +132,17 @@ Notebook: `importer/notebooks/03_stitch.ipynb`. Logic: `importer/importer/analys
 - **ほこナビ is a superset elsewhere.** It has 3 to 23 extra links per station with no pathway, and the same number of extra nodes (e.g. 大門: 14 nodes, 14 links). Most are dead-end spurs (degree 1), some short chains; all have known attributes (rank SSS/ASS/CSS).
 - **Edge anomalies (10 pathways).** 都庁前 has 8 pathways with no direct ほこナビ link (429L0008, 429L0009, 429L0037, 429L0038, 429L0111, 429L0141, 429L0142, 429L0144; walkways of 2.3 to 26.9 m). 青山一丁目 425L0136 (escalator, 20.1 m) has no direct link. 国立競技場 426L0284 (walkway, 6.8 m) joins nodes that ほこナビ connects with a different link type.
 - **Matching rule:** CLAUDE.md says only "by level and distance". The data shows distance is nearly irrelevant where the datasets agree, and level is unreliable at 新宿 and 都庁前. Matching should be by position first, and level conflicts should be recorded.
+
+### 2026-10-05: exported station graphs (step 1.5)
+
+Command: `uv run python -m importer.run --stations oedo`. Output: `data/build/graphs/<station_id>.json` plus `index.json` (about 1.4 MB for the 12 stations, uncompressed). Format: `docs/graph.schema.json`. Tests: `importer/tests/test_graph_export.py`.
+
+Counts for 大門: 340 nodes (13 entrances, 30 platform boarding areas, 23 elevator nodes, 2 gate nodes) and 378 edges (271 walk, 56 stairs, 25 escalator, 18 elevator, 7 ramp, 1 fare gate); 364 edges carry a `pathwayId`, the other 14 are ほこナビ-only links.
+
+Step-free reachability screen (no stairs or escalators, slope <= 8%, step <= 5 cm; entrances and street nodes as origins):
+- **新宿西口 (E-01) and 麻布十番 (E-22) have no step-free route between any entrance and the platforms.** The only way down uses a ramp in the 8 to 18% bucket (at 新宿西口 also two flat-labelled links with a slope above 18% and a step above 10 cm). With the slope limit relaxed to 18% both stations connect. The wheelchair profile forbids slopes above 8%, so these two stations will be reported as having no wheelchair route unless the ramp slopes are measured more precisely; the bucket 8 to 18% is too coarse to tell.
+- **新宿 (E-27): no listed entrance connects step-free, but an outside node does.** The three Pathways entrances (3, A1, 4, all at level 0) connect to each other and to escalators only. The one step-free route starts at an outside node on level 0 that has no Pathways counterpart and no entrance name, and passes through elevators at level 1 (the 1F link missing from the Pathways file). The app cannot name this exit from the data.
+- **With unknown slope or step treated as blocked ("strict"), 9 more stations fail** (all except 大門, 国立競技場 and 新宿). The cause is the 1 to 4% of approach links with unknown attributes. The exporter logs both variants as warnings.
+- **Elevator links carry the "under 1 m" width bucket** (`widthM` = 0). This is the cab hop, not a corridor, so the router must not apply the width rule to elevators.
+- **Entrance labels are exit codes, not names, and can repeat.** 大門 uses A1 to A6 and B1 to B5, with B4 on three separate entrance nodes; 麻布十番 uses 4, 5a, 5b, 6 and 7. Only this one label exists (no English or kana), so the UI shows it as is and must tell repeated labels apart by position.
+- **Assumed timings, not data:** the open data has no traversal times, so `seconds` uses assumed speeds (D-015).

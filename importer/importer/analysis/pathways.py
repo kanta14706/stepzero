@@ -38,6 +38,7 @@ class Feed:
     stops: pd.DataFrame
     pathways: pd.DataFrame
     levels: pd.DataFrame
+    translations: pd.DataFrame | None = None
 
 
 def load_feed(path: Path = PATHWAY_ZIP) -> Feed:
@@ -45,7 +46,9 @@ def load_feed(path: Path = PATHWAY_ZIP) -> Feed:
         def read(name: str) -> pd.DataFrame:
             return pd.read_csv(z.open(name), dtype=str, encoding="utf-8-sig")
 
-        return Feed(read("stops.txt"), read("pathways.txt"), read("levels.txt"))
+        return Feed(
+            read("stops.txt"), read("pathways.txt"), read("levels.txt"), read("translations.txt")
+        )
 
 
 def tier2_stations(feed: Feed) -> pd.DataFrame:

@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/kanta14706/stepzero/docs/graph.schema.json",
+  "title": "StepZero station graph",
+  "description": "One file per Tier-2 station (data/build/graphs/<station_id>.json), produced by `python -m importer.run`. Topology and edge attributes come from the ほこナビ walking network; GTFS-Pathways data is attached by matching (docs/decisions.md D-014). Optional fields that are absent mean 'unknown', never 'zero'.",
+  "type": "object",
+  "required": ["schemaVersion", "station", "nodes", "edges"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "station": { "$ref": "#/$defs/station" },
+    "nodes": { "type": "array", "items": { "$ref": "#/$defs/node" } },
+    "edges": { "type": "array", "items": { "$ref": "#/$defs/edge" } }
+  },
+  "$defs": {
+    "lang": { "enum": ["ja", "en", "zh-Hant", "ja-easy"] },
+    "names": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/lang" },
+      "additionalProperties": { "type": "string" },
+      "required": ["ja"]
+    },
+    "nodeId": {
+      "type": "string",
+      "pattern": "^[^:]+:[^:]+:[^:]+$",
+      "description": "<station_id>:<source>:<local_id>. Source is 'hokonavi' for every node today."
+    },
+    "node": {
+      "type": "object",
+      "required": ["id", "lon", "lat", "level", "kind", "stationId"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/nodeId" },
+        "lon": { "type": "number", "minimum": 122, "maximum": 154 },
+        "lat": { "type": "number", "minimum": 20, "maximum": 46 },
+        "level": { "type": "number", "description": "ほこナビ floor. 0 is outdoor ground; halves are mezzanines; negative is below ground." },
+        "kind": { "enum": ["entrance", "gate", "platform", "elevator", "junction", "street"] },
+        "stationId": { "type": "string" },
+        "name": { "$ref": "#/$defs/names", "description": "Entrance labels (e.g. D1). Only languages present in the source are given." },
+        "gtfsStopId": { "type": "string", "description": "Matched GTFS-Pathways stop_id, when there is one." },
+        "platformId": { "type": "string", "description": "For boarding areas (kind 'platform'): the GTFS platform stop_id, e.g. 421P3." },
+        "gtfsLevel": { "type": "number", "description": "Present only when the Pathways level_id differs from `level` (a level conflict); `level` is kept." }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "required": ["id", "from", "to", "mode", "lengthM", "seconds", "bidirectional"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "from": { "$ref": "#/$defs/nodeId" },
+        "to": { "$ref": "#/$defs/nodeId" },
+        "mode": { "enum": ["walk", "stairs", "escalator", "elevator", "ramp", "moving_walkway", "fare_gate"] },
+        "lengthM": { "type": "number", "minimum": 0 },
+        "seconds": { "type": "number", "exclusiveMinimum": 0, "description": "Base traversal time from importer/graph/timing.py (assumed speeds, not measured)." },
+        "slopePct": { "type": "number", "minimum": 0, "description": "UPPER bound of the ほこナビ slope bucket (0, 5, 8, 18). 18 means 'above 8%' and covers both 8-18% and over 18%. Direction (up or down) is not kept." },
+        "widthM": { "type": "number", "minimum": 0, "description": "LOWER bound of the ほこナビ width bucket (0 means under 1.0 m; then 1.0, 2.0, 3.0)." },
+        "stepHeightCm": { "type": "number", "minimum": 0, "description": "UPPER bound of the ほこナビ step bucket (0, 2, 5, 10). 10 means 'above 5 cm' and covers 5-10 cm and over 10 cm." },
+        "roofed": { "type": "boolean" },
+        "tactilePaving": { "type": "boolean" },
+        "pathwayId": { "type": "string", "description": "GTFS pathway_id of the matched pathway. Absent for ほこナビ links with no pathway; outage reports then key on the edge id." },
+        "bidirectional": { "type": "boolean", "description": "When false the edge runs from -> to only." }
+      }
+    },
+    "warning": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "enum": ["unverified_on_site", "gtfs_level_conflicts", "pathway_without_link", "disconnected_nodes", "no_step_free_route_optimistic", "no_step_free_route_strict"]
+        },
+        "message": { "type": "string" },
+        "count": { "type": "integer" },
+        "pathwayIds": { "type": "array", "items": { "type": "string" } },
+        "nodeIds": { "type": "array", "items": { "type": "string" } },
+        "platformIds": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "reach": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["in", "out"],
+        "properties": { "in": { "type": "boolean" }, "out": { "type": "boolean" } }
+      }
+    },
+    "station": {
+      "type": "object",
+      "required": ["id", "slug", "name", "tier", "levels", "bbox", "platforms", "sources", "stitch", "warnings", "reachability"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "slug": { "type": "string" },
+        "name": { "$ref": "#/$defs/names" },
+        "tier": { "const": 2 },
+        "levels": { "type": "array", "items": { "type": "number" } },
+        "bbox": { "type": "array", "items": { "type": "number" }, "minItems": 4, "maxItems": 4, "description": "[minLon, minLat, maxLon, maxLat]" },
+        "platforms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "nodeIds"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "code": { "type": "string" },
+              "nodeIds": { "type": "array", "items": { "$ref": "#/$defs/nodeId" }, "minItems": 1 }
+            }
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "licence", "downloadedAt"],
+            "additionalProperties": false,
+            "properties": { "id": { "type": "string" }, "licence": { "type": "string" }, "downloadedAt": { "type": "string" } }
+          }
+        },
+        "stitch": {
+          "type": "object",
+          "required": ["matchedNodes", "pathwaysNodes", "levelConflicts", "pathways", "pathwaysWithLink", "hokonaviOnlyLinks"],
+          "additionalProperties": { "type": "integer" }
+        },
+        "warnings": { "type": "array", "items": { "$ref": "#/$defs/warning" } },
+        "reachability": {
+          "type": "object",
+          "required": ["optimistic", "strict"],
+          "additionalProperties": false,
+          "description": "Per platform: reachable from an entrance (in) and an entrance reachable from it (out) without stairs, escalators, slopes above 8% or steps above 5 cm. 'strict' also blocks edges whose slope or step height is unknown.",
+          "properties": { "optimistic": { "$ref": "#/$defs/reach" }, "strict": { "$ref": "#/$defs/reach" } }
+        }
+      }
+    }
+  }
+}
