@@ -53,6 +53,8 @@ export const en: Dictionary = {
   legendEscalator: 'Escalator (orange, dotted line)',
   legendStairs: 'Stairs (red, dashed line)',
   legendWalk: 'Walkway or ramp (grey, solid line)',
+  legendRoute:
+    'Route (yellow, thick line with a black edge; the numbers in circles are step numbers)',
   warningUnverified: 'The data for this station has not been checked on site yet.',
   warningStepFree:
     'In the data, no step-free way was found between the entrances and the platforms of this station.',
@@ -75,6 +77,9 @@ export const en: Dictionary = {
     'Elevators have no names or numbers in the data, so they are described by a nearby exit or the floor they go to.',
   routeAnnounce: 'Showing directions in {n} steps.',
   routeAnnounceNone: 'No route found. Showing why, and what you can do instead.',
+  routeShowOnMap: 'Show on map',
+  routeShowOnMapStep: 'Show on map: step {n}',
+  mapRouteNote: 'The route is shown as a thick yellow line.',
   sides: {
     north: 'north',
     northeast: 'north-east',

@@ -9,8 +9,24 @@ import { StationPage } from './StationPage';
 
 // jsdom has no WebGL: stand in for the lazily loaded MapLibre component.
 vi.mock('./StationMap', () => ({
-  default: ({ label, panel }: { label: string; panel: number }) => (
-    <div role="region" aria-label={label} data-panel={panel} />
+  default: ({
+    label,
+    panel,
+    route,
+    selectedStep,
+  }: {
+    label: string;
+    panel: number;
+    route?: { features: unknown[] } | null;
+    selectedStep?: number | null;
+  }) => (
+    <div
+      role="region"
+      aria-label={label}
+      data-panel={panel}
+      data-route-features={route?.features.length ?? 0}
+      data-selected={selectedStep ?? ''}
+    />
   ),
 }));
 
@@ -85,5 +101,74 @@ describe('StationPage', () => {
     vi.spyOn(data, 'loadStationGraph').mockRejectedValue(new Error('boom'));
     renderWith(<StationPage id="T" />);
     expect(await screen.findByRole('alert')).toBeVisible();
+  });
+});
+
+describe('StationPage route on the map', () => {
+  async function withRoute() {
+    const user = userEvent.setup();
+    renderWith(<StationPage id="T" />);
+    await user.click(await screen.findByRole('radio', { name: '感覚過敏' }));
+    await screen.findByRole('button', { name: '地図で見る：ステップ1' });
+    return user;
+  }
+
+  it('passes the route to the map, says so in its label and adds it to the legend', async () => {
+    renderWith(<StationPage id="T" />);
+    const map = await screen.findByRole('region', { name: /駅構内マップ/ });
+    expect(map).toHaveAttribute('data-route-features', '0');
+    expect(screen.queryByText(/道順（黄色/)).toBeNull();
+    await userEvent.setup().click(screen.getByRole('radio', { name: '感覚過敏' }));
+    await waitFor(() => {
+      expect(screen.getByRole('region', { name: /駅構内マップ/ })).not.toHaveAttribute(
+        'data-route-features',
+        '0',
+      );
+    });
+    expect(screen.getByRole('region', { name: /道順は黄色の太い線/ })).toBeVisible();
+    expect(screen.getByText(/道順（黄色/)).toBeVisible();
+  });
+
+  it('starts on the floor where the route begins', async () => {
+    await withRoute();
+    expect(screen.getByRole('radio', { name: '地上' })).toBeChecked();
+  });
+
+  it('shows the floor a step starts on and marks the step as pressed', async () => {
+    const user = await withRoute();
+    // step 4 is the stairs down from B1
+    const button = screen.getByRole('button', { name: '地図で見る：ステップ4' });
+    await user.click(button);
+    expect(screen.getByRole('radio', { name: '地下1階' })).toBeChecked();
+    expect(button).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('region', { name: /駅構内マップ/ })).toHaveAttribute(
+      'data-selected',
+      '3',
+    );
+    expect(screen.getByText('地下1階を表示しています。')).toBeVisible();
+  });
+
+  it('clears the selection when the same step is pressed again', async () => {
+    const user = await withRoute();
+    const button = screen.getByRole('button', { name: '地図で見る：ステップ4' });
+    await user.click(button);
+    await user.click(button);
+    expect(button).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('region', { name: /駅構内マップ/ })).toHaveAttribute(
+      'data-selected',
+      '',
+    );
+  });
+
+  it('clears the selection when the route changes', async () => {
+    const user = await withRoute();
+    await user.click(screen.getByRole('button', { name: '地図で見る：ステップ4' }));
+    await user.click(screen.getByRole('radio', { name: /駅を出る/ }));
+    await waitFor(() => {
+      expect(screen.getByRole('region', { name: /駅構内マップ/ })).toHaveAttribute(
+        'data-selected',
+        '',
+      );
+    });
   });
 });

@@ -49,6 +49,7 @@ const jaLiterals = {
   legendEscalator: 'エスカレーター（橙、点線）',
   legendStairs: '階段（赤、破線）',
   legendWalk: '通路・スロープ（灰、実線）',
+  legendRoute: '道順（黄色、黒い縁の太い線。丸の中の数字は道順のステップ番号）',
   warningUnverified: 'この駅のデータは、現地ではまだ確認されていません。',
   warningStepFree: 'この駅は、データ上、段差のない出入口からホームまでの道が見つかりません。',
   tierLine: '案内の種類',
@@ -70,6 +71,9 @@ const jaLiterals = {
     'エレベーターには名前や番号のデータがないため、近くの出入口や行き先の階で示しています。',
   routeAnnounce: '{n}ステップの道順を表示しています。',
   routeAnnounceNone: '道順が見つかりません。理由とほかの方法を表示しています。',
+  routeShowOnMap: '地図で見る',
+  routeShowOnMapStep: '地図で見る：ステップ{n}',
+  mapRouteNote: '道順は黄色の太い線で示しています。',
   sides: {
     north: '北',
     northeast: '北東',

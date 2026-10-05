@@ -53,6 +53,8 @@ export const jaEasy: Dictionary = {
   legendEscalator: 'エスカレーター（オレンジ、てんせん）',
   legendStairs: 'かいだん（あか、やぶれせん）',
   legendWalk: 'あるく みち・スロープ（はいいろ、せん）',
+  legendRoute:
+    'みち（きいろ、くろい ふちの ふとい せん。まるの なかの すうじは ステップの ばんごう）',
   warningUnverified: 'この えきの データは、まだ げんちで たしかめて いません。',
   warningStepFree:
     'この えきは、データでは、だんさの ない でいりぐちから ホームまでの みちが みつかりません。',
@@ -75,6 +77,9 @@ export const jaEasy: Dictionary = {
     'エレベーターの なまえや ばんごうは データに ありません。ちかくの でいりぐちや、いく かいで しめして います。',
   routeAnnounce: '{n}こに わけた みちを みせて います。',
   routeAnnounceNone: 'みちが みつかりません。わけと、ほかの ほうほうを みせて います。',
+  routeShowOnMap: 'ちずで みる',
+  routeShowOnMapStep: 'ちずで みる：ステップ{n}',
+  mapRouteNote: 'みちは きいろい ふとい せんで しめして います。',
   sides: {
     north: 'きた',
     northeast: 'きたひがし',

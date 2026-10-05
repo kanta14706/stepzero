@@ -49,6 +49,7 @@ export const zhHant: Dictionary = {
   legendEscalator: '電扶梯（橘色，點線）',
   legendStairs: '樓梯（紅色，虛線）',
   legendWalk: '通道或斜坡（灰色，實線）',
+  legendRoute: '路線（黃色、黑邊的粗線；圓圈中的數字為步驟編號）',
   warningUnverified: '這個車站的資料尚未在現場確認。',
   warningStepFree: '依資料，這個車站找不到從出入口到月台的無段差路線。',
   tierLine: '導引類型',
@@ -69,6 +70,9 @@ export const zhHant: Dictionary = {
   routeElevatorNote: '資料中沒有電梯的名稱或編號，因此以附近的出入口或前往的樓層來說明。',
   routeAnnounce: '正在顯示共{n}個步驟的路線。',
   routeAnnounceNone: '找不到路線。正在顯示原因與其他方法。',
+  routeShowOnMap: '在地圖上查看',
+  routeShowOnMapStep: '在地圖上查看：步驟{n}',
+  mapRouteNote: '路線以黃色粗線顯示。',
   sides: {
     north: '北',
     northeast: '東北',

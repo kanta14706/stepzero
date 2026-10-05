@@ -1,11 +1,18 @@
 import { AttributionControl, Map as MapLibre, NavigationControl, setWorkerUrl } from 'maplibre-gl';
-import type { ExpressionSpecification, Map as MapLibreMap, StyleSpecification } from 'maplibre-gl';
+import type {
+  ExpressionSpecification,
+  GeoJSONSource,
+  Map as MapLibreMap,
+  StyleSpecification,
+} from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 // MapLibre 6 does not find its worker on its own under a bundler; Vite builds it as its own entry.
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { useEffect, useRef } from 'react';
 import { blankStyle, gsiBasemapStyle } from './basemapStyle';
+import type { FeatureCollection } from 'geojson';
 import { mapFeatures, networkLines, networkPoints } from './geojson';
+import { EMPTY_ROUTE, stepBounds } from './routeGeojson';
 import type { StationGraph, StationMapData } from './types';
 
 setWorkerUrl(workerUrl);
@@ -20,7 +27,15 @@ interface Props {
   basemap: Basemap;
   /** Accessible name of the map region (already translated). */
   label: string;
+  /** The route to draw (`routeFeatures`), or null for none. */
+  route?: FeatureCollection | null;
+  /** Index of the step to emphasise, or null for the whole route alike. */
+  selectedStep?: number | null;
 }
+
+const ROUTE_CASING = '#111827';
+const ROUTE_LINE = '#fde047';
+const ROUTE_SELECTED = '#f97316';
 
 const GLYPHS = 'https://maps.gsi.go.jp/xyz/noto-jp/{fontstack}/{range}.pbf';
 const FONT = ['NotoSansCJKjp-Regular'];
@@ -74,6 +89,110 @@ function applyPanel(map: MapLibreMap, panel: number): void {
   map.setFilter('net-points', ['all', onPanel, ['!=', ['get', 'kind'], 'street']]);
   if (map.getLayer('net-labels'))
     map.setFilter('net-labels', ['all', onPanel, ['==', ['get', 'kind'], 'entrance']]);
+}
+
+/** Route layers follow the floor; the selected step is drawn on top, thicker and orange. */
+function applyRoute(map: MapLibreMap, panel: number, selected: number | null): void {
+  if (!map.getLayer('route-line')) return;
+  const onPanel = panelFilter(panel);
+  const isLine: ExpressionSpecification = ['==', ['get', 'kind'], 'line'];
+  const isStep: ExpressionSpecification = ['==', ['get', 'step'], selected ?? -1];
+  map.setFilter('route-casing', ['all', isLine, onPanel]);
+  map.setFilter('route-line', ['all', isLine, onPanel]);
+  map.setFilter('route-selected-casing', ['all', isLine, onPanel, isStep]);
+  map.setFilter('route-selected', ['all', isLine, onPanel, isStep]);
+  map.setFilter('route-markers', ['all', ['!=', ['get', 'kind'], 'line'], onPanel]);
+  map.setFilter('route-marker-selected', ['all', ['!=', ['get', 'kind'], 'line'], onPanel, isStep]);
+  if (map.getLayer('route-numbers')) {
+    map.setFilter('route-numbers', ['all', ['==', ['get', 'kind'], 'start'], onPanel]);
+  }
+}
+
+function addRouteLayers(map: MapLibreMap, props: Props): void {
+  map.addSource('route', { type: 'geojson', data: props.route ?? EMPTY_ROUTE });
+  const width = (base: number): ExpressionSpecification => [
+    'interpolate',
+    ['linear'],
+    ['zoom'],
+    15,
+    base * 0.7,
+    20,
+    base * 2,
+  ];
+  const layout = { 'line-cap': 'round', 'line-join': 'round' } as const;
+  map.addLayer({
+    id: 'route-casing',
+    type: 'line',
+    source: 'route',
+    layout,
+    paint: { 'line-color': ROUTE_CASING, 'line-width': width(9) },
+  });
+  map.addLayer({
+    id: 'route-line',
+    type: 'line',
+    source: 'route',
+    layout,
+    paint: { 'line-color': ROUTE_LINE, 'line-width': width(5) },
+  });
+  map.addLayer({
+    id: 'route-selected-casing',
+    type: 'line',
+    source: 'route',
+    layout,
+    paint: { 'line-color': ROUTE_CASING, 'line-width': width(14) },
+  });
+  map.addLayer({
+    id: 'route-selected',
+    type: 'line',
+    source: 'route',
+    layout,
+    paint: { 'line-color': ROUTE_SELECTED, 'line-width': width(9) },
+  });
+  map.addLayer({
+    id: 'route-markers',
+    type: 'circle',
+    source: 'route',
+    paint: {
+      'circle-radius': [
+        'interpolate',
+        ['linear'],
+        ['zoom'],
+        15,
+        ['case', ['==', ['get', 'kind'], 'start'], 5, 3.5],
+        20,
+        ['case', ['==', ['get', 'kind'], 'start'], 11, 7],
+      ],
+      'circle-color': ['case', ['==', ['get', 'kind'], 'start'], ROUTE_LINE, '#ffffff'],
+      'circle-stroke-color': ROUTE_CASING,
+      'circle-stroke-width': 2.5,
+    },
+  });
+  map.addLayer({
+    id: 'route-marker-selected',
+    type: 'circle',
+    source: 'route',
+    paint: {
+      'circle-radius': ['interpolate', ['linear'], ['zoom'], 15, 9, 20, 16],
+      'circle-color': 'rgba(0,0,0,0)',
+      'circle-stroke-color': ROUTE_SELECTED,
+      'circle-stroke-width': 4,
+    },
+  });
+  if (props.basemap === 'gsi') {
+    map.addLayer({
+      id: 'route-numbers',
+      type: 'symbol',
+      source: 'route',
+      layout: {
+        'text-field': ['get', 'label'],
+        'text-font': [...FONT],
+        'text-size': ['interpolate', ['linear'], ['zoom'], 15, 9, 20, 14],
+        'text-allow-overlap': true,
+      },
+      paint: { 'text-color': ROUTE_CASING },
+    });
+  }
+  applyRoute(map, props.panel, props.selectedStep ?? null);
 }
 
 function addLayers(map: MapLibreMap, props: Props): void {
@@ -145,6 +264,7 @@ function addLayers(map: MapLibreMap, props: Props): void {
     });
   }
   applyPanel(map, props.panel);
+  addRouteLayers(map, props);
 }
 
 function styleFor(basemap: Basemap): StyleSpecification {
@@ -199,8 +319,40 @@ export default function StationMap(props: Props) {
   // Change floor without rebuilding the map.
   useEffect(() => {
     const map = mapRef.current;
-    if (map && loaded.current) applyPanel(map, props.panel);
+    if (!map || !loaded.current) return;
+    applyPanel(map, props.panel);
+    applyRoute(map, props.panel, props.selectedStep ?? null);
+    // `selectedStep` has its own effect below
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.panel]);
+
+  // New route: swap the data without rebuilding the map.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !loaded.current) return;
+    void map.getSource<GeoJSONSource>('route')?.setData(props.route ?? EMPTY_ROUTE);
+  }, [props.route]);
+
+  // Select a step: emphasise it and bring it into view.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !loaded.current) return;
+    const selected = props.selectedStep ?? null;
+    applyRoute(map, props.panel, selected);
+    if (selected === null || !props.route) return;
+    const b = stepBounds(props.route, selected, props.panel);
+    if (!b) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    map.fitBounds(
+      [
+        [b[0], b[1]],
+        [b[2], b[3]],
+      ],
+      { padding: 90, maxZoom: 20, duration: reduced ? 0 : 400 },
+    );
+    // Runs when the selection changes; the floor and route are read as they are at that moment.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.selectedStep]);
 
   return <div ref={container} className="station-map" role="region" aria-label={props.label} />;
 }

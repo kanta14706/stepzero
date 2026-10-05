@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { I18nProvider } from '../../i18n';
 import { edge, graph, node } from '../../routing/fixtures';
 import type { StationGraph } from '../../routing/types';
@@ -117,5 +117,51 @@ describe('RoutePlanner', () => {
     expect(await screen.findByText('Start at exit A1.')).toBeVisible();
     expect(screen.getByText('You arrive on platform 3.')).toBeVisible();
     expect(screen.getByRole('radio', { name: 'Wheelchair' })).toBeChecked();
+  });
+
+  it('hides the map buttons when nothing listens for them', async () => {
+    renderPlanner(stepFreeGraph());
+    await screen.findAllByRole('listitem');
+    expect(screen.queryByRole('button', { name: /地図で見る/ })).toBeNull();
+  });
+
+  it('has one map button per step, named by its number, and reports the pressed one', async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    const { rerender } = render(
+      <I18nProvider>
+        <RoutePlanner graph={stepFreeGraph()} selectedStep={null} onSelectStep={onSelect} />
+      </I18nProvider>,
+    );
+    const items = await screen.findAllByRole('listitem');
+    const buttons = screen.getAllByRole('button', { name: /^地図で見る：ステップ\d+$/ });
+    expect(buttons).toHaveLength(items.length);
+    await user.click(buttons[1] as HTMLElement);
+    expect(onSelect).toHaveBeenCalledWith(1);
+    rerender(
+      <I18nProvider>
+        <RoutePlanner graph={stepFreeGraph()} selectedStep={1} onSelectStep={onSelect} />
+      </I18nProvider>,
+    );
+    expect(buttons[1]).toHaveAttribute('aria-pressed', 'true');
+    expect(buttons[0]).toHaveAttribute('aria-pressed', 'false');
+    await user.click(buttons[1] as HTMLElement);
+    expect(onSelect).toHaveBeenLastCalledWith(null);
+  });
+
+  it('tells the page about the route and clears it when there is none', async () => {
+    const onRoute = vi.fn();
+    render(
+      <I18nProvider>
+        <RoutePlanner graph={testGraph()} onRouteChange={onRoute} />
+      </I18nProvider>,
+    );
+    await screen.findByRole('alert'); // wheelchair: stairs only
+    expect(onRoute).toHaveBeenLastCalledWith(null);
+    await userEvent.setup().click(screen.getByRole('radio', { name: '感覚過敏' }));
+    await screen.findAllByRole('listitem');
+    const route = onRoute.mock.calls.at(-1)?.[0] as { steps: { kind: string }[] } | null;
+    expect(route?.steps[0]?.kind).toBe('start');
+    expect(route?.steps.at(-1)?.kind).toBe('arrive');
   });
 });

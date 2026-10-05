@@ -1,4 +1,5 @@
-import { useId, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
+import type { PlannedRoute } from '../../map/routeGeojson';
 import { fmt, useI18n } from '../../i18n';
 import type { Dictionary } from '../../i18n/ja';
 import { indexGraph } from '../../routing/astar';
@@ -74,10 +75,21 @@ interface Props {
   graph: StationGraph;
   /** Test hook: a fake router worker. */
   createWorker?: () => WorkerLike;
+  /** Called with the route and its steps whenever they change (null when there is no route). */
+  onRouteChange?: (route: PlannedRoute | null) => void;
+  /** The step the map is showing, and the way to change it. Without them the buttons are hidden. */
+  selectedStep?: number | null;
+  onSelectStep?: (step: number | null) => void;
 }
 
 /** Pick direction, entrance, platform and profile; shows the steps or why there is no route. */
-export function RoutePlanner({ graph, createWorker }: Props) {
+export function RoutePlanner({
+  graph,
+  createWorker,
+  onRouteChange,
+  selectedStep = null,
+  onSelectStep,
+}: Props) {
   const { t } = useI18n();
   const uid = useId();
   const [direction, setDirection] = useState<Direction>('in');
@@ -105,6 +117,17 @@ export function RoutePlanner({ graph, createWorker }: Props) {
     () => (state.status === 'ready' && state.result.ok ? routeToSteps(index, state.result) : []),
     [index, state],
   );
+
+  const planned = useMemo<PlannedRoute | null>(
+    () =>
+      state.status === 'ready' && state.result.ok
+        ? { nodes: state.result.nodes, legs: state.result.legs, steps }
+        : null,
+    [state, steps],
+  );
+  useEffect(() => {
+    onRouteChange?.(planned);
+  }, [planned, onRouteChange]);
 
   const platformLabel = (id: string, code: string | undefined) =>
     code ? fmt(t.steps.platform, { code }) : id;
@@ -206,13 +229,28 @@ export function RoutePlanner({ graph, createWorker }: Props) {
             {steps.map((step, i) => {
               const { text, notes } = describeStep(step, t, profile);
               return (
-                <li key={i} data-kind={step.kind} data-step={i}>
+                <li key={i} data-kind={step.kind} data-step={i} data-selected={selectedStep === i}>
                   <span>{text}</span>
                   {notes.map((n) => (
                     <span key={n} className="step-note">
                       {n}
                     </span>
                   ))}
+                  {onSelectStep && (
+                    <div className="step-actions">
+                      <button
+                        type="button"
+                        className="step-button"
+                        aria-pressed={selectedStep === i}
+                        aria-label={fmt(t.routeShowOnMapStep, { n: i + 1 })}
+                        onClick={() => {
+                          onSelectStep(selectedStep === i ? null : i);
+                        }}
+                      >
+                        {t.routeShowOnMap}
+                      </button>
+                    </div>
+                  )}
                 </li>
               );
             })}

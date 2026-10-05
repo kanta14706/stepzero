@@ -26,8 +26,8 @@ test('shows a rendered map, a floor switcher and a text list for the floor', asy
   await expect(map).toBeVisible();
   await expect(map.locator('canvas')).toBeVisible();
   await expect(page.getByRole('group', { name: '階を選ぶ' })).toBeVisible();
-  // B1 is the first floor with map data
-  await expect(page.getByRole('radio', { name: '地下1階' })).toBeChecked();
+  // the page opens on the floor where the route starts: the ground, at exit B5
+  await expect(page.getByRole('radio', { name: '地上' })).toBeChecked();
   await expect(page.getByRole('heading', { name: 'この階にあるもの' })).toBeVisible();
   await expect(page.locator('.floor-list').getByText('出入口', { exact: true })).toBeVisible();
   expect(errors).toEqual([]);
@@ -52,7 +52,7 @@ test('is usable in English', async ({ page }) => {
   await page.goto(STATION);
   await page.locator('#language-select').selectOption('en');
   await expect(page.getByRole('group', { name: 'Choose a floor' })).toBeVisible();
-  await expect(page.getByRole('radio', { name: 'B1' })).toBeChecked();
+  await expect(page.getByRole('radio', { name: 'Ground' })).toBeChecked();
   await expect(page.getByRole('heading', { name: 'What is on this floor' })).toBeVisible();
 });
 
@@ -107,4 +107,25 @@ test('directions follow the page language', async ({ page }) => {
   await page.goto(STATION);
   await page.getByLabel('言語').selectOption('en');
   await expect(page.getByText(/^Take the elevator at exit/).first()).toBeVisible();
+});
+
+test('a step button shows its floor and the route on the map, without errors', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto(STATION);
+  const planner = page.getByRole('region', { name: '駅の中の道順' });
+  await expect(planner.locator('ol.steps > li').first()).toBeVisible();
+  // a new route starts on the floor where it begins: the ground, exit B5
+  await expect(page.getByRole('radio', { name: '地上' })).toBeChecked();
+  await expect(page.getByRole('region', { name: /道順は黄色の太い線/ })).toBeVisible();
+  await expect(page.getByText(/道順（黄色/)).toBeVisible();
+  // the walk at the ticket gates is on B3
+  const gate = planner.locator('li', { hasText: '改札を通って' });
+  await gate.getByRole('button', { name: /地図で見る/ }).click();
+  await expect(page.getByRole('radio', { name: '地下3階' })).toBeChecked();
+  await expect(gate.getByRole('button', { name: /地図で見る/ })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  expect(errors).toEqual([]);
 });

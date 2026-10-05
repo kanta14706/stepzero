@@ -358,6 +358,13 @@ main a {
   color: #4b5563;
 }
 
+.swatch-route {
+  height: 0.5rem;
+  background: #fde047;
+  border: 2px solid #111827;
+  border-radius: 0.25rem;
+}
+
 @media (max-width: 36rem) {
   .floor-row {
     grid-template-columns: 1fr;
@@ -449,4 +456,36 @@ main a {
 
 .no-route h4 {
   margin-top: 0;
+}
+
+.step-actions {
+  margin-top: 0.5rem;
+}
+
+.step-button {
+  min-width: var(--target);
+  min-height: var(--target);
+  padding: 0 1rem;
+  font: inherit;
+  color: var(--fg);
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.step-button[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 700;
+}
+
+.step-button:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.steps li[data-selected='true'] {
+  background: var(--surface);
 }
