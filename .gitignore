@@ -170,3 +170,6 @@ data/raw/*
 !data/raw/manifest.json
 data/build/*
 !data/build/README.md
+
+# Claude Code local settings
+.claude/settings.local.json

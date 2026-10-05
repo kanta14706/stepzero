@@ -28,6 +28,7 @@ packages = ["importer"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+extend-exclude = ["*.ipynb"]  # exploration notebooks; logic lives in tested modules
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]

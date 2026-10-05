@@ -33,7 +33,7 @@ Later prompts assume earlier ones worked. If a finding changes the plan (e.g. a 
 - [x] **1.1 Importer project + downloads**
 > Set up `importer/` as a Python project with uv (geopandas, gtfs-kit, networkx, shapely, pandas, jupyter, ruff, pytest). Write a source adapter that downloads the Toei GTFS (including GTFS-Pathways) from ODPT and the ほこナビ walking-network and station-map datasets for the 12 Ōedo stations into `data/raw/`, recording each source URL, licence and download date in a manifest. The ODPT key comes from `.env`; ask me before running anything that needs it.
 
-- [ ] **1.2 Explore GTFS-Pathways**
+- [x] **1.2 Explore GTFS-Pathways**
 > Create `importer/notebooks/01_pathways.ipynb`. For each of the 12 Ōedo stations, report: levels, number of pathways by pathway_mode, elevators, whether every platform is reachable step-free from a street entrance, and any obvious data errors. Summarise the results as a table in docs/data-notes.md.
 
 - [ ] **1.3 Explore ほこナビ**
