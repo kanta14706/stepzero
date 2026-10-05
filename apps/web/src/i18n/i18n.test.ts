@@ -16,10 +16,27 @@ describe('dictionaries', () => {
     }
   });
 
-  it('have no empty strings', () => {
+  it('have no empty strings, nested ones included', () => {
     for (const lang of LANGUAGES) {
-      for (const [k, v] of Object.entries(dictionaries[lang])) {
-        if (typeof v === 'string') expect(v.trim(), `${lang}.${k}`).not.toBe('');
+      for (const k of keys(dictionaries[lang])) {
+        const v = k
+          .split('.')
+          .reduce<unknown>((o, part) => (o as Record<string, unknown>)[part], dictionaries[lang]);
+        expect(typeof v === 'string' && v.trim(), `${lang}.${k}`).not.toBe('');
+      }
+    }
+  });
+
+  it('use the same placeholders in every language', () => {
+    const placeholders = (lang: (typeof LANGUAGES)[number], k: string) => {
+      const v = k
+        .split('.')
+        .reduce<unknown>((o, part) => (o as Record<string, unknown>)[part], dictionaries[lang]);
+      return [...String(v).matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+    };
+    for (const k of keys(dictionaries.ja)) {
+      for (const lang of LANGUAGES) {
+        expect(placeholders(lang, k), `${lang}.${k}`).toEqual(placeholders('ja', k));
       }
     }
   });
