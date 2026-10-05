@@ -10,12 +10,15 @@ const source = resolve(root, '../../data/build');
 const target = resolve(root, 'public/data');
 
 if (!existsSync(resolve(source, 'graphs/index.json'))) {
-  console.warn(`sync-data: ${source}/graphs/index.json not found; run the importer first. Skipping.`);
+  console.warn(
+    `sync-data: ${source}/graphs/index.json not found; run the importer first. Skipping.`,
+  );
   process.exit(0);
 }
 rmSync(target, { recursive: true, force: true });
 mkdirSync(target, { recursive: true });
 for (const dir of ['graphs', 'maps']) {
-  if (existsSync(resolve(source, dir))) cpSync(resolve(source, dir), resolve(target, dir), { recursive: true });
+  if (existsSync(resolve(source, dir)))
+    cpSync(resolve(source, dir), resolve(target, dir), { recursive: true });
 }
 console.log('sync-data: copied graphs and maps to public/data');
