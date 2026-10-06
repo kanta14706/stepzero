@@ -91,6 +91,8 @@ export const zhHant: Dictionary = {
     reported: '{time} 回報・{n} 人確認',
     stillBroken: '仍無法使用',
     fixed: '已恢復使用',
+    queued: '目前無法連線，回報已儲存在此裝置上，恢復連線後會自動送出。您的路線已經反映這項回報。',
+    queuedNote: '{time} 回報・尚未送出（恢復連線後自動送出）',
     rerouted: '故障資訊已更新，因此變更了路線。',
   },
   journey: {
@@ -163,6 +165,8 @@ export const zhHant: Dictionary = {
       no_trains: '找不到這兩個地點之間的列車路線。',
       outside_service_period: '沒有這個日期時間的時刻表，請改用其他日期時間。',
       location_not_found: '列車路線搜尋的資料中沒有所選的地點。',
+      offline:
+        '目前無法連線，此裝置上也沒有已儲存的路線。在有網路時搜尋一次路線，就會儲存起來供離線使用。',
       failed: '無法搜尋路線，請再試一次。',
     },
     noJourney: '以這個移動條件，找不到無階梯的路線。',
@@ -172,6 +176,8 @@ export const zhHant: Dictionary = {
       transfer: '轉乘',
       egress: '從月台到出口',
     },
+    savedPlan:
+      '目前無法連線，顯示 {saved} 儲存的路線（{time} 出發的條件）。未反映列車延誤及之後的故障回報。',
     rerouted: '故障資訊已更新，因此已變更路線。',
   },
   tierLine: '導引類型',
@@ -320,6 +326,10 @@ export const zhHant: Dictionary = {
       wait_for_repair: '等待修復，或稍後再查詢一次',
       try_another_profile: '用其他移動方式再查詢一次',
     },
+  },
+  offline: {
+    notice: '目前為離線狀態。仍可查看站內路線及最後搜尋的路線。故障回報會在恢復連線後送出。',
+    openSaved: '開啟最後搜尋的路線',
   },
   languageNames: {
     ja: '日本語',

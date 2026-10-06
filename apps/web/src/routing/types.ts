@@ -97,6 +97,8 @@ export interface OutageReport {
   source: 'community' | 'operator';
   /** The device (elevator shaft or escalator) the edge belongs to; set by the back end (D-022). */
   deviceId?: string;
+  /** Client only: made offline and queued on this device, not sent yet (step 2.9, D-025). */
+  pending?: boolean;
 }
 
 /** Why an edge cannot be used by a profile. */

@@ -98,6 +98,9 @@ export const en: Dictionary = {
     reported: 'Reported at {time} · confirmed by {n}',
     stillBroken: 'Still not working',
     fixed: 'Working again',
+    queued:
+      'No connection, so the report is saved on this device and will be sent automatically when you are back online. Your own route already takes it into account.',
+    queuedNote: 'Reported at {time} · not sent yet (will be sent when online)',
     rerouted: 'The route changed because outage reports were updated.',
   },
   journey: {
@@ -179,6 +182,8 @@ export const en: Dictionary = {
       no_trains: 'No train route was found between these two places.',
       outside_service_period: 'There is no timetable for this date and time. Try another one.',
       location_not_found: 'The train route search does not know one of the places.',
+      offline:
+        'No connection, and no journey is saved on this device. Plan a journey once while online and it is kept for use offline.',
       failed: 'Routes could not be found. Please try again.',
     },
     noJourney: 'No step-free journey was found for this profile.',
@@ -188,6 +193,8 @@ export const en: Dictionary = {
       transfer: 'change',
       egress: 'platform to exit',
     },
+    savedPlan:
+      'No connection: showing the journey saved on {saved} (for leaving at {time}). Train delays and later outage reports are not included.',
     rerouted: 'The outage reports changed, so the route has changed.',
   },
   tierLine: 'Type of guidance',
@@ -342,6 +349,11 @@ export const en: Dictionary = {
       wait_for_repair: 'Wait for the repair, or check again later',
       try_another_profile: 'Search again with another way of travelling',
     },
+  },
+  offline: {
+    notice:
+      'You are offline. Routes inside stations and your last planned journey still work. Outage reports will be sent when you are back online.',
+    openSaved: 'Open your last planned journey',
   },
   languageNames: {
     ja: '日本語',

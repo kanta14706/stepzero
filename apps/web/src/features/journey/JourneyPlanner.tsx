@@ -1,9 +1,9 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { SyntheticEvent } from 'react';
-import { fmt, useI18n } from '../../i18n';
+import { fmt, htmlLang, useI18n } from '../../i18n';
 import { PROFILES } from '../../routing/profiles';
 import type { ProfileId } from '../../routing/types';
-import { ReportFeedback, useReporter } from '../report/ReportControls';
+import { ReportFeedback, reportTime, useReporter } from '../report/ReportControls';
 import { describeFailure } from '../station-view/describe';
 import { JourneyTimeline, journeySummary, stationName } from './JourneyTimeline';
 import { PlacePicker } from './PlacePicker';
@@ -331,6 +331,14 @@ function JourneyResults({
           <h3 id={`${uid}-title`} ref={headingRef} tabIndex={-1}>
             {j.resultsTitle}
           </h3>
+          {state.saved && (
+            <p className="notice-inline saved-plan">
+              {fmt(j.savedPlan, {
+                saved: savedTime(state.saved.savedAt, lang),
+                time: reportTime(state.saved.time, lang),
+              })}
+            </p>
+          )}
           {outagesStatus !== 'unavailable' && (
             <p className="hint outage-status" data-status={outagesStatus}>
               {t.outageStatus[outagesStatus]}
@@ -383,6 +391,18 @@ function JourneyResults({
       )}
     </section>
   );
+}
+
+/** "10/7 09:02" in Tokyo time: a saved plan may be from another day. */
+function savedTime(iso: string, lang: Parameters<typeof reportTime>[1]): string {
+  return new Intl.DateTimeFormat(htmlLang[lang], {
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+    timeZone: 'Asia/Tokyo',
+  }).format(new Date(iso));
 }
 
 /** Why no journey works: one entry per station and reason, with what to try instead. */

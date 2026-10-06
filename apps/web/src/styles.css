@@ -92,6 +92,18 @@ main,
   padding: 0 16px;
 }
 
+/* Offline (D-025): inside the page width, above the content. */
+.offline-notice {
+  max-width: calc(48rem - 32px);
+  margin: 0.5rem auto;
+}
+
+@media (max-width: 48rem) {
+  .offline-notice {
+    margin: 0.5rem 16px;
+  }
+}
+
 .site-header {
   display: flex;
   flex-wrap: wrap;

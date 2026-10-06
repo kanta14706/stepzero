@@ -1,4 +1,5 @@
 import { LanguageSwitcher } from './components/LanguageSwitcher';
+import { OfflineNotice } from './components/OfflineNotice';
 import { JourneyPlanner } from './features/journey/JourneyPlanner';
 import { useI18n } from './i18n';
 import { StationList } from './map/StationList';
@@ -49,6 +50,7 @@ export function App() {
         </div>
         <LanguageSwitcher />
       </header>
+      <OfflineNotice onJourney={route.page === 'journey'} />
       <main id="main" tabIndex={-1}>
         {route.page === 'station' ? (
           <StationPage key={route.id} id={route.id} />

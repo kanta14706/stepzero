@@ -54,6 +54,32 @@ function nextRerouted(prev: RouteState, next: RouteState, wasRerouted: boolean):
   return (blockedChanged && routeKey(prev) !== routeKey(next)) || wasRerouted;
 }
 
+export interface Seen {
+  /** The route state last rendered. */
+  state: RouteState;
+  /** The route on screen changed because of outage reports. */
+  rerouted: boolean;
+  /** A route that took the loaded reports into account has been shown; stays true after. */
+  loaded: boolean;
+}
+
+/**
+ * What the planner has seen, after rendering `state`; null when nothing changes. `loaded` must
+ * not go back to false: reports for one device arrive one row per edge, and a route for the
+ * first row can render together with the next row. Resetting it there lost the notice (step 2.9).
+ */
+export function nextSeen(seen: Seen, state: RouteState, reflectsReports: boolean): Seen | null {
+  if (seen.state !== state && state.status !== 'idle') {
+    return {
+      state,
+      rerouted: seen.loaded && nextRerouted(seen.state, state, seen.rerouted),
+      loaded: seen.loaded || reflectsReports,
+    };
+  }
+  if (!seen.loaded && reflectsReports) return { ...seen, loaded: true };
+  return null;
+}
+
 interface EntranceOption {
   id: string;
   label: string;
@@ -157,24 +183,13 @@ export function RoutePlanner({
   // Adjusting state while rendering (React's pattern for "derive from the previous value").
   // `loaded` is whether the route on screen already takes the loaded outage reports into
   // account; only changes after that are announced.
-  const [seen, setSeen] = useState<{ state: RouteState; rerouted: boolean; loaded: boolean }>({
-    state,
-    rerouted: false,
-    loaded: false,
-  });
+  const [seen, setSeen] = useState<Seen>({ state, rerouted: false, loaded: false });
   const reflectsReports =
     outagesLoaded &&
     state.status === 'ready' &&
     (state.query.blockedEdgeIds ?? []).join('\n') === blockedKey;
-  if (seen.state !== state && state.status !== 'idle') {
-    setSeen({
-      state,
-      rerouted: seen.loaded && nextRerouted(seen.state, state, seen.rerouted),
-      loaded: reflectsReports,
-    });
-  } else if (!seen.loaded && reflectsReports) {
-    setSeen({ ...seen, loaded: true });
-  }
+  const next = nextSeen(seen, state, reflectsReports);
+  if (next) setSeen(next);
   const rerouted = seen.rerouted && state.status === 'ready' && state.result.ok;
   const legs = state.status === 'ready' && state.result.ok ? state.result.legs : [];
 

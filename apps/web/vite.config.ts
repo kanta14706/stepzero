@@ -32,7 +32,32 @@ export default defineConfig({
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
-      workbox: { globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'] },
+      // Offline (step 2.9, D-025): the app shell and every station's data are precached, so a
+      // station works underground even if it was never opened. Basemap tiles and glyphs are
+      // cached as they are viewed; the station's own layers do not need them.
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}', 'data/**/*.json'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/cyberjapandata\.gsi\.go\.jp\/xyz\/experimental_bvmap\//,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'gsi-tiles',
+              expiration: { maxEntries: 400, maxAgeSeconds: 30 * 24 * 3600 },
+              cacheableResponse: { statuses: [200] },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/maps\.gsi\.go\.jp\/xyz\/noto-jp\//,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'gsi-glyphs',
+              expiration: { maxEntries: 100, maxAgeSeconds: 90 * 24 * 3600 },
+              cacheableResponse: { statuses: [200] },
+            },
+          },
+        ],
+      },
     }),
   ],
   test: {

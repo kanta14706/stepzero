@@ -7,6 +7,7 @@ import { floorLabel } from '../../map/floors';
 import type { OutageReport, StationGraph } from '../../routing/types';
 import { devicesOutOfService, indexDevices } from './devices';
 import type { Device } from './devices';
+import { isQueuedAnswer } from './queue';
 import { ReportError } from './source';
 import type { CommunityStatus, ReportErrorCode } from './source';
 
@@ -41,7 +42,9 @@ export function reportTime(iso: string, lang: Lang): string {
 }
 
 type Feedback =
-  { kind: 'sent'; status: CommunityStatus } | { kind: 'error'; code: ReportErrorCode } | null;
+  | { kind: 'sent' | 'queued'; status: CommunityStatus }
+  | { kind: 'error'; code: ReportErrorCode }
+  | null;
 
 /** Sends reports and keeps the outcome for <ReportFeedback>. */
 export function useReporter(report: (edgeId: string, status: CommunityStatus) => Promise<unknown>) {
@@ -52,8 +55,10 @@ export function useReporter(report: (edgeId: string, status: CommunityStatus) =>
     (edgeId, status) => {
       setBusy(true);
       report(edgeId, status).then(
-        () => {
-          setFeedback({ kind: 'sent', status });
+        (rows) => {
+          // Offline, the source keeps the report on the device and answers with its pending copy.
+          const queued = Array.isArray(rows) && isQueuedAnswer(rows as OutageReport[]);
+          setFeedback({ kind: queued ? 'queued' : 'sent', status });
           setBusy(false);
         },
         (e: unknown) => {
@@ -82,13 +87,15 @@ export function ReportFeedback({ feedback, busy }: { feedback: Feedback; busy: b
   const r = t.report;
   const text = busy
     ? r.sending
-    : feedback?.kind === 'sent'
-      ? feedback.status === 'out_of_service'
-        ? r.thanksOut
-        : r.thanksWorking
-      : feedback?.kind === 'error'
-        ? r.errors[feedback.code]
-        : '';
+    : feedback?.kind === 'queued'
+      ? r.queued
+      : feedback?.kind === 'sent'
+        ? feedback.status === 'out_of_service'
+          ? r.thanksOut
+          : r.thanksWorking
+        : feedback?.kind === 'error'
+          ? r.errors[feedback.code]
+          : '';
   return (
     <p
       ref={ref}
@@ -228,10 +235,12 @@ export function OutageList({
               <li key={device.id} data-device={device.id}>
                 <span id={`${uid}-${i}`}>{deviceName(device, t)}</span>
                 <span className="step-note">
-                  {fmt(r.reported, {
-                    time: reportTime(report.createdAt, lang),
-                    n: report.confirmations,
-                  })}
+                  {report.pending
+                    ? fmt(r.queuedNote, { time: reportTime(report.createdAt, lang) })
+                    : fmt(r.reported, {
+                        time: reportTime(report.createdAt, lang),
+                        n: report.confirmations,
+                      })}
                 </span>
                 <div className="step-actions">
                   <button

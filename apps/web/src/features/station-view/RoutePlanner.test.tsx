@@ -5,7 +5,9 @@ import { I18nProvider } from '../../i18n';
 import { edge, graph, node } from '../../routing/fixtures';
 import type { StationGraph } from '../../routing/types';
 import { testGraph } from '../../map/mapFixtures';
-import { RoutePlanner } from './RoutePlanner';
+import { RoutePlanner, nextSeen } from './RoutePlanner';
+import type { Seen } from './RoutePlanner';
+import type { RouteState } from './useStationRoute';
 
 /** Exit A1, a lift down to the gates and a platform: step-free all the way. */
 function stepFreeGraph(): StationGraph {
@@ -328,5 +330,34 @@ describe('RoutePlanner', () => {
       expect(last?.legs.map((l) => l.edge.id)).toEqual(['w2', 'lift2']);
     });
     expect(screen.queryByText(/故障情報が更新されたため/)).toBeNull();
+  });
+});
+
+describe('nextSeen', () => {
+  const ready = (blocked: string[], edges: string[]): RouteState =>
+    ({
+      status: 'ready',
+      ms: 1,
+      query: { from: ['a'], to: ['p'], profile: 'wheelchair', blockedEdgeIds: blocked },
+      result: { ok: true, legs: edges.map((id) => ({ edge: { id } })) },
+    }) as unknown as RouteState; // only the fields nextSeen reads
+
+  it('keeps the notice when a route for an earlier report renders with a newer one', () => {
+    // Loaded: the first route took the (empty) reports into account.
+    let seen: Seen = { state: ready([], ['w1', 'lift1']), rerouted: false, loaded: true };
+    // Two rows of one device: the route for the first renders when the second is already in.
+    const first = ready(['lift1a'], ['w2', 'lift2']);
+    seen = nextSeen(seen, first, false) ?? seen;
+    expect(seen).toMatchObject({ rerouted: true, loaded: true });
+    const second = ready(['lift1a', 'lift1b'], ['w2', 'lift2']);
+    seen = nextSeen(seen, second, true) ?? seen;
+    expect(seen).toMatchObject({ rerouted: true, loaded: true });
+  });
+
+  it('is not a change while the first reports are still arriving', () => {
+    let seen: Seen = { state: ready([], ['w1', 'lift1']), rerouted: false, loaded: false };
+    seen = nextSeen(seen, ready(['lift1a'], ['w2', 'lift2']), false) ?? seen;
+    seen = nextSeen(seen, ready(['lift1a', 'lift1b'], ['w2', 'lift2']), true) ?? seen;
+    expect(seen).toMatchObject({ rerouted: false, loaded: true });
   });
 });

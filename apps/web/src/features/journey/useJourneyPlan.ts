@@ -10,21 +10,28 @@ import { assembleAll } from './assemble';
 import type { AssembleDeps, Planned } from './assemble';
 import { PlanError, planTrains, planWalk } from './otp';
 import type { PlanErrorCode, PlanTrainsInput } from './otp';
+import { defaultPlanStore, planKey, savedPlan } from './saved';
+import type { PlanStore, SavedPlan, WalkAnswer } from './saved';
 import type { Itinerary, Journey, JourneyRequest, Station } from './types';
 
 /** When no train can be caught from the requested time, ask again this much later (once). */
 const RETRY_LATER_S = 15 * 60;
 
+/** 'offline': no connection and no saved plan for this trip. */
+export type JourneyErrorCode = PlanErrorCode | 'failed' | 'offline';
+
 export type JourneyPlanState =
   | { status: 'idle' }
   | { status: 'loading' }
-  | { status: 'error'; code: PlanErrorCode | 'failed' }
+  | { status: 'error'; code: JourneyErrorCode }
   | {
       status: 'ready';
       request: JourneyRequest;
       planned: Planned;
       /** The outage reports the plan took into account, per station (sorted edge ids). */
       blockedKey: string;
+      /** Set when OTP could not be reached and the plan is the one saved on the device. */
+      saved: { savedAt: string; time: string } | null;
     };
 
 export interface JourneyPlanOptions {
@@ -32,7 +39,12 @@ export interface JourneyPlanOptions {
   walk?: AssembleDeps['walk'];
   createWorker?: () => WorkerLike;
   loadGraph?: (id: string) => Promise<GraphIndex>;
+  /** Where the last plan is kept for offline use (D-025). */
+  store?: PlanStore;
+  isOnline?: () => boolean;
 }
+
+const browserOnline = (): boolean => typeof navigator === 'undefined' || navigator.onLine;
 
 const graphCache = new Map<string, Promise<GraphIndex>>();
 function loadIndex(id: string): Promise<GraphIndex> {
@@ -83,7 +95,14 @@ export function useJourneyPlan(
   stations: readonly Station[],
   options: JourneyPlanOptions = {},
 ): { state: JourneyPlanState; outages: ManyOutages } {
-  const { plan, walk, createWorker = createRouter, loadGraph = loadIndex } = options;
+  const {
+    plan,
+    walk,
+    createWorker = createRouter,
+    loadGraph = loadIndex,
+    store = defaultPlanStore,
+    isOnline = browserOnline,
+  } = options;
   const tier2 = useMemo(
     () => new Set(stations.filter((s) => s.tier === 2).map((s) => s.id)),
     [stations],
@@ -91,8 +110,13 @@ export function useJourneyPlan(
 
   // 1. Train itineraries for the request.
   const [trains, setTrains] = useState<
-    | { request: JourneyRequest; itineraries: Itinerary[]; retried: boolean }
-    | { request: JourneyRequest; error: PlanErrorCode | 'failed' }
+    | {
+        request: JourneyRequest;
+        itineraries: Itinerary[];
+        retried: boolean;
+        saved: SavedPlan | null;
+      }
+    | { request: JourneyRequest; error: JourneyErrorCode }
     | null
   >(null);
   const [retryAt, setRetryAt] = useState<{ request: JourneyRequest; time: string } | null>(null);
@@ -102,20 +126,35 @@ export function useJourneyPlan(
     const controller = new AbortController();
     const time = retryAt?.request === request ? retryAt.time : request.time;
     const input = { from: request.from, to: request.to, time, profile: request.profile };
-    (plan ? plan(input, controller.signal) : planTrains(input, { signal: controller.signal })).then(
+    // Without a connection, the plan saved for the same trip (any time) stands in for OTP.
+    const fromSaved = (): boolean => {
+      const saved = store.load();
+      if (saved?.key !== planKey(request)) return false;
+      setTrains({ request, itineraries: saved.itineraries, retried: true, saved });
+      return true;
+    };
+    // Offline, OTP is not asked at all (a request could hang on a weak signal).
+    const answer = !isOnline()
+      ? Promise.reject(new PlanError('unavailable'))
+      : plan
+        ? plan(input, controller.signal)
+        : planTrains(input, { signal: controller.signal });
+    answer.then(
       (itineraries) => {
         if (!controller.signal.aborted)
-          setTrains({ request, itineraries, retried: time !== request.time });
+          setTrains({ request, itineraries, retried: time !== request.time, saved: null });
       },
       (e: unknown) => {
-        if (!controller.signal.aborted)
-          setTrains({ request, error: e instanceof PlanError ? e.code : 'failed' });
+        if (controller.signal.aborted) return;
+        const code = e instanceof PlanError ? e.code : 'failed';
+        if (code === 'unavailable' && fromSaved()) return;
+        setTrains({ request, error: code === 'unavailable' && !isOnline() ? 'offline' : code });
       },
     );
     return () => {
       controller.abort();
     };
-  }, [request, retryAt, plan]);
+  }, [request, retryAt, plan, store, isOnline]);
 
   const current = trains && trains.request === request ? trains : null;
   const itineraries = current && 'itineraries' in current ? current.itineraries : null;
@@ -149,7 +188,12 @@ export function useJourneyPlan(
     const router = routerRef.current;
     const blocked: Record<string, string[]> = {};
     for (const id of watched) blocked[id] = outages.byStation.get(id)?.blockedEdgeIds ?? [];
-    const walks = new Map<string, ReturnType<AssembleDeps['walk']>>();
+    const saved = current.saved;
+    // A saved plan is assembled for the time it was made for, with the walks it had then.
+    const planRequest = saved ? { ...request, time: saved.time } : request;
+    const walks = new Map<string, Promise<WalkAnswer>>(
+      saved?.walks.map(([k, w]) => [k, Promise.resolve(w)]),
+    );
     const deps: AssembleDeps = {
       graph: async (id) => (tier2.has(id) ? loadGraph(id).catch(() => null) : null),
       route: async (id, q) => {
@@ -165,15 +209,17 @@ export function useJourneyPlan(
         const key = [from.lat, from.lon, to.lat, to.lon].join();
         let w = walks.get(key);
         if (!w) {
-          w = walk
-            ? walk(from, to)
-            : planWalk(from, to, request.time, request.profile).catch(() => null);
+          w = saved
+            ? Promise.resolve(null)
+            : walk
+              ? walk(from, to)
+              : planWalk(from, to, request.time, request.profile).catch(() => null);
           walks.set(key, w);
         }
         return w;
       },
     };
-    assembleAll(itineraries, { request, blocked }, deps).then(
+    assembleAll(itineraries, { request: planRequest, blocked }, deps).then(
       (planned) => {
         if (cancelled) return;
         // Every train leaves too soon to be caught: ask OTP again a little later, once.
@@ -181,7 +227,21 @@ export function useJourneyPlan(
           setRetryAt({ request, time: addSeconds(request.time, RETRY_LATER_S) });
           return;
         }
-        setAssembled({ status: 'ready', request, planned, blockedKey });
+        setAssembled({
+          status: 'ready',
+          request,
+          planned,
+          blockedKey,
+          saved: saved ? { savedAt: saved.savedAt, time: saved.time } : null,
+        });
+        // Keep OTP's answer for offline use: the walks are all settled once assembly is done.
+        if (!saved && planned.journeys.length > 0) {
+          void Promise.all(
+            [...walks].map(async ([k, w]): Promise<[string, WalkAnswer]> => [k, await w]),
+          ).then((settled) => {
+            store.save(savedPlan(request, itineraries, settled));
+          });
+        }
       },
       () => {
         if (!cancelled) setAssembled({ status: 'error', code: 'failed' });
@@ -192,7 +252,7 @@ export function useJourneyPlan(
     };
     // blockedKey stands for the contents of outages.byStation.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [request, itineraries, blockedKey, tier2, loadGraph, walk, createWorker]);
+  }, [request, itineraries, blockedKey, tier2, loadGraph, walk, createWorker, store]);
 
   let state: JourneyPlanState;
   if (!request) state = { status: 'idle' };

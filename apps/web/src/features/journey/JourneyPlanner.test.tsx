@@ -13,7 +13,8 @@ import { indexDevices } from '../report/devices';
 import { FakeOutageSource, outage } from '../report/fakeSource';
 import { OutageSourceProvider } from '../report/useOutages';
 import { JourneyPlanner } from './JourneyPlanner';
-import { parsePlan } from './otp';
+import { PlanError, parsePlan } from './otp';
+import type { PlanStore, SavedPlan } from './saved';
 import { resetStationsCache } from './stations';
 import type { JourneyPlanOptions } from './useJourneyPlan';
 
@@ -31,14 +32,29 @@ const plan = parsePlan(
 const graph = (id: string): StationGraph =>
   JSON.parse(readFileSync(resolve(BUILD, 'graphs', `${id}.json`), 'utf-8')) as StationGraph;
 
-const options: JourneyPlanOptions = {
+function memoryPlanStore(): PlanStore & { plan: SavedPlan | null } {
+  return {
+    plan: null,
+    load() {
+      return this.plan;
+    },
+    save(p) {
+      this.plan = p;
+    },
+  };
+}
+
+const baseOptions: JourneyPlanOptions = {
   plan: () => Promise.resolve(plan),
   walk: () => Promise.resolve(null),
   createWorker: createInlineWorker,
   loadGraph: (id) => Promise.resolve(indexGraph(graph(id))),
+  isOnline: () => true,
 };
+let options: JourneyPlanOptions = baseOptions;
 
 beforeEach(() => {
+  options = { ...baseOptions, store: memoryPlanStore() };
   resetStationsCache();
   vi.stubGlobal(
     'fetch',
@@ -57,14 +73,14 @@ afterEach(() => {
 
 function renderPlanner(params: string, source = new FakeOutageSource()) {
   const navigate = vi.fn();
-  render(
+  const view = render(
     <I18nProvider>
       <OutageSourceProvider source={source}>
         <JourneyPlanner params={params} options={options} navigate={navigate} />
       </OutageSourceProvider>
     </I18nProvider>,
   );
-  return { source, navigate };
+  return { source, navigate, unmount: view.unmount };
 }
 
 const accessElevators = (): string[] => {
@@ -162,5 +178,54 @@ describe.skipIf(!HAVE_DATA)('JourneyPlanner', () => {
     const alert = await screen.findByRole('alert');
     expect(alert).toHaveTextContent('大門駅（入口からホームまで）');
     expect(alert).toHaveTextContent('故障や通行止めが報告されている設備');
+  });
+
+  it('offline, shows the journey saved for the same trip', async () => {
+    const store = memoryPlanStore();
+    options = { ...options, store };
+    const first = renderPlanner(PARAMS);
+    await screen.findByRole('heading', { name: 'ルートの候補' });
+    await waitFor(() => {
+      expect(store.plan).not.toBeNull();
+    });
+    expect(store.plan?.time).toBe('2026-10-07T08:50:00+09:00');
+    expect(store.plan?.href).toBe(
+      '#/journey?from=station%3A421&to=station%3A428&profile=wheelchair',
+    );
+    first.unmount();
+
+    // OTP unreachable; the trip is asked for "now", and the saved plan (08:50) answers it.
+    const asked = vi.fn(() => Promise.reject(new PlanError('unavailable')));
+    options = { ...options, plan: asked };
+    renderPlanner('from=station:421&to=station:428&profile=wheelchair');
+    await screen.findByRole('heading', { name: 'ルートの候補' });
+    expect(asked).toHaveBeenCalledTimes(1);
+    expect(document.querySelector('.saved-plan')).toHaveTextContent(
+      /通信できないため、.*に調べて保存したルートを表示しています（08:50出発の条件）/,
+    );
+    expect(document.querySelectorAll('.timeline > li')).toHaveLength(3);
+  });
+
+  it('offline with nothing saved, says so without asking OTP', async () => {
+    const asked = vi.fn(() => Promise.resolve(plan));
+    options = { ...options, plan: asked, isOnline: () => false };
+    renderPlanner(PARAMS);
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      '通信できません。この端末に保存されたルートもありません。',
+    );
+    expect(asked).not.toHaveBeenCalled();
+  });
+
+  it('a saved plan for another trip is not used', async () => {
+    const store = memoryPlanStore();
+    options = { ...options, store };
+    const first = renderPlanner(PARAMS);
+    await waitFor(() => {
+      expect(store.plan).not.toBeNull();
+    });
+    first.unmount();
+    options = { ...options, isOnline: () => false };
+    renderPlanner('from=station:421&to=station:428&profile=sensory');
+    expect(await screen.findByRole('alert')).toHaveTextContent('通信できません。');
   });
 });

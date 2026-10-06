@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { ReactNode } from 'react';
 import { buildOutageIndex } from '../../routing/outages';
 import type { OutageReport } from '../../routing/types';
+import { createQueuedSource } from './queue';
 import { mergeReports, nextExpiry } from './rows';
 import { unavailableSource } from './source';
 import type { CommunityStatus, LiveStatus, OutageSource } from './source';
@@ -22,11 +23,14 @@ export function OutageSourceProvider({
 
 let defaultSource: OutageSource | null = null;
 
-/** Supabase when the build has its URL and key, otherwise a source that says "unavailable". */
+/**
+ * Supabase when the build has its URL and key, with reports made offline queued until the
+ * connection is back (D-025); otherwise a source that says "unavailable".
+ */
 function getDefaultSource(): OutageSource {
   if (!defaultSource) {
     const config = supabaseConfig();
-    defaultSource = config ? createSupabaseSource(config) : unavailableSource;
+    defaultSource = config ? createQueuedSource(createSupabaseSource(config)) : unavailableSource;
   }
   return defaultSource;
 }

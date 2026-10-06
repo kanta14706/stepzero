@@ -69,6 +69,8 @@ macOS Safari with VoiceOver, and iOS Safari with VoiceOver, in Japanese and in E
 - [ ] "Search addresses and places" reads its status ("Searching…", the result or the failure) once, and the results are reachable as buttons right after it.
 - [ ] After "Find routes" the focus moves to "Route options"; "3 route options found" is read once; each option button reads its times and facts and its pressed state.
 - [ ] The timeline reads in order: street walk, station (heading, then its steps), train (line, times, where to ride), station. Report buttons inside a journey say which step they belong to (step numbers restart in each station: check this is not confusing).
+- [ ] Offline (step 2.9): with flight mode on, the notice under the header ("You are offline. …") is read once when the connection drops, and not again on every page; "Open your last planned journey" is a link and opens it.
+- [ ] Offline journey: the "No connection: showing the journey saved on …" notice is read before the options; reporting a lift offline reads "the report is saved on this device …" once, and the outage list reads "not sent yet".
 
 TalkBack on Android if a device is available.
 

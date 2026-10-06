@@ -44,6 +44,15 @@ describe('StepReport', () => {
     expect(screen.queryByRole('group')).toBeNull();
   });
 
+  it('says when the report was kept on the device to send later', async () => {
+    const user = userEvent.setup();
+    render(<Harness report={() => Promise.resolve([outage({ pending: true })])} />);
+    await user.click(screen.getByRole('button', { name: /故障を報告/ }));
+    await user.click(screen.getByRole('button', { name: '使えない' }));
+    const status = await screen.findByText(/報告をこの端末に保存しました/);
+    expect(status).toHaveFocus();
+  });
+
   it('closes with Escape and returns the focus to the report button', async () => {
     const user = userEvent.setup();
     render(<Harness report={() => Promise.resolve([])} />);
@@ -81,6 +90,20 @@ describe('OutageList', () => {
     );
     expect(screen.getByRole('heading', { name: 'この駅の故障情報' })).toBeVisible();
     expect(screen.getByText('いま報告されている故障はありません。')).toBeVisible();
+  });
+
+  it('marks a report made offline as not sent yet', () => {
+    render(
+      <I18nProvider>
+        <OutageList
+          graph={g}
+          reports={[outage({ edgeId: 'lift', pending: true, createdAt: '2026-10-06T01:05:00Z' })]}
+          busy={false}
+          onSend={vi.fn()}
+        />
+      </I18nProvider>,
+    );
+    expect(screen.getByText('10:05に報告・未送信（つながったら自動で送ります）')).toBeVisible();
   });
 
   it('lists a broken elevator with buttons to confirm or clear it', async () => {
