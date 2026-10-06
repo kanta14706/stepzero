@@ -13,6 +13,7 @@ import { floorLabel, summariseFloor } from './floors';
 import { stationName } from './StationList';
 import type { Basemap } from './StationMap';
 import type { StationGraph, StationMapData } from './types';
+import { TierBadge } from '../components/TierBadge';
 
 // MapLibre is large; load it only when a station page is opened (first-load budget).
 const StationMap = lazy(() => import('./StationMap'));
@@ -116,8 +117,8 @@ export function StationPage({ id }: { id: string }) {
       {ready && panel !== null && summary && (
         <>
           <h2>{`${stationName(ready.graph.station, lang)} · ${t.stationMapTitle}`}</h2>
-          <p>
-            {t.tierLine}: {t.tier2Name}
+          <p className="tier-line">
+            <TierBadge tier={2} />
           </p>
           <StationWarnings graph={ready.graph} />
           <p className="hint outage-status" data-status={outages.status}>

@@ -119,7 +119,6 @@ export const zhHant: Dictionary = {
     swap: '交換出發地與目的地',
     stationLabel: '{name}站',
     stationOption: '{name}站（{lines}）',
-    stationTier2: '有站內路線',
     lineSeparator: '、',
     pointAddress: '地址：{label}',
     pointPlace: '{label}',
@@ -180,7 +179,11 @@ export const zhHant: Dictionary = {
       '目前無法連線，顯示 {saved} 儲存的路線（{time} 出發的條件）。未反映列車延誤及之後的故障回報。',
     rerouted: '故障資訊已更新，因此已變更路線。',
   },
-  tierLine: '導引類型',
+  tierBadge: {
+    label: '導引類型：{tier}',
+    tier1: { name: '僅站間路線', explain: '會規劃搭乘電車，但尚未確認站內的無階梯路線。' },
+    tier2: { name: '含站內詳細導引', explain: '會指引入口、電梯與月台上的候車位置，全程無階梯。' },
+  },
   routeTitle: '站內無段差路線',
   routeIntro:
     '選擇方向、出入口、月台與移動方式，即可逐步顯示無段差的路線。變更選項後，路線會立即更新。',

@@ -127,7 +127,6 @@ export const en: Dictionary = {
     swap: 'Swap start and destination',
     stationLabel: '{name} Station',
     stationOption: '{name} Station ({lines})',
-    stationTier2: 'Routes inside the station',
     lineSeparator: ', ',
     pointAddress: 'Address: {label}',
     pointPlace: '{label}',
@@ -197,7 +196,17 @@ export const en: Dictionary = {
       'No connection: showing the journey saved on {saved} (for leaving at {time}). Train delays and later outage reports are not included.',
     rerouted: 'The outage reports changed, so the route has changed.',
   },
-  tierLine: 'Type of guidance',
+  tierBadge: {
+    label: 'Type of guidance: {tier}',
+    tier1: {
+      name: 'Between stations only',
+      explain: 'Trains are planned, but the step-free way inside this station is not checked.',
+    },
+    tier2: {
+      name: 'Full detail inside the station',
+      explain: 'Names the entrance, the lifts and where to board, all step-free.',
+    },
+  },
   routeTitle: 'Step-free route inside the station',
   routeIntro:
     'Choose the direction, entrance, platform and how you travel to get step-by-step directions without steps. The directions update as soon as you change a choice.',

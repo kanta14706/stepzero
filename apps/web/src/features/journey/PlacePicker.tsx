@@ -7,6 +7,7 @@ import { searchPlaces } from './geocode';
 import type { PlaceSearchResult } from './geocode';
 import { searchStations } from './stations';
 import type { Place, Station } from './types';
+import { TierBadge } from '../../components/TierBadge';
 
 type PointPlace = Extract<Place, { kind: 'point' }>;
 
@@ -175,7 +176,7 @@ export function PlacePicker({
                     }}
                   >
                     {stationOption(s, t, lang)}
-                    {s.tier === 2 && <span className="tier-tag">{j.stationTier2}</span>}
+                    <TierBadge tier={s.tier} explain={false} />
                   </button>
                 </li>
               ))}

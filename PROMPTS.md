@@ -7,14 +7,14 @@ Later prompts assume earlier ones worked. If a finding changes the plan (e.g. a 
 
 ## Where we are (read this first; update it whenever the order or status changes)
 
-Last updated 2026-10-07 (after 2.9). The checkboxes below are the source of truth for what is done; this section explains the exceptions.
+Last updated 2026-10-07 (after 2.10). The checkboxes below are the source of truth for what is done; this section explains the exceptions.
 
 - **Out of order on purpose.** We did 2.1 (web scaffold) and 2.3 (profiles and A*) before finishing Phase 1, because 1.6 is waiting on API keys and a licence decision. **2.2 (map with floors) is now done** (floor-polygon export plus the MapLibre station page; see D-019).
 - **1.6 (Tier-1 station data) is in progress, not done.** The first pass without keys is in docs/data-notes.md ("step 1.6, in progress"). Still to do: download the other operators' GTFS and count `wheelchair_boarding`, then propose how Tier-1 stations without data are shown. It needs `ODPT_CONSUMER_KEY` (basic) and `ODPT_CHALLENGE_KEY` (challenge-limited operators) in `.env`, which the user is applying for. **Open decision for the user:** extend the D-012 licence exception to the challenge-limited operators (JR East, Keio, Tobu, Sotetsu, Tokyu) for Tier 1, or keep Tier 1 to basic-licence operators.
 - **1.7 (OTP spike): the Toei half is done and committed.** Build 27 s, 2.4 GiB peak, 1.3 GiB serving, test query saved (see data-notes 2026-10-06 and D-018). **Still to do:** build with the other operators' GTFS once the keys arrive (same `./build.sh <feed>` pattern; add each feed to `feed_zip` in `otp/build.sh`), record time and memory for each, and write the final all-operators-or-subset recommendation in decisions.md. Leave 1.7 unticked until then. That recommendation is an Opus step.
 - **Known gaps carried forward.** 新宿 is flagged "not verified on site" (D-014); 麻布十番 and 新宿西口 have no wheelchair route in the data because the only way down is an 8 to 18% ramp (data-notes, step 1.5); the routing penalty sizes and base timings are assumptions to revisit after user tests (D-015, D-017).
 - **The UI is temporary scaffolding.** A dedicated visual design step (2.11) is planned after 2.5; it must start by consulting the user on the visual direction.
-- **Web app state:** the home page has the journey planner (2.4: station, address or place to station, address or place, through OTP and the station graphs, re-planned live on outage reports). Each station page (12 Ōedo stations) has the route planner with its step list, the floor map with the route drawn on it, the text list for the floor, and outage reports (2.8). Offline works (2.9): every station, the last journey, and reports queued until back online. No tier badge beyond the "type of guidance" line and the journey's "not checked" notes (2.10), no live train status (2.7). The app is not deployed anywhere (4.5).
+- **Web app state:** the home page has the journey planner (2.4: station, address or place to station, address or place, through OTP and the station graphs, re-planned live on outage reports). Each station page (12 Ōedo stations) has the route planner with its step list, the floor map with the route drawn on it, the text list for the floor, and outage reports (2.8). Offline works (2.9): every station, the last journey, and reports queued until back online. Every station shows its tier in words (2.10), no live train status (2.7). The app is not deployed anywhere (4.5).
 
 **2.5 (inside-station step view) is done, in four slices.** (1) `routeToSteps` in `apps/web/src/routing/steps.ts` (D-020). (2) Four-language step text (`features/station-view/describe.ts`) and the planner with its step list (`features/station-view/RoutePlanner.tsx`, on the station page above the floor map; it routes through the real worker, with an inline fallback when there is no `Worker`). (3) The route on the map (`map/routeGeojson.ts`, route layers in `map/StationMap.tsx`): yellow line with numbered markers matching the list, and a "地図で見る" toggle per step that switches floor, zooms and highlights; a new route opens the map on the floor where it starts. (4) Accessibility: `docs/a11y-checklist.md`, `e2e/planner-a11y.spec.ts` (axe in four languages and states, dark and high contrast, keyboard walkthrough, targets), a skip-the-step-list button, and the map's own labels localised. Lighthouse accessibility is 100.
 
@@ -34,9 +34,11 @@ Last updated 2026-10-07 (after 2.9). The checkboxes below are the source of trut
 
 **Still open from 2.9:** (a) the offline items in the manual VoiceOver pass (`docs/a11y-checklist.md` section 4); (b) native-speaker review of the new `offline`, `report.queued`, `report.queuedNote`, `journey.savedPlan` and `journey.errors.offline` strings (zh-Hant, ja-easy); (c) try it on a real phone in flight mode, including iOS Safari (no Background Sync there, which is why the queue lives in the page); (d) `outages.live.spec.ts` "A reports … B's route changes" still failed twice in about 20 runs at "confirmed by 2" (B's confirmation was accepted; A did not show the new count). Not reproduced in 8 runs of that test alone; watch it; (e) precaching every station does not scale beyond the Ōedo set (D-025 consequences); revisit when Tier-2 grows; (f) whether a queued report should carry the time it was made (3.1).
 
+**2.10 (coverage tiers in the UI) is done.** One `TierBadge` (`apps/web/src/components/TierBadge.tsx`) writes the tier out ("駅の中まで案内" / "駅間ルートのみ", never colour alone) and is used in station search results, on each station segment of a journey, and on the station page with a one-line explanation. Strings are in `tierBadge` in all four dictionaries; the old `tierLine` and `journey.stationTier2` keys are gone. **Still open from 2.10:** native-speaker review of the new `tierBadge` strings (zh-Hant, ja-easy); the badge styling is placeholder until 2.11; a Tokyo-wide tier map is 3.3.
+
 **Next, in this order:**
 1. **2.7 Live train status**: Supabase edge function proxying the ODPT real-time feed. **Blocked until the ODPT keys arrive.**
-2. **2.10 Coverage tiers in the UI** (Sonnet), then **2.11 Visual design pass** (Opus; consult the user on the visual direction first).
+2. **2.11 Visual design pass** (Opus; consult the user on the visual direction first).
 
 Finish 1.6 and the rest of 1.7 whenever the ODPT keys arrive.
 
@@ -145,7 +147,7 @@ Sonnet 5.5 is enough for routine implementation, setup and docs. **Before starti
 - [x] **2.9 Offline PWA**
 > Configure the service worker to cache the app shell, the station graphs, floor maps and the last planned journey. Offline, the app must show the cached journey and in-station steps, and queue reports until back online. Test with Playwright's offline mode.
 
-- [ ] **2.10 Coverage tiers in the UI**
+- [x] **2.10 Coverage tiers in the UI**
 > Show each station's tier (full detail vs basic) in search results and on the journey, with a short plain-language explanation of what that means for the guidance.
 
 - [ ] **2.11 Visual design pass** (do after 2.5, once the planner and step view exist; then re-check 4.1 items)

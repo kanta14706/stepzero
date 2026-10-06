@@ -681,3 +681,14 @@ div.place-picker {
 .ride-advice {
   font-weight: 700;
 }
+
+.tier-badge {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+}
+
+.place-option .tier-badge {
+  margin-inline-start: 0.5rem;
+}

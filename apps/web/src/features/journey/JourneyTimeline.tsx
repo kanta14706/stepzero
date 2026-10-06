@@ -10,6 +10,7 @@ import type { SendReport } from '../report/ReportControls';
 import { boardingNotes, describeStep, nameIn, roundMetres } from '../station-view/describe';
 import { MARGIN_S } from './assemble';
 import type { Journey, RideLeg, Segment, Station } from './types';
+import { TierBadge } from '../../components/TierBadge';
 
 export const minutes = (s: number): number => Math.max(1, Math.round(s / 60));
 
@@ -222,6 +223,9 @@ function SegmentView({
         return (
           <>
             <h4>{title}</h4>
+            <p>
+              <TierBadge tier={1} explain={false} />
+            </p>
             <p className="notice-inline tier1-note">{j.tier1}</p>
           </>
         );
@@ -262,6 +266,9 @@ function StationSteps({
   return (
     <>
       <h4>{title}</h4>
+      <p>
+        <TierBadge tier={2} explain={false} />
+      </p>
       <p>
         {fmt(j.inStation, {
           m: roundMetres(summary.lengthM),

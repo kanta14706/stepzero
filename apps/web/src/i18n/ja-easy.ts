@@ -132,7 +132,6 @@ export const jaEasy: Dictionary = {
     swap: 'でる ところと いく ところを いれかえる',
     stationLabel: '{name}えき',
     stationOption: '{name}えき（{lines}）',
-    stationTier2: 'えきの なかの みち あり',
     lineSeparator: '・',
     pointAddress: 'じゅうしょ：{label}',
     pointPlace: '{label}',
@@ -205,7 +204,19 @@ export const jaEasy: Dictionary = {
       'つうしん できないので、{saved}に しらべた みちを みせて います（{time}に でる とき）。でんしゃの おくれや、そのあとに こわれた ものの じょうほうは はいって いません。',
     rerouted: 'こわれて いる ばしょの じょうほうが かわったので、みちを かえました。',
   },
-  tierLine: 'あんないの しゅるい',
+  tierBadge: {
+    label: 'あんないの しゅるい：{tier}',
+    tier1: {
+      name: 'えきから えきまで',
+      explain:
+        'でんしゃの のりかたまで あんない します。えきの なかの だんさの ない みちは たしかめて いません。',
+    },
+    tier2: {
+      name: 'えきの なかまで あんない',
+      explain:
+        'いりぐち・エレベーター・ホームの どこまで あんない します。だんさの ない みちです。',
+    },
+  },
   routeTitle: 'えきの なかの みち',
   routeIntro:
     'むき、でいりぐち、ホーム、うごきかたを えらぶと、だんさの ない みちを ひとつずつ おしえます。えらびなおすと、すぐに みちも かわります。',

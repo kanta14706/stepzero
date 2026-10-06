@@ -123,7 +123,6 @@ const jaLiterals = {
     swap: '出発地と目的地を入れ替える',
     stationLabel: '{name}駅',
     stationOption: '{name}駅（{lines}）',
-    stationTier2: '駅の中の道順あり',
     lineSeparator: '・',
     pointAddress: '住所：{label}',
     pointPlace: '{label}',
@@ -191,7 +190,17 @@ const jaLiterals = {
       '通信できないため、{saved}に調べて保存したルートを表示しています（{time}出発の条件）。電車の遅れや運休、その後の故障の報告は反映されていません。',
     rerouted: '故障情報が更新されたため、ルートを変えました。',
   },
-  tierLine: '案内の種類',
+  tierBadge: {
+    label: '案内の種類：{tier}',
+    tier1: {
+      name: '駅間ルートのみ',
+      explain: '電車の乗り降りまで案内します。駅の中の段差のない道順は確認していません。',
+    },
+    tier2: {
+      name: '駅の中まで案内',
+      explain: '入口・エレベーター・ホームの位置まで、段差のない道順を案内します。',
+    },
+  },
   routeTitle: '駅の中の道順',
   routeIntro:
     '向き、出入口、ホーム、移動の条件を選ぶと、段差のない道順を一つずつ案内します。選び直すと、すぐに道順も変わります。',
