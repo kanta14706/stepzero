@@ -153,6 +153,7 @@ cd apps/web && pnpm i && pnpm dev | pnpm sync-data | pnpm test | pnpm e2e | pnpm
 # node scripts/record-otp.mjs re-records the OTP answers the tests replay (needs OTP running)
 # supabase (run the importer first: it writes the devices seed)
 supabase start && supabase db reset && supabase test db
+cd supabase/functions/live-status && deno test --allow-read=. --allow-env --allow-net=registry.npmjs.org,jsr.io   # live train status function
 ```
 
 Keep these working. If you change a command, update this section in the same commit.

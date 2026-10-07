@@ -21,6 +21,39 @@ The Toei GTFS-Pathways file and the ほこナビ Ōedo station datasets are cont
 
 ## Findings
 
+### 2026-10-07: live train feeds, GTFS-Realtime (step 2.7, slice 1)
+
+Checked on the live feeds with the function in `supabase/functions/live-status` (recorded sample: `fixtures/toei_trip_update.sample.pb`).
+
+- **Toei's real-time feeds are public** (`api-public.odpt.org/.../toei_odpt_train_{trip_update,alert,vehicle}`, no key). JR East, Keio and Tobu trip updates need the challenge key and work (JR East 443 trips, Keio 66, Tobu 124 at 2026-10-07 19:30 JST); Keio and Tobu have an alert feed, JR East's alert URL returns 404, Sotetsu's trip update returns 404. Tokyo Metro has no GTFS-RT in ODPT.
+- **Trip ids match the static GTFS.** All 116 trip ids in Toei's feed exist in the Pathways GTFS that OTP loads, and all 3,226 stop updates match a scheduled `stop_sequence`. The feed covers all five Toei lines (Ōedo 38 trips, Asakusa 21, Mita 20, Arakawa tram 19, Shinjuku 18).
+- **No explicit delays.** Stop updates carry absolute `arrival`/`departure` times (with `uncertainty` 30), never `delay`. Computed against the schedule on one snapshot: median +14 s, 911 of 3,226 updates more than 60 s late, 108 more than 5 min, maximum 879 s, 15 earlier than 60 s. A few scheduled stops have no scheduled time at all (13), so some stops cannot get a delay.
+- **Only running trains are in the feed** (about 105 to 116 at a time, not the day's 5,600 trips): a journey leaving later has no live data yet.
+- **Toei's alert feed is empty when all is well** (a header only, 15 bytes). Alerts could not be checked on real content; the tests use synthetic messages, labelled as such.
+- **Feed freshness:** the header timestamp was 7 to 16 s old on every fetch.
+- **OTP `stopPosition.position` equals the GTFS `stop_sequence`** on a real Ōedo trip (12 and 19 for 新宿 to 大門, where a 0-based index would be 11 and 18). Toei's sequences run 1..n without gaps, so a 1-based index would match too; other operators were not checked.
+- **An absent `stop_sequence` reads as 0** in the protobuf bindings, and 0 can be a real sequence in other feeds, so the decoder tests that the field was sent (a test found this).
+
+### 2026-10-07: GTFS of the other Tokyo operators, accessibility fields (step 1.6)
+
+Adapter: `importer/importer/sources/odpt_gtfs.py` (`uv run python -m importer.download --only gtfs`). The eight feeds total 4.8 MB, so downloads take seconds; every server supports range requests. The key is read from `.env` and is not stored in the manifest.
+
+| operator | licence | size | stops | `wheelchair_boarding` set | parent stations / levels / pathways |
+|---|---|---|---|---|---|
+| Tokyo Metro | basic | 1.1 MB | 185 | 0 | none |
+| TWR Rinkai | basic | 33 KB | 8 | 0 | none |
+| Tsukuba Express (MIR) | basic | 90 KB | 20 | 0 | none |
+| Tama Monorail | basic | 56 KB | 19 | 0 | none |
+| JR East | challenge-limited | 2.0 MB | 772 | 0 | none |
+| Keio | challenge-limited | 575 KB | 76 | 0 | none |
+| Tobu | challenge-limited | 784 KB | 218 | 0 | none |
+| Sotetsu | challenge-limited | 144 KB | 29 | 0 | none |
+
+- **No GTFS feed in ODPT carries station-level accessibility.** The `wheelchair_boarding` column exists in all eight but is empty on all 1,327 stops. Together with the Toei result (empty on 2,735 stops) this means no operator publishes elevator or step-free flags in GTFS. Tier 1 cannot say "this station has an elevator" from ODPT GTFS.
+- **No parent stations, levels or pathways.** Every stop is `location_type` 0, so there are no platforms or boarding areas and no in-station detail anywhere outside the Toei Pathways file. This confirms Tier 2 can only be built from Toei plus ほこナビ for now.
+- **Still not answered:** whether the stations on these lines have step-free access. The ほこナビ Tokyo datasets (step 1.6 first pass) and the Tokyo toilet data are the only candidate sources; the proposal for how Tier-1 stations are shown with no data is the remaining Opus part of 1.6.
+- **Dataset slugs are not uniform:** `train-*` for basic-licence operators, `keio_train`, `tobu_train`, `sotetsu_train` and `jreast_tokyo_area` for challenge-limited ones; JR East's real-time feeds are `odpt_jreast_tokyo_area`.
+
 ### 2026-10-05: sources and licences (step 1.1)
 
 - **Dataset / source:** Toei GTFS (`Toei-Train-GTFS.zip`) and GTFS-Pathways (`Toei-Train-GTFS-Pathway.zip`), ODPT `train-toei`.
@@ -159,6 +192,24 @@ Sources checked: the ODPT catalogue (ckan.odpt.org, 363 datasets, scraped from t
 - **ほこナビ has more than the Ōedo stations.** 43 datasets: street-level walking networks around Tokyo-area stations (赤羽, 上野, 渋谷 south, 千駄ヶ谷, 新宿, 東京, 池袋, 新木場, 国際展示場, 東京テレポート, お台場海浜公園, 大門 surroundings, 府中, 千代田・中央, and several in Kawasaki and Yokohama) plus 「バリアフリー施設等データ（東京都・車椅子使用者対応トイレのバリアフリー情報）」. Licence pdl-jp-1.0. These are outdoor or station-surround networks, not in-station detail, and the toilet data is useful for the effort summary (step 3.5).
 - **Superseded datasets on ODPT:** the `mlit_nwd_oedo_*` datasets are marked 【公開終了】; the ほこナビ copies are the ones in use. A Tokyo geospatial 3D point cloud of 都庁前 (`ext-mg_tokyo-geosp-tochomae-3d-pointcloud`) is listed; it could feed the 3D view (step 3.4) but has not been examined.
 - **Still to do** (needs the ODPT keys): download the GTFS of the other operators and count `wheelchair_boarding` per operator, then propose how Tier-1 stations without data are shown.
+
+### 2026-10-07: OpenTripPlanner spike, all operators (step 1.7, second half)
+
+Same setup as the Toei build below (OTP 2.10.0, BBBike Tokyo OSM, 6 GB heap cap, memory sampled every 2 s, so peaks are approximate and noisy). `otp/build.sh` now knows all nine feeds. Service window in `build-config.json` is 2026-09-07 to 2027-04-08; every feed's calendar lies inside it.
+
+| Feeds | Trips | Build time | Peak memory while building | Graph file |
+|---|---|---|---|---|
+| Toei with Pathways (earlier runs) | 5,600 | 27 to 28 s | 2.0 to 2.4 GiB | 97 MB |
+| + Tokyo Metro | 15,306 | 31 s | 2.9 GiB | 96 MB |
+| + TWR, Tsukuba Express, Tama Monorail (basic licence, 5 feeds) | 16,183 | 28 s | 2.5 GiB | 97 MB |
+| + JR East, Keio, Tobu, Sotetsu (all 9 feeds) | 53,580 | 31 to 32 s | 2.4 GiB | 112 to 113 MB |
+
+- **Cost is small.** All nine operators build in about 30 s, within the 6 GB heap, and serve in 1.33 GiB (Toei alone: 1.3 GiB). The Tokyo street network dominates the graph; 53,580 trips add about 16 MB. Peak memory does not grow with the feeds (the variation between runs is larger than any trend), so no sign of a limit at this scale.
+- **Checked, not assumed:** OTP's trip-pattern counts equal each feed's `trips.txt`, so no feed was silently dropped (a flat graph size had made that look possible). Routing works across operators: 池袋 → 新宿 on the JR 埼京線 (feed 5) and 渋谷 → 大手町 on the Hanzomon Line (feed 4).
+- **Feed ids were not stable, now pinned (open item 2.4c closed).** OTP numbers feeds in the order it finds the files, which is arbitrary: with all nine, Toei was feed `3` (Tama Monorail 1, Keio 2, Metro 4, JR East 5, Tobu 6, MIR 7, Sotetsu 8, TWR 9), and the journey planner assumes Toei is `1`. `otp/build.sh` now writes `transitFeeds` into the build config from one table (`feed_id`): Toei 1, Metro 2, TWR 3, MIR 4, Tama Monorail 5, JR East 6, Keio 7, Tobu 8, Sotetsu 9. Checked by building with the feeds in a shuffled order and listing `feeds` from the running server. Listing the feeds turns off OTP's directory scan, so the OSM file is listed too. `importer/tests/test_otp_feed_id.py` fails if the importer's `FEED_ID` and the table disagree.
+- **More operators change wheelchair answers.** 新宿 → 大門, wheelchair, with JR East and Metro loaded: OTP's second option is a 41-minute JR trip (中央線快速, 山手線), faster than the Ōedo Line one (47 min in the Toei-only graph). OTP treats the JR stops as accessibility-unknown (no `wheelchair_boarding`, step 1.6), not as accessible, so the app must keep marking every leg outside Tier 2 as "not checked" and must not rank such an itinerary above a verified one without saying so. The default (non-wheelchair) answer is unchanged (26 min, Ōedo Line).
+- **The OSM extract may be too small.** 新宿 → 調布 (Keio Line, lon 139.54) returned `LOCATION_NOT_FOUND` for the destination. Probably it lies outside the BBBike Tokyo extract; not verified.
+- **Not tested:** wheelchair routing outside Toei. No feed has stop accessibility (step 1.6), so OTP's wheelchair mode cannot separate accessible stops there. Real-time (GTFS-RT) is not loaded into OTP yet.
 
 ### 2026-10-06: OpenTripPlanner spike, Toei only (step 1.7, first half)
 
