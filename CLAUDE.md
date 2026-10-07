@@ -83,7 +83,7 @@ docs/                decisions.md, data-notes.md, feed-spec.md, graph.schema.jso
 
 Rules:
 - The ODPT API key lives in `.env` as `ODPT_CONSUMER_KEY`. Never commit it or ship it to the client; proxy through the back end.
-- **Licences:** use the ODPT basic licence for core features. Datasets marked 「チャレンジ限定」 (e.g. Haneda TIAT flight data) may appear **only** in stretch features and must be listed in `docs/data-notes.md`. **Exception (decided 2026-10-05):** the Toei GTFS-Pathways file and the ほこナビ Ōedo station datasets are contest-period-only releases (ほこナビ until 2027-03-12) but are core data for Tier 2; they are recorded in `docs/data-notes.md` and `docs/decisions.md` (D-012).
+- **Licences:** use the ODPT basic licence for core features. Datasets marked 「チャレンジ限定」 (e.g. Haneda TIAT flight data) may appear **only** in stretch features and must be listed in `docs/data-notes.md`. **Exception (decided 2026-10-05):** the Toei GTFS-Pathways file and the ほこナビ Ōedo station datasets are contest-period-only releases (ほこナビ until 2027-03-12) but are core data for Tier 2; they are recorded in `docs/data-notes.md` and `docs/decisions.md` (D-012). **Exception (decided 2026-10-07):** the challenge-limited datasets of JR East, Keio, Tobu, Sotetsu and Tokyu are core data for Tier 1 (D-026); the key is `ODPT_CHALLENGE_KEY` in `.env`.
 - Credit every source on an in-app "Data sources" page, as the licences require.
 - Record every data quirk you discover (missing levels, mismatched IDs, wrong coordinates) in `docs/data-notes.md`. These notes become the "data quality" findings in the entry.
 

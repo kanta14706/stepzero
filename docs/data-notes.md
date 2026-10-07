@@ -17,7 +17,7 @@ Newest first. One entry per finding:
 
 Datasets marked 「チャレンジ限定」 (e.g. Haneda TIAT flight data) may appear only in stretch features and must be listed here.
 
-The Toei GTFS-Pathways file and the ほこナビ Ōedo station datasets are contest-period-only releases but are core data for Tier 2 (see decisions.md D-012). No other 「チャレンジ限定」 dataset is used.
+The Toei GTFS-Pathways file and the ほこナビ Ōedo station datasets are contest-period-only releases but are core data for Tier 2 (see decisions.md D-012). The challenge-limited datasets of JR East, Keio, Tobu, Sotetsu and Tokyu are core data for Tier 1 (D-026); each one is listed here when the importer starts using it.
 
 ## Findings
 
