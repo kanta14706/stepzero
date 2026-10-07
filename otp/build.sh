@@ -15,13 +15,38 @@ feed_zip() {
   case "$1" in
     toei) echo "$RAW/toei/Toei-Train-GTFS.zip" ;;
     toei-pathway) echo "$RAW/toei/Toei-Train-GTFS-Pathway.zip" ;;
+    tokyometro) echo "$RAW/gtfs/TokyoMetro-Train-GTFS.zip" ;;
+    twr) echo "$RAW/gtfs/TWR-Train-GTFS.zip" ;;
+    mir) echo "$RAW/gtfs/MIR-Train-GTFS.zip" ;;
+    tamamonorail) echo "$RAW/gtfs/TamaMonorail-Train-GTFS.zip" ;;
+    jreast) echo "$RAW/gtfs/JR-East-Train-GTFS.zip" ;;
+    keio) echo "$RAW/gtfs/Keio-Train-GTFS.zip" ;;
+    tobu) echo "$RAW/gtfs/Tobu-Train-GTFS.zip" ;;
+    sotetsu) echo "$RAW/gtfs/Sotetsu-Train-GTFS.zip" ;;
     *) echo "unknown feed $1" >&2; return 1 ;;
+  esac
+}
+# feed name -> the feed id OTP prefixes to every GTFS id ("1:421"). Pinned, because OTP
+# otherwise numbers feeds in the arbitrary order it finds the files. Toei stays "1": the
+# station list, the journey planner and the recorded OTP answers all assume it (D-018).
+feed_id() {
+  case "$1" in
+    toei | toei-pathway) echo 1 ;;
+    tokyometro) echo 2 ;;
+    twr) echo 3 ;;
+    mir) echo 4 ;;
+    tamamonorail) echo 5 ;;
+    jreast) echo 6 ;;
+    keio) echo 7 ;;
+    tobu) echo 8 ;;
+    sotetsu) echo 9 ;;
+    *) echo "no feed id for $1" >&2; return 1 ;;
   esac
 }
 feeds=("${@:-toei-pathway}")
 
 mkdir -p data
-cp config/build-config.json config/router-config.json data/
+cp config/router-config.json data/
 if [ ! -f data/tokyo.osm.pbf ]; then
   echo "downloading $OSM_URL"
   # resumable: the server resets slow connections now and then
@@ -34,6 +59,21 @@ rm -f data/*-gtfs.zip data/graph.obj
 for f in "${feeds[@]}"; do
   cp "$(feed_zip "$f")" "data/$f-gtfs.zip"
 done
+# build-config.json = config/build-config.json plus the pinned feed ids. Listing the feeds
+# turns off OTP's directory scan, so the OSM extract is listed too.
+feed_args=()
+for f in "${feeds[@]}"; do feed_args+=("$f=$(feed_id "$f")"); done
+python3 - "${feed_args[@]}" <<'PY'
+import json, sys
+cfg = json.load(open("config/build-config.json", encoding="utf-8"))
+base = "file:///var/opentripplanner"
+cfg["osm"] = [{"source": f"{base}/tokyo.osm.pbf"}]
+cfg["transitFeeds"] = [
+    {"type": "gtfs", "feedId": fid, "source": f"{base}/{name}-gtfs.zip"}
+    for name, fid in (a.split("=") for a in sys.argv[1:])
+]
+json.dump(cfg, open("data/build-config.json", "w", encoding="utf-8"), indent=2)
+PY
 
 # poll the container's memory while it builds
 cid_file=$(mktemp -u)  # docker wants a path that does not exist yet

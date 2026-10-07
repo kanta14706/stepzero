@@ -24,7 +24,7 @@ from importer.graph.export import BUILD_DIR
 
 SCHEMA_VERSION = 1
 OUT = BUILD_DIR.parent / "stations.json"
-FEED_ID = "1"  # the feed id OTP gives the Toei feed (otp/build.sh loads it first)
+FEED_ID = "1"  # the feed id OTP gives the Toei feed (pinned in otp/build.sh `feed_id`)
 
 
 def _read(z: zipfile.ZipFile, name: str) -> pd.DataFrame:
