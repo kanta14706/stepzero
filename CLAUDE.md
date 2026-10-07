@@ -149,7 +149,7 @@ cd otp && ./build.sh && docker compose up otp
 # web
 cd apps/web && pnpm i && pnpm dev | pnpm sync-data | pnpm test | pnpm e2e | pnpm e2e:live | pnpm lint | pnpm lighthouse | pnpm build
 # pnpm dev / preview forward /otp to OTP_URL (default localhost:8080) for the journey planner
-# pnpm e2e:live needs `supabase start` (and OTP running for the journey tests); it runs e2e/*.live.spec.ts against a build with the local keys
+# pnpm e2e:live needs `supabase start` (and OTP running for the journey tests, `supabase functions serve --env-file .env` for the real live-status test); it runs e2e/*.live.spec.ts against a build with the local keys
 # node scripts/record-otp.mjs re-records the OTP answers the tests replay (needs OTP running)
 # supabase (run the importer first: it writes the devices seed)
 supabase start && supabase db reset && supabase test db

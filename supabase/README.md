@@ -27,3 +27,6 @@ supabase functions serve --env-file ../.env                                   # 
 ```
 
 The challenge key is read from the function's environment only (a hosted project needs `supabase secrets set ODPT_CHALLENGE_KEY=...`, step 4.5); it is never returned or logged.
+
+Browser tests: `cd apps/web && pnpm e2e:live` (needs `supabase start`). Its live-status spec answers the function with made-up feeds, and one test goes through the real function and Toei's feed: run `supabase functions serve --env-file ../.env` (from `supabase/`, or `--env-file .env` from the repo root) and, for the journey, OTP (`cd otp && docker compose up otp`); that test skips itself when either is not running. `supabase/config.toml` sets `verify_jwt = false` for `live-status` because the app calls it with the publishable key, which is not a JWT; keep that setting in a hosted deploy.
+

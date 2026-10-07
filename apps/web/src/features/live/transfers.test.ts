@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Segment } from '../journey/types';
+import type { Segment, WalkLeg } from '../journey/types';
 import { legKey } from './delay';
 import { transferRisks } from './transfers';
 import { ARR, epoch, journey, legLive, ride } from './testing';
@@ -75,5 +75,37 @@ describe('transferRisks', () => {
   it('says nothing for a journey with one train, or with no live data', () => {
     expect(transferRisks(journey([{ kind: 'ride', leg: A, advice: null }]), live(900))).toEqual([]);
     expect(transferRisks(j, new Map())).toEqual([]);
+  });
+
+  it('adds up a change between two different stations: a station, the walk, the other station', () => {
+    const walkLeg: WalkLeg = {
+      kind: 'walk',
+      from: A.to,
+      to: B.from,
+      departure: ARR,
+      arrival: ARR,
+      distanceM: 300,
+      seconds: 240,
+    };
+    const walkSeg: Segment = { kind: 'walk', leg: walkLeg };
+    const station = (id: string): Segment => ({
+      kind: 'station',
+      role: 'transfer',
+      stationId: id,
+      tier: 1,
+      walk: null,
+    });
+    const three = journey([
+      { kind: 'ride', leg: A, advice: null },
+      station('412'),
+      walkSeg,
+      station('117'),
+      { kind: 'ride', leg: B, advice: null },
+    ]);
+    // arrives 09:20 + 4 min walk = 09:24, leaves 09:25: fine on time, broken by a 4 min delay
+    expect(transferRisks(three, live(0))).toEqual([]);
+    expect(transferRisks(three, live(240))).toEqual([
+      { stationId: A.to.stationId, reason: 'late' },
+    ]);
   });
 });

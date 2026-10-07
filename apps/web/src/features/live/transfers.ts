@@ -23,16 +23,15 @@ export function transferRisks(
   for (let i = 0; i < segs.length; i++) {
     const a = segs[i];
     if (a?.kind !== 'ride') continue;
-    // The change between two trains: an in-station route or a street walk, or nothing at all.
+    // Everything between two trains is the change: an in-station route, or, between two different
+    // stations, a station, OTP's walk and the other station (three segments), or nothing at all.
     let j = i + 1;
     let seconds = 0;
-    const mid = segs[j];
-    if (mid?.kind === 'station' && mid.role === 'transfer') {
-      seconds = mid.tier === 2 ? mid.route.summary.seconds : (mid.walk?.seconds ?? 0);
-      j++;
-    } else if (mid?.kind === 'walk') {
-      seconds = mid.leg.seconds;
-      j++;
+    for (let seg = segs[j]; seg; seg = segs[++j]) {
+      if (seg.kind === 'walk') seconds += seg.leg.seconds;
+      else if (seg.kind === 'station' && seg.role === 'transfer') {
+        seconds += seg.tier === 2 ? seg.route.summary.seconds : (seg.walk?.seconds ?? 0);
+      } else break;
     }
     const b = segs[j];
     if (b?.kind !== 'ride') continue;

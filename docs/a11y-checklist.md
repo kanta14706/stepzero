@@ -71,6 +71,10 @@ macOS Safari with VoiceOver, and iOS Safari with VoiceOver, in Japanese and in E
 - [ ] The timeline reads in order: street walk, station (heading, then its steps), train (line, times, where to ride), station. Report buttons inside a journey say which step they belong to (step numbers restart in each station: check this is not confusing).
 - [ ] Offline (step 2.9): with flight mode on, the notice under the header ("You are offline. …") is read once when the connection drops, and not again on every page; "Open your last planned journey" is a link and opens it.
 - [ ] Offline journey: the "No connection: showing the journey saved on …" notice is read before the options; reporting a lift offline reads "the report is saved on this device …" once, and the outage list reads "not sent yet".
+- [ ] Live train status (step 2.7, needs Supabase configured): each train's line is read as a sentence ("About 5 min late." followed by "Departs 09:05, arrives 09:21 (timetable: 09:00, 09:16)"), not as a table. "Running on time" is never read for a train the feed does not know: it reads "No live information for this train yet".
+- [ ] A stale or unavailable feed reads as plain text in the ride ("Live information has not updated for 7 min. Showing timetable times."); nothing sounds like good news.
+- [ ] The results' status line announces "Live information updated. N trains are delayed." once when the number of delayed or cancelled trains changes, not every 30 seconds, and not for the first answer. Check it does not interrupt a step being read.
+- [ ] Operator alerts ("Service information") read as a heading followed by a list. The connection warning ("Because of the delay, you may miss your connection at …") is reached before the trains, and "Search again from now" is a button with its hint read after it.
 
 TalkBack on Android if a device is available.
 
