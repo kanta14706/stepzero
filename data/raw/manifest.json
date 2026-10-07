@@ -550,6 +550,96 @@
       ]
     },
     {
+      "id": "jreast-gtfs",
+      "source": "JR-East train GTFS (ODPT jreast_tokyo_area)",
+      "url": "https://api-challenge.odpt.org/api/v4/files/JR-East/data/JR-East-Train-GTFS.zip",
+      "local_path": "gtfs/JR-East-Train-GTFS.zip",
+      "licence": "ODPT challenge-limited licence (チャレンジ限定); core Tier-1 data by D-026",
+      "licence_url": "https://ckan.odpt.org/dataset/jreast_tokyo_area",
+      "downloaded_at": "2026-10-07",
+      "sha256": "70c7666f1735e63e900994e429d29a7ddfce1a584fdb14f05aaf9ae2a7206e0c",
+      "size_bytes": 2017003,
+      "notes": [
+        "Dataset page: https://ckan.odpt.org/dataset/jreast_tokyo_area",
+        "Key: ODPT_CHALLENGE_KEY (not stored)"
+      ]
+    },
+    {
+      "id": "keio-gtfs",
+      "source": "Keio train GTFS (ODPT keio_train)",
+      "url": "https://api-challenge.odpt.org/api/v4/files/Keio/data/Keio-Train-GTFS.zip",
+      "local_path": "gtfs/Keio-Train-GTFS.zip",
+      "licence": "ODPT challenge-limited licence (チャレンジ限定); core Tier-1 data by D-026",
+      "licence_url": "https://ckan.odpt.org/dataset/keio_train",
+      "downloaded_at": "2026-10-07",
+      "sha256": "d23e2d23812a781c60bfa29eda2e8abebdbb5d5d5cdbdf3c91a7b89526c8c828",
+      "size_bytes": 574766,
+      "notes": [
+        "Dataset page: https://ckan.odpt.org/dataset/keio_train",
+        "Key: ODPT_CHALLENGE_KEY (not stored)"
+      ]
+    },
+    {
+      "id": "mir-gtfs",
+      "source": "MIR train GTFS (ODPT train-mir)",
+      "url": "https://api.odpt.org/api/v4/files/MIR/data/MIR-Train-GTFS.zip",
+      "local_path": "gtfs/MIR-Train-GTFS.zip",
+      "licence": "ODPT basic licence",
+      "licence_url": "https://ckan.odpt.org/dataset/train-mir",
+      "downloaded_at": "2026-10-07",
+      "sha256": "1b939caff27e0eefe57b7f336eb6b3b05eb509b63f6859571d4f85d981847abd",
+      "size_bytes": 89983,
+      "notes": [
+        "Dataset page: https://ckan.odpt.org/dataset/train-mir",
+        "Key: ODPT_CONSUMER_KEY (not stored)"
+      ]
+    },
+    {
+      "id": "sotetsu-gtfs",
+      "source": "Sotetsu train GTFS (ODPT sotetsu_train)",
+      "url": "https://api-challenge.odpt.org/api/v4/files/Sotetsu/data/Sotetsu-Train-GTFS.zip",
+      "local_path": "gtfs/Sotetsu-Train-GTFS.zip",
+      "licence": "ODPT challenge-limited licence (チャレンジ限定); core Tier-1 data by D-026",
+      "licence_url": "https://ckan.odpt.org/dataset/sotetsu_train",
+      "downloaded_at": "2026-10-07",
+      "sha256": "e72c9733acb610ec91566d9ee11f513d3d2eebbd390a880a5e0e2f3de26c7126",
+      "size_bytes": 143822,
+      "notes": [
+        "Dataset page: https://ckan.odpt.org/dataset/sotetsu_train",
+        "Key: ODPT_CHALLENGE_KEY (not stored)"
+      ]
+    },
+    {
+      "id": "tamamonorail-gtfs",
+      "source": "TamaMonorail train GTFS (ODPT train-tamamonorail)",
+      "url": "https://api.odpt.org/api/v4/files/TamaMonorail/data/TamaMonorail-Train-GTFS.zip",
+      "local_path": "gtfs/TamaMonorail-Train-GTFS.zip",
+      "licence": "ODPT basic licence",
+      "licence_url": "https://ckan.odpt.org/dataset/train-tamamonorail",
+      "downloaded_at": "2026-10-07",
+      "sha256": "a9bb7f93a1c0d8dbc8cda84f47de826efec813a277d136ac5d523b03c0ed8de7",
+      "size_bytes": 56367,
+      "notes": [
+        "Dataset page: https://ckan.odpt.org/dataset/train-tamamonorail",
+        "Key: ODPT_CONSUMER_KEY (not stored)"
+      ]
+    },
+    {
+      "id": "tobu-gtfs",
+      "source": "Tobu train GTFS (ODPT tobu_train)",
+      "url": "https://api-challenge.odpt.org/api/v4/files/Tobu/data/Tobu-Train-GTFS.zip",
+      "local_path": "gtfs/Tobu-Train-GTFS.zip",
+      "licence": "ODPT challenge-limited licence (チャレンジ限定); core Tier-1 data by D-026",
+      "licence_url": "https://ckan.odpt.org/dataset/tobu_train",
+      "downloaded_at": "2026-10-07",
+      "sha256": "6c18df2c5728212594495a3cfa8e1d66ffbad6222275d64206c1205269136c68",
+      "size_bytes": 784240,
+      "notes": [
+        "Dataset page: https://ckan.odpt.org/dataset/tobu_train",
+        "Key: ODPT_CHALLENGE_KEY (not stored)"
+      ]
+    },
+    {
       "id": "toei-gtfs",
       "source": "Toei Bureau of Transportation train information (ODPT train-toei)",
       "url": "https://api-public.odpt.org/api/v4/files/Toei/data/Toei-Train-GTFS.zip",
@@ -576,6 +666,36 @@
       "notes": [
         "Dataset page: https://ckan.odpt.org/dataset/train-toei",
         "Dataset page describes this file as limited to the contest period."
+      ]
+    },
+    {
+      "id": "tokyometro-gtfs",
+      "source": "TokyoMetro train GTFS (ODPT train-tokyometro)",
+      "url": "https://api.odpt.org/api/v4/files/TokyoMetro/data/TokyoMetro-Train-GTFS.zip",
+      "local_path": "gtfs/TokyoMetro-Train-GTFS.zip",
+      "licence": "ODPT basic licence",
+      "licence_url": "https://ckan.odpt.org/dataset/train-tokyometro",
+      "downloaded_at": "2026-10-07",
+      "sha256": "76f046236893b136f0d84b2e2ce21db67375a90e63c9e594732e1bec48a277e1",
+      "size_bytes": 1135582,
+      "notes": [
+        "Dataset page: https://ckan.odpt.org/dataset/train-tokyometro",
+        "Key: ODPT_CONSUMER_KEY (not stored)"
+      ]
+    },
+    {
+      "id": "twr-gtfs",
+      "source": "TWR train GTFS (ODPT train-twr)",
+      "url": "https://api.odpt.org/api/v4/files/TWR/data/TWR-Train-GTFS.zip",
+      "local_path": "gtfs/TWR-Train-GTFS.zip",
+      "licence": "ODPT basic licence",
+      "licence_url": "https://ckan.odpt.org/dataset/train-twr",
+      "downloaded_at": "2026-10-07",
+      "sha256": "3a2461884f0f0912b8fcd6e80c63c17df9a8bbadd39e36b82974ba7a07a1c9b0",
+      "size_bytes": 33154,
+      "notes": [
+        "Dataset page: https://ckan.odpt.org/dataset/train-twr",
+        "Key: ODPT_CONSUMER_KEY (not stored)"
       ]
     }
   ]

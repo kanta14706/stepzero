@@ -8,13 +8,16 @@ from __future__ import annotations
 
 import argparse
 
-from importer.sources import hokonavi, toei_gtfs
+from importer.sources import hokonavi, odpt_gtfs, toei_gtfs
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--only", choices=["toei", "hokonavi"])
+    parser.add_argument("--only", choices=["toei", "hokonavi", "gtfs"])
     args = parser.parse_args()
+    if args.only in (None, "gtfs"):
+        for e in odpt_gtfs.fetch():
+            print(f"{e.id}: {e.size_bytes} bytes -> {e.local_path}")
     if args.only in (None, "toei"):
         for e in toei_gtfs.fetch():
             print(f"{e.id}: {e.size_bytes} bytes -> {e.local_path}")
