@@ -1,5 +1,5 @@
 {
-  "recorded": "2026-10-05T19:57:37.190Z",
+  "recorded": "2026-10-07T10:39:58.516Z",
   "otp": "opentripplanner 2.10.0, toei-pathway",
   "variables": {
     "origin": {
@@ -34,6 +34,10 @@
                 "duration": 1140,
                 "distance": 7544,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400852B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:00:00+09:00"
                 },
@@ -44,6 +48,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 21
+                  },
                   "stop": {
                     "gtfsId": "1:421P4",
                     "platformCode": "4",
@@ -56,6 +63,9 @@
                   "name": "都庁前",
                   "lat": 35.690607,
                   "lon": 139.692677,
+                  "stopPosition": {
+                    "position": 29
+                  },
                   "stop": {
                     "gtfsId": "1:429P4",
                     "platformCode": "4",
@@ -107,6 +117,10 @@
                 "duration": 1140,
                 "distance": 7544,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400832B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:04:00+09:00"
                 },
@@ -117,6 +131,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 21
+                  },
                   "stop": {
                     "gtfsId": "1:421P4",
                     "platformCode": "4",
@@ -129,6 +146,9 @@
                   "name": "都庁前",
                   "lat": 35.690607,
                   "lon": 139.692677,
+                  "stopPosition": {
+                    "position": 29
+                  },
                   "stop": {
                     "gtfsId": "1:429P4",
                     "platformCode": "4",
@@ -180,6 +200,10 @@
                 "duration": 1140,
                 "distance": 7544,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400801B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:08:00+09:00"
                 },
@@ -190,6 +214,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 21
+                  },
                   "stop": {
                     "gtfsId": "1:421P4",
                     "platformCode": "4",
@@ -202,6 +229,9 @@
                   "name": "都庁前",
                   "lat": 35.690607,
                   "lon": 139.692677,
+                  "stopPosition": {
+                    "position": 29
+                  },
                   "stop": {
                     "gtfsId": "1:429P4",
                     "platformCode": "4",
@@ -253,6 +283,10 @@
                 "duration": 1140,
                 "distance": 7544,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400802B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:13:00+09:00"
                 },
@@ -263,6 +297,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 21
+                  },
                   "stop": {
                     "gtfsId": "1:421P4",
                     "platformCode": "4",
@@ -275,6 +312,9 @@
                   "name": "都庁前",
                   "lat": 35.690607,
                   "lon": 139.692677,
+                  "stopPosition": {
+                    "position": 29
+                  },
                   "stop": {
                     "gtfsId": "1:429P4",
                     "platformCode": "4",
@@ -326,6 +366,10 @@
                 "duration": 1140,
                 "distance": 7544,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400803B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:17:00+09:00"
                 },
@@ -336,6 +380,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 21
+                  },
                   "stop": {
                     "gtfsId": "1:421P4",
                     "platformCode": "4",
@@ -348,6 +395,9 @@
                   "name": "都庁前",
                   "lat": 35.690607,
                   "lon": 139.692677,
+                  "stopPosition": {
+                    "position": 29
+                  },
                   "stop": {
                     "gtfsId": "1:429P4",
                     "platformCode": "4",
@@ -399,6 +449,10 @@
                 "duration": 1140,
                 "distance": 7544,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400804B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:23:00+09:00"
                 },
@@ -409,6 +463,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 21
+                  },
                   "stop": {
                     "gtfsId": "1:421P4",
                     "platformCode": "4",
@@ -421,6 +478,9 @@
                   "name": "都庁前",
                   "lat": 35.690607,
                   "lon": 139.692677,
+                  "stopPosition": {
+                    "position": 29
+                  },
                   "stop": {
                     "gtfsId": "1:429P4",
                     "platformCode": "4",

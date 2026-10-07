@@ -42,6 +42,30 @@ describe('parsePlan', () => {
     expect(ride?.kind === 'ride' && ride.stops).toBeGreaterThan(3);
   });
 
+  it("keeps what the live feeds need: trip, service day and the stops' positions (D-027)", () => {
+    const [first] = parsePlan(recorded('daimon-shinjuku').data);
+    const ride = first?.legs[0];
+    expect(ride?.kind === 'ride' && ride.live).toMatchObject({
+      feedId: '1',
+      tripId: expect.stringMatching(/^[0-9A-Z]+$/) as string,
+      serviceDate: '20261007',
+    });
+    const live = ride?.kind === 'ride' ? ride.live : null;
+    expect(live && live.toSeq - live.fromSeq).toBeGreaterThan(3);
+    // the trip id has no feed prefix, as every other id in the app
+    expect(live?.tripId).not.toContain(':');
+  });
+
+  it('has no live key when OTP does not give every part of it', () => {
+    const data = structuredClone(recorded('daimon-shinjuku').data);
+    const leg = data.planConnection.edges[0]?.node.legs[0];
+    if (!leg) throw new Error('fixture has no leg');
+    delete leg.trip;
+    const [first] = parsePlan(data);
+    const ride = first?.legs[0];
+    expect(ride?.kind === 'ride' && ride.live).toBeNull();
+  });
+
   it('keeps walks between stops at a change, and stops without a parent are their own station', () => {
     const [first] = parsePlan(recorded('daimon-oshiage').data);
     const walk = first?.legs.find((l) => l.kind === 'walk');

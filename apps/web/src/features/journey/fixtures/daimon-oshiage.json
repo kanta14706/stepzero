@@ -1,5 +1,5 @@
 {
-  "recorded": "2026-10-05T19:57:37.282Z",
+  "recorded": "2026-10-07T10:39:58.612Z",
   "otp": "opentripplanner 2.10.0, toei-pathway",
   "variables": {
     "origin": {
@@ -34,6 +34,10 @@
                 "duration": 1200,
                 "distance": 8655,
                 "headsign": "都庁前",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:410817A0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:02:00+09:00"
                 },
@@ -44,6 +48,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 19
+                  },
                   "stop": {
                     "gtfsId": "1:421P3",
                     "platformCode": "3",
@@ -56,6 +63,9 @@
                   "name": "蔵前",
                   "lat": 35.705587,
                   "lon": 139.792244,
+                  "stopPosition": {
+                    "position": 28
+                  },
                   "stop": {
                     "gtfsId": "1:412",
                     "platformCode": null,
@@ -100,6 +110,8 @@
                 "duration": 586,
                 "distance": 415.83,
                 "headsign": null,
+                "serviceDate": null,
+                "trip": null,
                 "start": {
                   "scheduledTime": "2026-10-07T09:22:00+09:00"
                 },
@@ -110,6 +122,7 @@
                   "name": "蔵前",
                   "lat": 35.705587,
                   "lon": 139.792244,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:412",
                     "platformCode": null,
@@ -120,6 +133,7 @@
                   "name": "蔵前",
                   "lat": 35.703128,
                   "lon": 139.790858,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:117",
                     "platformCode": null,
@@ -134,6 +148,10 @@
                 "duration": 300,
                 "distance": 2350,
                 "headsign": "青砥",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:100781H0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:35:00+09:00"
                 },
@@ -144,6 +162,9 @@
                   "name": "蔵前",
                   "lat": 35.703128,
                   "lon": 139.790858,
+                  "stopPosition": {
+                    "position": 11
+                  },
                   "stop": {
                     "gtfsId": "1:117",
                     "platformCode": null,
@@ -154,6 +175,9 @@
                   "name": "押上",
                   "lat": 35.710824,
                   "lon": 139.812993,
+                  "stopPosition": {
+                    "position": 14
+                  },
                   "stop": {
                     "gtfsId": "1:120",
                     "platformCode": null,
@@ -188,6 +212,10 @@
                 "duration": 1260,
                 "distance": 8655,
                 "headsign": "都庁前",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:410818A0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:05:00+09:00"
                 },
@@ -198,6 +226,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 19
+                  },
                   "stop": {
                     "gtfsId": "1:421P3",
                     "platformCode": "3",
@@ -210,6 +241,9 @@
                   "name": "蔵前",
                   "lat": 35.705587,
                   "lon": 139.792244,
+                  "stopPosition": {
+                    "position": 28
+                  },
                   "stop": {
                     "gtfsId": "1:412",
                     "platformCode": null,
@@ -254,6 +288,8 @@
                 "duration": 586,
                 "distance": 415.83,
                 "headsign": null,
+                "serviceDate": null,
+                "trip": null,
                 "start": {
                   "scheduledTime": "2026-10-07T09:26:00+09:00"
                 },
@@ -264,6 +300,7 @@
                   "name": "蔵前",
                   "lat": 35.705587,
                   "lon": 139.792244,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:412",
                     "platformCode": null,
@@ -274,6 +311,7 @@
                   "name": "蔵前",
                   "lat": 35.703128,
                   "lon": 139.790858,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:117",
                     "platformCode": null,
@@ -288,6 +326,10 @@
                 "duration": 360,
                 "distance": 2350,
                 "headsign": "成田空港",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:100843T0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:39:00+09:00"
                 },
@@ -298,6 +340,9 @@
                   "name": "蔵前",
                   "lat": 35.703128,
                   "lon": 139.790858,
+                  "stopPosition": {
+                    "position": 11
+                  },
                   "stop": {
                     "gtfsId": "1:117",
                     "platformCode": null,
@@ -308,6 +353,9 @@
                   "name": "押上",
                   "lat": 35.710824,
                   "lon": 139.812993,
+                  "stopPosition": {
+                    "position": 14
+                  },
                   "stop": {
                     "gtfsId": "1:120",
                     "platformCode": null,
@@ -342,6 +390,10 @@
                 "duration": 240,
                 "distance": 1468,
                 "headsign": "清澄白河",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:410842A0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:08:00+09:00"
                 },
@@ -352,6 +404,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 19
+                  },
                   "stop": {
                     "gtfsId": "1:421P3",
                     "platformCode": "3",
@@ -364,6 +419,9 @@
                   "name": "築地市場",
                   "lat": 35.664919,
                   "lon": 139.766929,
+                  "stopPosition": {
+                    "position": 21
+                  },
                   "stop": {
                     "gtfsId": "1:419",
                     "platformCode": null,
@@ -387,6 +445,8 @@
                 "duration": 858,
                 "distance": 784.46,
                 "headsign": null,
+                "serviceDate": null,
+                "trip": null,
                 "start": {
                   "scheduledTime": "2026-10-07T09:12:00+09:00"
                 },
@@ -397,6 +457,7 @@
                   "name": "築地市場",
                   "lat": 35.664919,
                   "lon": 139.766929,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:419",
                     "platformCode": null,
@@ -407,6 +468,7 @@
                   "name": "東銀座",
                   "lat": 35.669915,
                   "lon": 139.76735,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:111",
                     "platformCode": null,
@@ -421,6 +483,10 @@
                 "duration": 960,
                 "distance": 6694,
                 "headsign": "成田空港",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:100843T0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:29:00+09:00"
                 },
@@ -431,6 +497,9 @@
                   "name": "東銀座",
                   "lat": 35.669915,
                   "lon": 139.76735,
+                  "stopPosition": {
+                    "position": 5
+                  },
                   "stop": {
                     "gtfsId": "1:111",
                     "platformCode": null,
@@ -441,6 +510,9 @@
                   "name": "押上",
                   "lat": 35.710824,
                   "lon": 139.812993,
+                  "stopPosition": {
+                    "position": 14
+                  },
                   "stop": {
                     "gtfsId": "1:120",
                     "platformCode": null,
@@ -493,6 +565,10 @@
                 "duration": 1200,
                 "distance": 8655,
                 "headsign": "都庁前",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:410819A0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:11:00+09:00"
                 },
@@ -503,6 +579,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 19
+                  },
                   "stop": {
                     "gtfsId": "1:421P3",
                     "platformCode": "3",
@@ -515,6 +594,9 @@
                   "name": "蔵前",
                   "lat": 35.705587,
                   "lon": 139.792244,
+                  "stopPosition": {
+                    "position": 28
+                  },
                   "stop": {
                     "gtfsId": "1:412",
                     "platformCode": null,
@@ -559,6 +641,8 @@
                 "duration": 586,
                 "distance": 415.83,
                 "headsign": null,
+                "serviceDate": null,
+                "trip": null,
                 "start": {
                   "scheduledTime": "2026-10-07T09:31:00+09:00"
                 },
@@ -569,6 +653,7 @@
                   "name": "蔵前",
                   "lat": 35.705587,
                   "lon": 139.792244,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:412",
                     "platformCode": null,
@@ -579,6 +664,7 @@
                   "name": "蔵前",
                   "lat": 35.703128,
                   "lon": 139.790858,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:117",
                     "platformCode": null,
@@ -593,6 +679,10 @@
                 "duration": 300,
                 "distance": 2350,
                 "headsign": "京成高砂",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:100963K0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:43:00+09:00"
                 },
@@ -603,6 +693,9 @@
                   "name": "蔵前",
                   "lat": 35.703128,
                   "lon": 139.790858,
+                  "stopPosition": {
+                    "position": 17
+                  },
                   "stop": {
                     "gtfsId": "1:117",
                     "platformCode": null,
@@ -613,6 +706,9 @@
                   "name": "押上",
                   "lat": 35.710824,
                   "lon": 139.812993,
+                  "stopPosition": {
+                    "position": 20
+                  },
                   "stop": {
                     "gtfsId": "1:120",
                     "platformCode": null,
@@ -647,6 +743,10 @@
                 "duration": 240,
                 "distance": 1468,
                 "headsign": "都庁前",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:410820A0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:14:00+09:00"
                 },
@@ -657,6 +757,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 19
+                  },
                   "stop": {
                     "gtfsId": "1:421P3",
                     "platformCode": "3",
@@ -669,6 +772,9 @@
                   "name": "築地市場",
                   "lat": 35.664919,
                   "lon": 139.766929,
+                  "stopPosition": {
+                    "position": 21
+                  },
                   "stop": {
                     "gtfsId": "1:419",
                     "platformCode": null,
@@ -692,6 +798,8 @@
                 "duration": 858,
                 "distance": 784.46,
                 "headsign": null,
+                "serviceDate": null,
+                "trip": null,
                 "start": {
                   "scheduledTime": "2026-10-07T09:18:00+09:00"
                 },
@@ -702,6 +810,7 @@
                   "name": "築地市場",
                   "lat": 35.664919,
                   "lon": 139.766929,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:419",
                     "platformCode": null,
@@ -712,6 +821,7 @@
                   "name": "東銀座",
                   "lat": 35.669915,
                   "lon": 139.76735,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:111",
                     "platformCode": null,
@@ -726,6 +836,10 @@
                 "duration": 900,
                 "distance": 6694,
                 "headsign": "京成高砂",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:100783H0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:36:00+09:00"
                 },
@@ -736,6 +850,9 @@
                   "name": "東銀座",
                   "lat": 35.669915,
                   "lon": 139.76735,
+                  "stopPosition": {
+                    "position": 5
+                  },
                   "stop": {
                     "gtfsId": "1:111",
                     "platformCode": null,
@@ -746,6 +863,9 @@
                   "name": "押上",
                   "lat": 35.710824,
                   "lon": 139.812993,
+                  "stopPosition": {
+                    "position": 14
+                  },
                   "stop": {
                     "gtfsId": "1:120",
                     "platformCode": null,
@@ -798,6 +918,8 @@
                 "duration": 1816,
                 "distance": 1534.53,
                 "headsign": null,
+                "serviceDate": null,
+                "trip": null,
                 "start": {
                   "scheduledTime": "2026-10-07T09:03:44+09:00"
                 },
@@ -808,6 +930,7 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:421P3",
                     "platformCode": "3",
@@ -820,6 +943,7 @@
                   "name": "新橋",
                   "lat": 35.665386,
                   "lon": 139.759338,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:110",
                     "platformCode": null,
@@ -834,6 +958,10 @@
                 "duration": 1020,
                 "distance": 7576,
                 "headsign": "京成高砂",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:100783H0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:34:00+09:00"
                 },
@@ -844,6 +972,9 @@
                   "name": "新橋",
                   "lat": 35.665386,
                   "lon": 139.759338,
+                  "stopPosition": {
+                    "position": 4
+                  },
                   "stop": {
                     "gtfsId": "1:110",
                     "platformCode": null,
@@ -854,6 +985,9 @@
                   "name": "押上",
                   "lat": 35.710824,
                   "lon": 139.812993,
+                  "stopPosition": {
+                    "position": 14
+                  },
                   "stop": {
                     "gtfsId": "1:120",
                     "platformCode": null,

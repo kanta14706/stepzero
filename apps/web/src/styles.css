@@ -682,6 +682,33 @@ div.place-picker {
   font-weight: 700;
 }
 
+/* Live train status (step 2.7). The wording carries the meaning; weight only adds emphasis. */
+.live-line {
+  margin: 0.25rem 0;
+}
+
+.live-line[data-tone='late'],
+.live-line[data-tone='canceled'] {
+  font-weight: 700;
+}
+
+.live-alerts {
+  margin: 0.5rem 0;
+}
+
+.live-alerts h5 {
+  margin: 0 0 0.25rem;
+}
+
+.live-alerts ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.live-bar .step-button {
+  margin-inline-end: 0.75rem;
+}
+
 .tier-badge {
   display: inline-flex;
   flex-wrap: wrap;

@@ -11,6 +11,11 @@ import { boardingNotes, describeStep, nameIn, roundMetres } from '../station-vie
 import { MARGIN_S } from './assemble';
 import type { Journey, RideLeg, Segment, Station } from './types';
 import { TierBadge } from '../../components/TierBadge';
+import { LiveBar } from '../live/LiveBar';
+import { LiveLeg } from '../live/LiveLeg';
+import { legKey } from '../live/delay';
+import { transferRisks } from '../live/transfers';
+import type { JourneyLive } from '../live/useLiveStatus';
 
 export const minutes = (s: number): number => Math.max(1, Math.round(s / 60));
 
@@ -64,6 +69,10 @@ interface TimelineProps {
   profile: ProfileId;
   onReport?: SendReport | undefined;
   reportBusy: boolean;
+  /** Live delays and alerts for the trains (step 2.7); absent: no live information. */
+  live?: JourneyLive | undefined;
+  /** Plan again from now. */
+  onReplan?: (() => void) | undefined;
 }
 
 /** One journey as an ordered list: street, stations (with their steps), trains. */
@@ -73,12 +82,17 @@ export function JourneyTimeline({
   profile,
   onReport,
   reportBusy,
+  live,
+  onReplan,
 }: TimelineProps) {
   const { t, lang } = useI18n();
   const byId = useMemo(() => new Map(stations.map((s) => [s.id, s])), [stations]);
   const j = t.journey;
+  const risks = useMemo(() => (live ? transferRisks(journey, live.byLeg) : []), [journey, live]);
+  const nameOf = (id: string | null, fallback: string) => stationName(id, fallback, byId, lang);
   return (
     <>
+      {live && <LiveBar live={live} risks={risks} stationName={nameOf} onReplan={onReplan} />}
       <p>
         {journey.leaveAt ? `${fmt(j.leaveAt, { time: reportTime(journey.leaveAt, lang) })} → ` : ''}
         {fmt(j.arriveAt, { time: reportTime(journey.arriveAt, lang) })}
@@ -101,6 +115,7 @@ export function JourneyTimeline({
               profile={profile}
               onReport={onReport}
               reportBusy={reportBusy}
+              live={live}
             />
           </li>
         ))}
@@ -117,6 +132,7 @@ function SegmentView({
   profile,
   onReport,
   reportBusy,
+  live,
 }: {
   seg: Segment;
   journey: Journey;
@@ -125,6 +141,7 @@ function SegmentView({
   profile: ProfileId;
   onReport?: SendReport | undefined;
   reportBusy: boolean;
+  live: JourneyLive | undefined;
 }) {
   const { t, lang } = useI18n();
   const j = t.journey;
@@ -191,6 +208,14 @@ function SegmentView({
               stops: leg.stops + 1,
             })}
           </p>
+          {live && (
+            <LiveLeg
+              leg={leg}
+              live={live.byLeg.get(legKey(leg))}
+              alerts={live.alerts.get(legKey(leg)) ?? []}
+              stationName={name}
+            />
+          )}
           {a && (
             <>
               <p className="ride-advice">

@@ -43,6 +43,20 @@ export interface OtpStop {
   platformCode: string | null;
 }
 
+/**
+ * What identifies one train in the live feeds (D-027): the operator's OTP feed id, the GTFS trip,
+ * its service day (OTP's own, so a 00:02 train belongs to the day before) and the positions of the
+ * boarding and alighting stops, which are the feeds' `stop_sequence`.
+ */
+export interface LiveRef {
+  feedId: string;
+  tripId: string;
+  /** YYYYMMDD. */
+  serviceDate: string;
+  fromSeq: number;
+  toSeq: number;
+}
+
 export interface RideLeg {
   kind: 'ride';
   mode: string;
@@ -56,6 +70,8 @@ export interface RideLeg {
   /** Stops between boarding and alighting. */
   stops: number;
   distanceM: number;
+  /** Null when OTP did not say (plans saved before step 2.7 have no such field at all). */
+  live?: LiveRef | null;
 }
 
 export interface WalkLeg {

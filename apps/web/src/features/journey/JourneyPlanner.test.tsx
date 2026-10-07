@@ -14,6 +14,8 @@ import { FakeOutageSource, outage } from '../report/fakeSource';
 import { OutageSourceProvider } from '../report/useOutages';
 import { JourneyPlanner } from './JourneyPlanner';
 import { PlanError, parsePlan } from './otp';
+import { epoch, response, stopTime, trip } from '../live/testing';
+import type { LiveFetch } from '../live/useLiveStatus';
 import type { PlanStore, SavedPlan } from './saved';
 import { resetStationsCache } from './stations';
 import type { JourneyPlanOptions } from './useJourneyPlan';
@@ -227,5 +229,102 @@ describe.skipIf(!HAVE_DATA)('JourneyPlanner', () => {
     options = { ...options, isOnline: () => false };
     renderPlanner('from=station:421&to=station:428&profile=sensory');
     expect(await screen.findByRole('alert')).toHaveTextContent('通信できません。');
+  });
+});
+
+/** A live feed that answers for the trains of the recorded plan, `late()` seconds late. */
+function liveFeed(late: () => number): LiveFetch {
+  const legs = new Map(
+    plan
+      .flatMap((it) => it.legs)
+      .flatMap((l) => (l.kind === 'ride' && l.live ? [[l.live.tripId, l] as const] : [])),
+  );
+  return (_operator, ids) =>
+    Promise.resolve(
+      response(
+        Object.fromEntries(
+          ids.flatMap((id) => {
+            const leg = legs.get(id);
+            if (!leg?.live) return [];
+            return [
+              [
+                id,
+                trip([
+                  stopTime(leg.live.fromSeq, { departure: epoch(leg.departure) + late() }),
+                  stopTime(leg.live.toSeq, { arrival: epoch(leg.arrival) + late() }),
+                ]),
+              ],
+            ];
+          }),
+        ),
+      ),
+    );
+}
+
+describe.skipIf(!HAVE_DATA)('JourneyPlanner live status (step 2.7)', () => {
+  it('shows a late train with its new times, and says when the data is from', async () => {
+    options = {
+      ...options,
+      live: { config: null, fetchLive: liveFeed(() => 300), intervalMs: 60_000 },
+    };
+    renderPlanner(PARAMS);
+    expect(await screen.findByText('約5分遅れています。')).toBeInTheDocument();
+    expect(screen.getByText(/^出発 \d\d:\d\d、到着 \d\d:\d\d（時刻表：/)).toBeInTheDocument();
+    expect(screen.getByTestId('live-updated')).toHaveTextContent(/に更新$/);
+  });
+
+  it('says a train is on time only when the feed says so', async () => {
+    options = {
+      ...options,
+      live: { config: null, fetchLive: liveFeed(() => 0), intervalMs: 60_000 },
+    };
+    renderPlanner(PARAMS);
+    expect(await screen.findByText('定刻どおりに運行しています。')).toBeInTheDocument();
+  });
+
+  it('keeps the timetable and says why when live information is not available', async () => {
+    options = { ...options, live: { config: null } };
+    renderPlanner(PARAMS);
+    expect(
+      await screen.findByText(
+        'この環境ではリアルタイム情報を使えません。時刻表の時刻を表示しています。',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('定刻どおりに運行しています。')).not.toBeInTheDocument();
+  });
+
+  it('plans again from now with one button', async () => {
+    options = {
+      ...options,
+      live: { config: null, fetchLive: liveFeed(() => 0), intervalMs: 60_000 },
+    };
+    const user = userEvent.setup();
+    const { navigate } = renderPlanner(PARAMS);
+    await user.click(await screen.findByRole('button', { name: '今の時刻で探し直す' }));
+    expect(navigate).toHaveBeenCalledTimes(1);
+    const href = navigate.mock.calls[0]?.[0] as string;
+    expect(href).toContain('from=station%3A421');
+    expect(href).not.toContain('at=');
+  });
+
+  it('announces once when the live picture changes, not on every refresh', async () => {
+    let late = 0;
+    options = {
+      ...options,
+      live: { config: null, fetchLive: liveFeed(() => late), intervalMs: 40 },
+    };
+    renderPlanner(PARAMS);
+    await screen.findByText('定刻どおりに運行しています。');
+    const region = () =>
+      document.querySelector('.journey-results [role="status"]')?.textContent ?? '';
+    expect(region()).not.toContain('リアルタイム情報が更新されました');
+    late = 300;
+    await waitFor(() => {
+      expect(region()).toContain('リアルタイム情報が更新されました。1本の列車に遅れがあります。');
+    });
+    // another refresh with the same delay: the sentence stays, it is not repeated or changed
+    const before = region();
+    await new Promise((r) => setTimeout(r, 120));
+    expect(region()).toBe(before);
   });
 });

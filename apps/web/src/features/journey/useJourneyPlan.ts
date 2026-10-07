@@ -4,6 +4,7 @@ import type { GraphIndex } from '../../routing/astar';
 import { RouterClient, createRouter } from '../../routing/client';
 import type { WorkerLike } from '../../routing/client';
 import { loadStationGraph } from '../../map/data';
+import type { LiveStatusOptions } from '../live/useLiveStatus';
 import { useOutagesFor } from '../report/useOutages';
 import type { ManyOutages } from '../report/useOutages';
 import { assembleAll } from './assemble';
@@ -42,6 +43,8 @@ export interface JourneyPlanOptions {
   /** Where the last plan is kept for offline use (D-025). */
   store?: PlanStore;
   isOnline?: () => boolean;
+  /** Live train status (step 2.7): test hooks for the edge function call and the clock. */
+  live?: LiveStatusOptions;
 }
 
 const browserOnline = (): boolean => typeof navigator === 'undefined' || navigator.onLine;

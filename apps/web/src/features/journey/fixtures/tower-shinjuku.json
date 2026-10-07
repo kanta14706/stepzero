@@ -1,5 +1,5 @@
 {
-  "recorded": "2026-10-05T19:57:37.344Z",
+  "recorded": "2026-10-07T10:39:58.671Z",
   "otp": "opentripplanner 2.10.0, toei-pathway",
   "variables": {
     "origin": {
@@ -35,6 +35,8 @@
                 "duration": 577,
                 "distance": 681.7,
                 "headsign": null,
+                "serviceDate": null,
+                "trip": null,
                 "start": {
                   "scheduledTime": "2026-10-07T09:01:23+09:00"
                 },
@@ -45,12 +47,14 @@
                   "name": "Origin",
                   "lat": 35.65858,
                   "lon": 139.74543,
+                  "stopPosition": null,
                   "stop": null
                 },
                 "to": {
                   "name": "赤羽橋",
                   "lat": 35.654985,
                   "lon": 139.743989,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:422P2",
                     "platformCode": "2",
@@ -67,6 +71,10 @@
                 "duration": 780,
                 "distance": 5850,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400801B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:11:00+09:00"
                 },
@@ -77,6 +85,9 @@
                   "name": "赤羽橋",
                   "lat": 35.654985,
                   "lon": 139.743989,
+                  "stopPosition": {
+                    "position": 22
+                  },
                   "stop": {
                     "gtfsId": "1:422P2",
                     "platformCode": "2",
@@ -89,6 +100,9 @@
                   "name": "新宿",
                   "lat": 35.688462,
                   "lon": 139.699019,
+                  "stopPosition": {
+                    "position": 28
+                  },
                   "stop": {
                     "gtfsId": "1:428P7",
                     "platformCode": "7",
@@ -134,6 +148,8 @@
                 "duration": 577,
                 "distance": 681.7,
                 "headsign": null,
+                "serviceDate": null,
+                "trip": null,
                 "start": {
                   "scheduledTime": "2026-10-07T09:06:23+09:00"
                 },
@@ -144,12 +160,14 @@
                   "name": "Origin",
                   "lat": 35.65858,
                   "lon": 139.74543,
+                  "stopPosition": null,
                   "stop": null
                 },
                 "to": {
                   "name": "赤羽橋",
                   "lat": 35.654985,
                   "lon": 139.743989,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:422P2",
                     "platformCode": "2",
@@ -166,6 +184,10 @@
                 "duration": 780,
                 "distance": 5850,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400802B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:16:00+09:00"
                 },
@@ -176,6 +198,9 @@
                   "name": "赤羽橋",
                   "lat": 35.654985,
                   "lon": 139.743989,
+                  "stopPosition": {
+                    "position": 22
+                  },
                   "stop": {
                     "gtfsId": "1:422P2",
                     "platformCode": "2",
@@ -188,6 +213,9 @@
                   "name": "新宿",
                   "lat": 35.688462,
                   "lon": 139.699019,
+                  "stopPosition": {
+                    "position": 28
+                  },
                   "stop": {
                     "gtfsId": "1:428P7",
                     "platformCode": "7",
@@ -233,6 +261,8 @@
                 "duration": 577,
                 "distance": 681.7,
                 "headsign": null,
+                "serviceDate": null,
+                "trip": null,
                 "start": {
                   "scheduledTime": "2026-10-07T09:10:23+09:00"
                 },
@@ -243,12 +273,14 @@
                   "name": "Origin",
                   "lat": 35.65858,
                   "lon": 139.74543,
+                  "stopPosition": null,
                   "stop": null
                 },
                 "to": {
                   "name": "赤羽橋",
                   "lat": 35.654985,
                   "lon": 139.743989,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:422P2",
                     "platformCode": "2",
@@ -265,6 +297,10 @@
                 "duration": 840,
                 "distance": 5850,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400803B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:20:00+09:00"
                 },
@@ -275,6 +311,9 @@
                   "name": "赤羽橋",
                   "lat": 35.654985,
                   "lon": 139.743989,
+                  "stopPosition": {
+                    "position": 22
+                  },
                   "stop": {
                     "gtfsId": "1:422P2",
                     "platformCode": "2",
@@ -287,6 +326,9 @@
                   "name": "新宿",
                   "lat": 35.688462,
                   "lon": 139.699019,
+                  "stopPosition": {
+                    "position": 28
+                  },
                   "stop": {
                     "gtfsId": "1:428P7",
                     "platformCode": "7",
@@ -332,6 +374,8 @@
                 "duration": 577,
                 "distance": 681.7,
                 "headsign": null,
+                "serviceDate": null,
+                "trip": null,
                 "start": {
                   "scheduledTime": "2026-10-07T09:16:23+09:00"
                 },
@@ -342,12 +386,14 @@
                   "name": "Origin",
                   "lat": 35.65858,
                   "lon": 139.74543,
+                  "stopPosition": null,
                   "stop": null
                 },
                 "to": {
                   "name": "赤羽橋",
                   "lat": 35.654985,
                   "lon": 139.743989,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:422P2",
                     "platformCode": "2",
@@ -364,6 +410,10 @@
                 "duration": 780,
                 "distance": 5850,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400804B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:26:00+09:00"
                 },
@@ -374,6 +424,9 @@
                   "name": "赤羽橋",
                   "lat": 35.654985,
                   "lon": 139.743989,
+                  "stopPosition": {
+                    "position": 22
+                  },
                   "stop": {
                     "gtfsId": "1:422P2",
                     "platformCode": "2",
@@ -386,6 +439,9 @@
                   "name": "新宿",
                   "lat": 35.688462,
                   "lon": 139.699019,
+                  "stopPosition": {
+                    "position": 28
+                  },
                   "stop": {
                     "gtfsId": "1:428P7",
                     "platformCode": "7",
@@ -431,6 +487,8 @@
                 "duration": 577,
                 "distance": 681.7,
                 "headsign": null,
+                "serviceDate": null,
+                "trip": null,
                 "start": {
                   "scheduledTime": "2026-10-07T09:20:23+09:00"
                 },
@@ -441,12 +499,14 @@
                   "name": "Origin",
                   "lat": 35.65858,
                   "lon": 139.74543,
+                  "stopPosition": null,
                   "stop": null
                 },
                 "to": {
                   "name": "赤羽橋",
                   "lat": 35.654985,
                   "lon": 139.743989,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:422P2",
                     "platformCode": "2",
@@ -463,6 +523,10 @@
                 "duration": 840,
                 "distance": 5850,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400805B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:30:00+09:00"
                 },
@@ -473,6 +537,9 @@
                   "name": "赤羽橋",
                   "lat": 35.654985,
                   "lon": 139.743989,
+                  "stopPosition": {
+                    "position": 22
+                  },
                   "stop": {
                     "gtfsId": "1:422P2",
                     "platformCode": "2",
@@ -485,6 +552,9 @@
                   "name": "新宿",
                   "lat": 35.688462,
                   "lon": 139.699019,
+                  "stopPosition": {
+                    "position": 28
+                  },
                   "stop": {
                     "gtfsId": "1:428P7",
                     "platformCode": "7",
@@ -530,6 +600,8 @@
                 "duration": 577,
                 "distance": 681.7,
                 "headsign": null,
+                "serviceDate": null,
+                "trip": null,
                 "start": {
                   "scheduledTime": "2026-10-07T09:26:23+09:00"
                 },
@@ -540,12 +612,14 @@
                   "name": "Origin",
                   "lat": 35.65858,
                   "lon": 139.74543,
+                  "stopPosition": null,
                   "stop": null
                 },
                 "to": {
                   "name": "赤羽橋",
                   "lat": 35.654985,
                   "lon": 139.743989,
+                  "stopPosition": null,
                   "stop": {
                     "gtfsId": "1:422P2",
                     "platformCode": "2",
@@ -562,6 +636,10 @@
                 "duration": 780,
                 "distance": 5850,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400835B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:36:00+09:00"
                 },
@@ -572,6 +650,9 @@
                   "name": "赤羽橋",
                   "lat": 35.654985,
                   "lon": 139.743989,
+                  "stopPosition": {
+                    "position": 22
+                  },
                   "stop": {
                     "gtfsId": "1:422P2",
                     "platformCode": "2",
@@ -584,6 +665,9 @@
                   "name": "新宿",
                   "lat": 35.688462,
                   "lon": 139.699019,
+                  "stopPosition": {
+                    "position": 28
+                  },
                   "stop": {
                     "gtfsId": "1:428P7",
                     "platformCode": "7",

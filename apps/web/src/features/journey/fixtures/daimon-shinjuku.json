@@ -1,5 +1,5 @@
 {
-  "recorded": "2026-10-05T19:57:37.127Z",
+  "recorded": "2026-10-07T10:39:58.445Z",
   "otp": "opentripplanner 2.10.0, toei-pathway",
   "variables": {
     "origin": {
@@ -34,6 +34,10 @@
                 "duration": 960,
                 "distance": 6924,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400852B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:00:00+09:00"
                 },
@@ -44,6 +48,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 21
+                  },
                   "stop": {
                     "gtfsId": "1:421P4",
                     "platformCode": "4",
@@ -56,6 +63,9 @@
                   "name": "新宿",
                   "lat": 35.688462,
                   "lon": 139.699019,
+                  "stopPosition": {
+                    "position": 28
+                  },
                   "stop": {
                     "gtfsId": "1:428P7",
                     "platformCode": "7",
@@ -104,6 +114,10 @@
                 "duration": 960,
                 "distance": 6924,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400832B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:04:00+09:00"
                 },
@@ -114,6 +128,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 21
+                  },
                   "stop": {
                     "gtfsId": "1:421P4",
                     "platformCode": "4",
@@ -126,6 +143,9 @@
                   "name": "新宿",
                   "lat": 35.688462,
                   "lon": 139.699019,
+                  "stopPosition": {
+                    "position": 28
+                  },
                   "stop": {
                     "gtfsId": "1:428P7",
                     "platformCode": "7",
@@ -174,6 +194,10 @@
                 "duration": 960,
                 "distance": 6924,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400801B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:08:00+09:00"
                 },
@@ -184,6 +208,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 21
+                  },
                   "stop": {
                     "gtfsId": "1:421P4",
                     "platformCode": "4",
@@ -196,6 +223,9 @@
                   "name": "新宿",
                   "lat": 35.688462,
                   "lon": 139.699019,
+                  "stopPosition": {
+                    "position": 28
+                  },
                   "stop": {
                     "gtfsId": "1:428P7",
                     "platformCode": "7",
@@ -244,6 +274,10 @@
                 "duration": 960,
                 "distance": 6924,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400802B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:13:00+09:00"
                 },
@@ -254,6 +288,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 21
+                  },
                   "stop": {
                     "gtfsId": "1:421P4",
                     "platformCode": "4",
@@ -266,6 +303,9 @@
                   "name": "新宿",
                   "lat": 35.688462,
                   "lon": 139.699019,
+                  "stopPosition": {
+                    "position": 28
+                  },
                   "stop": {
                     "gtfsId": "1:428P7",
                     "platformCode": "7",
@@ -314,6 +354,10 @@
                 "duration": 1020,
                 "distance": 6924,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400803B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:17:00+09:00"
                 },
@@ -324,6 +368,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 21
+                  },
                   "stop": {
                     "gtfsId": "1:421P4",
                     "platformCode": "4",
@@ -336,6 +383,9 @@
                   "name": "新宿",
                   "lat": 35.688462,
                   "lon": 139.699019,
+                  "stopPosition": {
+                    "position": 28
+                  },
                   "stop": {
                     "gtfsId": "1:428P7",
                     "platformCode": "7",
@@ -384,6 +434,10 @@
                 "duration": 960,
                 "distance": 6924,
                 "headsign": "光が丘",
+                "serviceDate": "2026-10-07",
+                "trip": {
+                  "gtfsId": "1:400804B0"
+                },
                 "start": {
                   "scheduledTime": "2026-10-07T09:23:00+09:00"
                 },
@@ -394,6 +448,9 @@
                   "name": "大門",
                   "lat": 35.656671,
                   "lon": 139.755696,
+                  "stopPosition": {
+                    "position": 21
+                  },
                   "stop": {
                     "gtfsId": "1:421P4",
                     "platformCode": "4",
@@ -406,6 +463,9 @@
                   "name": "新宿",
                   "lat": 35.688462,
                   "lon": 139.699019,
+                  "stopPosition": {
+                    "position": 28
+                  },
                   "stop": {
                     "gtfsId": "1:428P7",
                     "platformCode": "7",

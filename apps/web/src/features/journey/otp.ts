@@ -8,7 +8,7 @@
 import type { ProfileId } from '../../routing/types';
 import PLAN_QUERY from './plan.graphql?raw';
 import WALK_QUERY from './walk.graphql?raw';
-import type { Itinerary, LatLon, OtpLeg, OtpStop, Place } from './types';
+import type { Itinerary, LatLon, LiveRef, OtpLeg, OtpStop, Place } from './types';
 
 export { PLAN_QUERY, WALK_QUERY };
 
@@ -84,6 +84,8 @@ interface RawPlace {
   name: string;
   lat: number;
   lon: number;
+  /** `{}` when the place is not a stop of a trip (a walk's ends, the union's other member). */
+  stopPosition?: { position?: number } | null;
   stop: {
     gtfsId: string;
     platformCode: string | null;
@@ -96,6 +98,8 @@ interface RawLeg {
   duration: number;
   distance: number;
   headsign: string | null;
+  serviceDate?: string | null;
+  trip?: { gtfsId: string } | null;
   start: { scheduledTime: string };
   end: { scheduledTime: string };
   from: RawPlace;
@@ -134,6 +138,18 @@ function toStop(p: RawPlace): OtpStop {
   };
 }
 
+/** The live-feed key of a ride, or null when OTP did not give every part of it. */
+function toLiveRef(l: RawLeg): LiveRef | null {
+  const trip = l.trip?.gtfsId;
+  const fromSeq = l.from.stopPosition?.position;
+  const toSeq = l.to.stopPosition?.position;
+  const date = l.serviceDate?.replaceAll('-', '');
+  if (!trip || !date || fromSeq === undefined || toSeq === undefined) return null;
+  const i = trip.indexOf(':');
+  if (i < 0) return null; // no feed prefix: cannot tell which operator's feed it belongs to
+  return { feedId: trip.slice(0, i), tripId: trip.slice(i + 1), serviceDate: date, fromSeq, toSeq };
+}
+
 function toLeg(l: RawLeg): OtpLeg {
   const from = toStop(l.from);
   const to = toStop(l.to);
@@ -165,6 +181,7 @@ function toLeg(l: RawLeg): OtpLeg {
     arrival,
     stops: l.intermediateStops?.length ?? 0,
     distanceM: l.distance,
+    live: toLiveRef(l),
   };
 }
 

@@ -3,6 +3,10 @@ import type { SyntheticEvent } from 'react';
 import { fmt, htmlLang, useI18n } from '../../i18n';
 import { PROFILES } from '../../routing/profiles';
 import type { ProfileId } from '../../routing/types';
+import { legKey } from '../live/delay';
+import { useLiveAnnouncement } from '../live/useLiveAnnouncement';
+import { useLiveStatus } from '../live/useLiveStatus';
+import type { LiveStatusOptions } from '../live/useLiveStatus';
 import { ReportFeedback, reportTime, useReporter } from '../report/ReportControls';
 import { describeFailure } from '../station-view/describe';
 import { JourneyTimeline, journeySummary, stationName } from './JourneyTimeline';
@@ -112,6 +116,16 @@ export function JourneyPlanner({ params, options, searchFetch, navigate }: Props
 
   const { state, outages } = useJourneyPlan(request, stations ?? [], options);
   const reporter = useReporter(outages.report);
+
+  // Plan again for trains that can still be caught: the time asked for becomes "now".
+  const replan = () => {
+    if (!request) return;
+    const href = journeyHref(request.from, request.to, request.profile, null);
+    if (window.location.hash === href) {
+      setSearch({ params, now: new Date().toISOString(), nonce: search.nonce + 1 });
+    } else if (navigate) navigate(href);
+    else window.location.hash = href;
+  };
 
   const submit = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -240,6 +254,8 @@ export function JourneyPlanner({ params, options, searchFetch, navigate }: Props
             outagesLoaded={outages.loaded}
             onReport={outages.status !== 'unavailable' ? reporter.send : undefined}
             reportBusy={reporter.busy}
+            liveOptions={options?.live}
+            onReplan={replan}
           />
         </>
       )}
@@ -255,6 +271,8 @@ function JourneyResults({
   outagesLoaded,
   onReport,
   reportBusy,
+  liveOptions,
+  onReplan,
 }: {
   state: JourneyPlanState;
   stations: Station[];
@@ -263,6 +281,8 @@ function JourneyResults({
   outagesLoaded: boolean;
   onReport: Parameters<typeof JourneyTimeline>[0]['onReport'];
   reportBusy: boolean;
+  liveOptions: LiveStatusOptions | undefined;
+  onReplan: () => void;
 }) {
   const { t, lang } = useI18n();
   const j = t.journey;
@@ -275,6 +295,14 @@ function JourneyResults({
   const index = Math.max(0, selected === null ? 0 : keys.indexOf(selected));
   const shown: Journey | undefined = journeys[index];
   const shownKey = shown ? journeyKey(shown) : null;
+
+  // Live delays and alerts for the trains of the journey on screen (step 2.7).
+  const rides = useMemo(
+    () => (shown ? shown.segments.flatMap((s) => (s.kind === 'ride' ? [s.leg] : [])) : []),
+    [shown],
+  );
+  const live = useLiveStatus(rides, liveOptions);
+  const liveAnnouncement = useLiveAnnouncement(live, rides.map(legKey).join('|'));
 
   // Re-routed: the reports changed what is blocked, after they had loaded, and the journey on
   // screen changed with them (React's "adjust state during render" pattern, as in RoutePlanner).
@@ -315,11 +343,12 @@ function JourneyResults({
           ? `${seen.rerouted ? `${j.rerouted} ` : ''}${fmt(j.resultsAnnounce, { n: journeys.length })}`
           : j.noJourney
         : '';
+  const announced = liveAnnouncement ? `${announce} ${liveAnnouncement}` : announce;
 
   return (
     <section aria-labelledby={`${uid}-title`} className="journey-results">
       <p role="status" aria-live="polite" className="floor-status">
-        {announce}
+        {announced}
       </p>
       {state.status === 'error' && (
         <p role="alert" className="notice-inline">
@@ -382,6 +411,8 @@ function JourneyResults({
                     profile={profile}
                     onReport={onReport}
                     reportBusy={reportBusy}
+                    live={live}
+                    onReplan={onReplan}
                   />
                 </section>
               )}
